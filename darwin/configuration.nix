@@ -76,38 +76,17 @@
 
   # Enable services
   services = {
-    # SSH
-    ssh.enable = true;
     
-    # Keychain
-    keychain.enable = true;
-    keychain.enableSshSupport = true;
-    
-    # GPG agent
-    gpg-agent.enable = true;
-    gpg-agent.enableSshSupport = true;
-    
-    # Launch agents
-    launchd.daemons = {
-      # Add custom launch agents here
-    };
   };
 
   # Security settings
   security = {
     # Enable sudo with touch ID
     pam.enableSudoTouchIdAuth = true;
-    
-    # Disable guest account
-    guestAccount.enable = false;
   };
 
   # Networking
   networking = {
-    # Enable firewall
-    firewall.enable = true;
-    firewall.allowPing = true;
-    
     # DNS settings
     dns = [ "1.1.1.1" "8.8.8.8" ];
   };

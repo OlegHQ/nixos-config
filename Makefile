@@ -1,9 +1,9 @@
-# NixOS and nix-darwin configuration management
+# NixOS, nix-darwin, and Home Manager configuration management
 # Usage: make <target>
 
 # Variables
 DARWIN_HOST := macbook
-LINUX_HOST := ubuntu
+HOME_USER := snowbear
 FLAKE_PATH := .
 
 # Colors for output
@@ -16,20 +16,17 @@ NC := \033[0m # No Color
 # Default target
 .PHONY: help
 help:
-	@echo "$(BLUE)NixOS and nix-darwin Configuration Management$(NC)"
+	@echo "$(BLUE)NixOS, nix-darwin, and Home Manager Configuration Management$(NC)"
 	@echo ""
 	@echo "$(GREEN)Available targets:$(NC)"
-	@echo "  $(YELLOW)darwin-switch$(NC)     - Switch to darwin configuration"
-	@echo "  $(YELLOW)linux-switch$(NC)      - Switch to linux configuration"
+	@echo "  $(YELLOW)darwin-switch$(NC)     - Switch to darwin configuration (macOS)"
+	@echo "  $(YELLOW)home-switch$(NC)       - Switch to home-manager configuration (Linux/Ubuntu)"
 	@echo "  $(YELLOW)darwin-test$(NC)       - Test darwin configuration (dry-run)"
-	@echo "  $(YELLOW)linux-test$(NC)        - Test linux configuration (dry-run)"
 	@echo "  $(YELLOW)darwin-build$(NC)      - Build darwin configuration"
-	@echo "  $(YELLOW)linux-build$(NC)       - Build linux configuration"
 	@echo "  $(YELLOW)darwin-activate$(NC)   - Activate darwin configuration"
-	@echo "  $(YELLOW)linux-activate$(NC)    - Activate linux configuration"
 	@echo "  $(YELLOW)update$(NC)            - Update all flake inputs"
 	@echo "  $(YELLOW)update-darwin$(NC)     - Update darwin-specific inputs"
-	@echo "  $(YELLOW)update-linux$(NC)      - Update linux-specific inputs"
+	@echo "  $(YELLOW)update-home$(NC)       - Update home-manager-specific inputs"
 	@echo "  $(YELLOW)gc$(NC)                - Garbage collect old generations"
 	@echo "  $(YELLOW)clean$(NC)             - Clean build artifacts"
 	@echo "  $(YELLOW)format$(NC)            - Format all Nix files"
@@ -65,30 +62,24 @@ darwin-activate:
 	@./result/sw/bin/darwin-rebuild activate --flake $(FLAKE_PATH)#$(DARWIN_HOST)
 	@echo "$(GREEN)Darwin configuration activated!$(NC)"
 
-# Linux (NixOS) targets
-.PHONY: linux-switch
-linux-switch:
-	@echo "$(BLUE)Switching to linux configuration...$(NC)"
-	@sudo nixos-rebuild switch --flake $(FLAKE_PATH)#$(LINUX_HOST)
-	@echo "$(GREEN)Linux configuration activated successfully!$(NC)"
+# Home Manager (Linux/Ubuntu) targets
+.PHONY: home-switch
+home-switch:
+	@echo "$(BLUE)Switching to home-manager configuration...$(NC)"
+	@nix run github:nix-community/home-manager -- switch --flake $(FLAKE_PATH)#$(HOME_USER)
+	@echo "$(GREEN)Home Manager configuration activated successfully!$(NC)"
 
-.PHONY: linux-test
-linux-test:
-	@echo "$(BLUE)Testing linux configuration (dry-run)...$(NC)"
-	@sudo nixos-rebuild build --flake $(FLAKE_PATH)#$(LINUX_HOST)
-	@echo "$(GREEN)Linux configuration test completed successfully!$(NC)"
+.PHONY: home-test
+home-test:
+	@echo "$(BLUE)Testing home-manager configuration (dry-run)...$(NC)"
+	@nix run github:nix-community/home-manager -- build --flake $(FLAKE_PATH)#$(HOME_USER)
+	@echo "$(GREEN)Home Manager configuration test completed successfully!$(NC)"
 
-.PHONY: linux-build
-linux-build:
-	@echo "$(BLUE)Building linux configuration...$(NC)"
-	@nix build $(FLAKE_PATH)#nixosConfigurations.$(LINUX_HOST).config.system.build.toplevel
-	@echo "$(GREEN)Linux configuration built successfully!$(NC)"
-
-.PHONY: linux-activate
-linux-activate:
-	@echo "$(BLUE)Activating linux configuration...$(NC)"
-	@sudo nixos-rebuild boot --flake $(FLAKE_PATH)#$(LINUX_HOST)
-	@echo "$(GREEN)Linux configuration will be activated on next boot!$(NC)"
+.PHONY: home-build
+home-build:
+	@echo "$(BLUE)Building home-manager configuration...$(NC)"
+	@nix build $(FLAKE_PATH)#homeConfigurations.$(HOME_USER).activationPackage
+	@echo "$(GREEN)Home Manager configuration built successfully!$(NC)"
 
 # Update targets
 .PHONY: update
@@ -104,12 +95,12 @@ update-darwin:
 	@nix flake lock --update-input home-manager
 	@echo "$(GREEN)Darwin inputs updated!$(NC)"
 
-.PHONY: update-linux
-update-linux:
-	@echo "$(BLUE)Updating linux-specific inputs...$(NC)"
+.PHONY: update-home
+update-home:
+	@echo "$(BLUE)Updating home-manager-specific inputs...$(NC)"
 	@nix flake lock --update-input nixpkgs
 	@nix flake lock --update-input home-manager
-	@echo "$(GREEN)Linux inputs updated!$(NC)"
+	@echo "$(GREEN)Home Manager inputs updated!$(NC)"
 
 # Utility targets
 .PHONY: gc
@@ -149,8 +140,8 @@ switch:
 		echo "$(BLUE)Detected Darwin system, switching to darwin configuration...$(NC)"; \
 		$(MAKE) darwin-switch; \
 	else \
-		echo "$(BLUE)Detected Linux system, switching to linux configuration...$(NC)"; \
-		$(MAKE) linux-switch; \
+		echo "$(BLUE)Detected Linux system, switching to home-manager configuration...$(NC)"; \
+		$(MAKE) home-switch; \
 	fi
 
 .PHONY: test
@@ -159,8 +150,8 @@ test:
 		echo "$(BLUE)Detected Darwin system, testing darwin configuration...$(NC)"; \
 		$(MAKE) darwin-test; \
 	else \
-		echo "$(BLUE)Detected Linux system, testing linux configuration...$(NC)"; \
-		$(MAKE) linux-test; \
+		echo "$(BLUE)Detected Linux system, testing home-manager configuration...$(NC)"; \
+		$(MAKE) home-test; \
 	fi
 
 # Show current system info
@@ -173,4 +164,4 @@ info:
 	@echo "  Nix Version: $$(nix --version | head -n1)"
 	@echo "  Flake Path: $(FLAKE_PATH)"
 	@echo "  Darwin Host: $(DARWIN_HOST)"
-	@echo "  Linux Host: $(LINUX_HOST)" 
+	@echo "  Home User: $(HOME_USER)" 

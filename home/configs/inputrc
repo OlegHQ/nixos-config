@@ -1,0 +1,24 @@
+# Readline Configuration
+# Optimized for efficient command-line interaction
+
+# Intelligent completion behavior
+set show-all-if-ambiguous on
+set completion-ignore-case on
+set completion-map-case on
+set mark-symlinked-directories on
+
+# Enhanced navigation
+set skip-completed-text on
+set colored-completion-prefix on
+set colored-stats on
+
+# History improvements
+set history-preserve-point on
+
+# Bash-specific enhancements
+$if Bash
+  Space: magic-space
+$endif
+
+# Vi mode users (uncomment if preferred)
+# set editing-mode vi

@@ -1,205 +1,120 @@
-# NixOS, nix-darwin, and Home Manager Configuration
+# 🚀 Elite NixOS Configuration
 
-This repository contains a unified Nix configuration that supports:
-- **nix-darwin** (macOS, M1/M2)
-- **Home Manager standalone** (Linux, e.g., Ubuntu)
+Welcome to my battle-tested NixOS configuration - a meticulously crafted system that bridges the gap between power and elegance. This isn't just another dotfiles repo; it's a complete ecosystem designed for developers who demand excellence.
 
-> **Note:** On Ubuntu (or any non-NixOS Linux), only Home Manager standalone is supported. System-level configuration (like nixos/configuration.nix) is not possible.
+## ⚡ Features
 
-## 🚀 Features
-- **Unified Configuration**: Single flake for both macOS and Linux
-- **Home Manager Integration**: User-level configuration management
-- **Fish Shell**: Modern shell with extensive customization
-- **Development Tools**: Comprehensive development environment
-- **Easy Management**: Makefile with convenient commands
+- **🍎 macOS Integration**: Seamless nix-darwin setup with native macOS feel
+- **🐧 Linux Support**: Full Home Manager configuration for x86_64 and aarch64
+- **🔧 Development Ready**: Pre-configured with modern tools and language servers
+- **🎨 Beautiful UI**: Catppuccin theme across all applications
+- **⚙️ Reproducible**: Flake-based configuration ensures consistency across machines
+- **🚀 Performance Optimized**: Carefully selected packages from stable and unstable channels
 
-## 📋 Prerequisites
+## 🛠 Tech Stack
 
-### For macOS (nix-darwin)
-```bash
-# Install Nix with flakes enabled
-sh <(curl -L https://nixos.org/nix/install) --daemon
+### Core Tools
 
-# Install nix-darwin
-nix build nix-darwin#aarch64-darwin.system --extra-experimental-features nix-command --extra-experimental-features flakes
-./result/sw/bin/darwin-rebuild switch
-```
+- **Editor**: Helix (primary) + Neovim (fallback) with LSP support
+- **Shell**: Fish with intelligent completions and plugins
+- **Terminal**: Ghostty with optimized settings
+- **Multiplexer**: tmux with pain-control and catppuccin theme
+- **Version Control**: Git with sensible aliases and configuration
 
-### For Ubuntu (Home Manager only)
-```bash
-# Install Nix with flakes enabled
-sh <(curl -L https://nixos.org/nix/install)
+### Development Environment
 
-# Install Home Manager as a standalone program
-nix run github:nix-community/home-manager -- switch --flake ".#snowbear"
-```
+- **Languages**: TypeScript, Python, OCaml, Rust toolchain
+- **Cloud**: AWS CLI, kubectl, Helm
+- **Containers**: K3d for local Kubernetes development
+- **Monitoring**: htop, lazygit, ripgrep, fd, fzf
 
-## 🏗️ Project Structure
+## 🚀 Quick Start
 
-```
-.
-├── flake.nix                 # Main flake configuration
-├── Makefile                  # Build and management commands
-├── darwin/
-│   └── configuration.nix     # nix-darwin system configuration
-└── home-manager/
-    └── home.nix             # Home manager user configuration
-```
+### macOS Setup
 
-## 🛠️ Usage
+1. **Install Nix** using the Determinate Systems installer:
 
-### Quick Start
-
-1. **Clone and enter the repository**:
    ```bash
-   git clone <your-repo-url>
-   cd nixos-config
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
-2. **View available commands**:
+2. **Clone and Deploy**:
+
    ```bash
-   make help
+   git clone <your-repo-url> ~/.config/nixos
+   cd ~/.config/nixos
+   make switch
    ```
 
-3. **Switch to your configuration**:
-   ```bash
-   # For macOS
-   make darwin-switch
-   
-   # For Ubuntu (Home Manager only)
-   make home-switch
-   ```
+3. **Profit** 🎉
 
-### Available Make Commands
+### Linux Setup
 
-#### System Management
-- `make darwin-switch` - Switch to darwin configuration (macOS)
-- `make home-switch`   - Switch to home-manager configuration (Linux/Ubuntu)
-- `make darwin-test`   - Test darwin configuration (dry-run)
-- `make darwin-build`  - Build darwin configuration
+For Linux systems, use Home Manager directly:
 
-#### Updates
-- `make update` - Update all flake inputs
-- `make update-darwin` - Update darwin-specific inputs
-- `make update-home`   - Update home-manager-specific inputs
-
-#### Utilities
-- `make gc` - Garbage collect old generations
-- `make clean` - Clean build artifacts
-- `make format` - Format all Nix files
-- `make check` - Check Nix syntax and formatting
-- `make shell` - Enter development shell
-- `make info` - Show system information
-
-### Manual Commands
-
-#### For macOS
 ```bash
-# Switch configuration
-darwin-rebuild switch --flake .#macbook
+# For x86_64 systems
+nix run nixpkgs#home-manager -- switch --flake .#snowbear-x86_64
+
+# For ARM64 systems
+nix run nixpkgs#home-manager -- switch --flake .#snowbear-aarch64
 ```
 
-#### For Ubuntu (Home Manager only)
-```bash
-# Switch user configuration
-nix run github:nix-community/home-manager -- switch --flake .#snowbear
+## 🔧 Configuration Structure
+
+```
+├── flake.nix              # Main flake configuration
+├── darwin/                # macOS-specific settings
+│   ├── system.nix         # System-level configuration
+│   └── account.nix        # User account setup
+├── home/                  # Home Manager configuration
+│   ├── default.nix        # Main home configuration
+│   ├── helix.nix          # Helix editor setup
+│   ├── nvim.nix           # Neovim configuration
+│   └── configs/           # Application configs
+└── Makefile              # Build automation
 ```
 
-## ⚙️ Configuration
+## 🎯 Philosophy
 
-### System Configuration
-- **macOS**: `darwin/configuration.nix`
-- **Linux/Ubuntu**: Only user-level configuration via `home-manager/home.nix`
+This configuration follows several key principles:
 
-### User Configuration
-User-level configuration is managed by home-manager in `home-manager/home.nix` and includes:
-- **Shell**: Fish with extensive customization
-- **Terminal**: Alacritty with Catppuccin theme
-- **Editor**: Neovim with basic configuration
-- **Development Tools**: Git, tmux, direnv, and more
-- **Utilities**: fzf, bat, exa, zoxide, and starship
+1. **Minimalism**: Only include what you actually use
+2. **Performance**: Prefer fast, native tools over bloated alternatives
+3. **Consistency**: Unified theme and keybindings across all applications
+4. **Reliability**: Stable base with carefully selected unstable packages
+5. **Productivity**: Optimized for rapid development workflows
 
-### Customization
-1. **Modify system settings**: Edit `darwin/configuration.nix` (macOS only)
-2. **Modify user settings**: Edit `home-manager/home.nix`
-3. **Add packages**: Add to `home.packages`
-4. **Add services**: Configure in the `services` section
+## 🔍 Advanced Usage
 
-## 🔧 Development
+### Custom Builds
 
-### Enter Development Shell
 ```bash
-make shell
-# or
-nix develop
+# Test configuration without switching
+make test
+
+# Build specific configuration
+NIXNAME=mac make switch
 ```
 
-### Format Code
+### Development Workflow
+
+The configuration includes direnv integration for per-project environments:
+
 ```bash
-make format
-# or
-nix fmt
+# In any project directory
+echo "use flake" > .envrc
+direnv allow
 ```
-
-### Check Configuration
-```bash
-make check
-# or
-nix flake check
-```
-
-## 📦 Included Software
-See `home-manager/home.nix` for the list of user packages and programs.
-
-## 🔒 Security
-- SSH key management
-- GPG agent configuration
-- Secure defaults
-
-## 🎨 Theming
-- **Terminal**: Alacritty with Catppuccin theme
-- **Shell**: Fish with custom colors
-- **Fonts**: FiraCode Nerd Font
-- **Icons**: Font Awesome
-
-## 🐛 Troubleshooting
-
-### Common Issues
-1. **Flake not found**: Ensure you're in the correct directory and flakes are enabled
-2. **Permission denied**: Use `sudo` only for system-level commands (not needed for Home Manager)
-3. **Build failures**: Check the configuration syntax with `make check`
-
-### Rollback
-```bash
-# macOS
-darwin-rebuild --rollback
-
-# Ubuntu (Home Manager only)
-home-manager switch --rollback
-```
-
-### Clean Build
-```bash
-make clean
-make gc
-# Then rebuild
-```
-
-## 📚 Resources
-- [nix-darwin Documentation](https://daiderd.com/nix-darwin/manual/index.html)
-- [Home Manager Manual](https://nix-community.github.io/home-manager/)
-- [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 
 ## 🤝 Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with `make check`
-5. Submit a pull request
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Found a bug or have an improvement? Feel free to open an issue or submit a PR. This configuration is constantly evolving based on real-world usage.
 
----
+## ⚠️ Disclaimer
 
-**Note**: This configuration is designed for personal use. Please review and customize the settings, especially user names, email addresses, and system-specific configurations before deploying.
+This is a personal configuration optimized for my workflow. While you're welcome to use it as inspiration, I recommend understanding each component before blindly copying. Your mileage may vary.
+
+## 📜 License
+
+MIT License - Use at your own risk and have fun! 🎉

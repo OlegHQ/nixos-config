@@ -71,8 +71,8 @@ This is a sophisticated Nix flake configuration supporting both macOS (via nix-d
 4. **User Parameterization**: Single `userName` variable controls user across all configurations
 
 ### Development Environment Features
-- **Primary Editor**: Helix with LSP support and custom language configurations
-- **Fallback Editor**: Neovim with extensive plugin setup and fennel configuration
+- **Primary Editor**: Neovim with extensive plugin setup and LSP support
+- **Alternative Editor**: Helix with LSP support and custom language configurations
 - **Shell**: Fish with fzf integration and kubectl completions
 - **Terminal**: Ghostty with optimized settings
 - **Version Control**: Git with sensible aliases and lazygit

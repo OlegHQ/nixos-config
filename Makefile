@@ -34,9 +34,9 @@ endif
 # Build configuration
 build:
 ifeq ($(UNAME), Darwin)
-	nix build ".#darwinConfigurations.${NIXNAME}.system"
+	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}.system" --impure
 else
-	nix build ".#homeConfigurations.${USER}-${ARCH}.activationPackage"
+	NIXPKGS_ALLOW_UNFREE=1 nix build ".#homeConfigurations.${USER}-${ARCH}.activationPackage" --impure
 endif
 
 # Validate flake

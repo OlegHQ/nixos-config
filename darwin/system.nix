@@ -7,6 +7,8 @@
 
   # Nix configuration settings
   nix = {
+    enable = false;
+
     settings = {
       substituters = [ "https://cache.nixos.org/" ];
       trusted-public-keys = [

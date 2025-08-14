@@ -14,8 +14,8 @@ all: switch
 switch:
 ifeq ($(UNAME), Darwin)
 	@echo "🍎 Switching Darwin configuration..."
-	nix build ".#darwinConfigurations.${NIXNAME}.system"
-	./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}"
+	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}.system" --impure
+	NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}" --impure
 else
 	@echo "🐧 Switching Home Manager configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run nixpkgs#home-manager -- switch --flake ".#${USER}-${ARCH}" --impure
@@ -58,3 +58,4 @@ help:
 	@echo "  check   - Validate flake configuration"
 	@echo "  clean   - Clean build artifacts"
 	@echo "  help    - Show this help message"
+

@@ -101,6 +101,7 @@
           kubectl = unstable.kubectl;
           awscli2 = unstable.awscli2;
           helm-ls = unstable.helm-ls;
+          claude-code = unstable.claude-code;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

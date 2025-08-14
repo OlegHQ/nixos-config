@@ -75,8 +75,6 @@ in {
     pkgs.tree-sitter
     pkgs.nodejs_20
     pkgs.nodePackages_latest.typescript-language-server
-    # pkgs.nodePackages.graphql-language-service-cli
-    # pkgs.bun
     pkgs.opam
     pkgs.lazygit
 
@@ -86,15 +84,12 @@ in {
     pkgs.watchman
 
     pkgs.direnv
-    # pkgs.k3d
     pkgs.kubectl
-    # pkgs.air
-
-    # pkgs.yaml-language-server
     pkgs.kubernetes-helm
     pkgs.awscli2
 
     pkgs.python3
+    pkgs.claude-code
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux

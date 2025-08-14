@@ -14,6 +14,9 @@
   # Nix configuration settings
   nix = {
     enable = false;
+    
+    # Suppress legacy channel warnings
+    nixPath = pkgs.lib.mkForce [ ];
 
     settings = {
       substituters = [ "https://cache.nixos.org/" ];

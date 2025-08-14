@@ -127,6 +127,9 @@ in {
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
+  
+  # Claude Code settings
+  home.file.".claude/settings.json".source = ./configs/claude-settings.json;
 
   # ═══════════════════════════════════════════════════════════════════════════════
   # Program Configuration

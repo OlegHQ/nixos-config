@@ -67,6 +67,38 @@
             LSHandlerRoleAll = "-";
           };
         }
+        # Markdown files
+        {
+          LSHandlerContentType = "net.daringfireball.markdown";
+          LSHandlerRoleAll = "com.mitchellh.ghostty";
+          LSHandlerPreferredVersions = {
+            LSHandlerRoleAll = "-";
+          };
+        }
+        # Lua files
+        {
+          LSHandlerContentType = "public.lua-script";
+          LSHandlerRoleAll = "com.mitchellh.ghostty";
+          LSHandlerPreferredVersions = {
+            LSHandlerRoleAll = "-";
+          };
+        }
+        # Files without extension (like LICENSE)
+        {
+          LSHandlerContentType = "public.data";
+          LSHandlerRoleAll = "com.mitchellh.ghostty";
+          LSHandlerPreferredVersions = {
+            LSHandlerRoleAll = "-";
+          };
+        }
+        # Text-based files
+        {
+          LSHandlerContentType = "public.text";
+          LSHandlerRoleAll = "com.mitchellh.ghostty";
+          LSHandlerPreferredVersions = {
+            LSHandlerRoleAll = "-";
+          };
+        }
         # Executables open with Ghostty (default terminal)
         {
           LSHandlerContentType = "public.unix-executable";

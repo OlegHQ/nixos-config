@@ -14,7 +14,7 @@
       "BashOutput",
       "KillBash"
     ],
-    "deny": [
+    "ask": [
       "Write",
       "Edit", 
       "MultiEdit",
@@ -22,3 +22,4 @@
     ]
   }
 }
+

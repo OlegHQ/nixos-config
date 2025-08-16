@@ -73,7 +73,6 @@ in {
     pkgs.tree
     pkgs.watch
     pkgs.tree-sitter
-    pkgs.nodejs_20
     pkgs.nodePackages_latest.typescript-language-server
     pkgs.opam
     pkgs.lazygit
@@ -97,10 +96,6 @@ in {
     pkgs.bzip2
     pkgs.gmp
     pkgs.pkg-config
-  ]) ++ (lib.optionals isDarwin [
-    # macOS-specific packages
-    pkgs.cachix
-    pkgs.tailscale
   ]) ++ helix.packages;
 
   # ═══════════════════════════════════════════════════════════════════════════════

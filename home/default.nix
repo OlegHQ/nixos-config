@@ -146,8 +146,7 @@ in {
       (lib.strings.intersperse "\n" ([
         (builtins.readFile ./configs/config.fish)
         "set -g SHELL ${pkgs.fish}/bin/fish"
-        "npm set prefix ~/.npm-global"
-        "set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths"
+        "if type -q npm; npm set prefix ~/.npm-global; set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths; end"
       ]));
 
     shellAliases = gitAliases // (if isLinux then {

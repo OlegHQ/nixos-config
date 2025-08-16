@@ -177,7 +177,7 @@ in {
     secureSocket = false;
 
     extraConfig = ''
-      set-option -ag terminal-overrides ",xterm-256color:Ms=\\E]52;c;%p2%s\\7"
+      set -ga terminal-overrides ",xterm-256color:Tc"
       set -g set-clipboard on
 
 

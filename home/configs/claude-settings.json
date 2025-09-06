@@ -13,12 +13,6 @@
       "TodoWrite",
       "BashOutput",
       "KillBash"
-    ],
-    "ask": [
-      "Write",
-      "Edit", 
-      "MultiEdit",
-      "NotebookEdit"
     ]
   }
 }

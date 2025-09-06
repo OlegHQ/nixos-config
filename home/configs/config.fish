@@ -88,6 +88,17 @@ if test -d "/opt/homebrew"
     set -gx MANPATH "/opt/homebrew/share/man" $MANPATH
     set -q INFOPATH; or set INFOPATH ''
     set -gx INFOPATH "/opt/homebrew/share/info" $INFOPATH
+    
+    # Add Homebrew Ruby and gems to PATH for CocoaPods compatibility
+    fish_add_path -g "/opt/homebrew/opt/ruby/bin"
+    
+    # Add gem bin directory (detect version dynamically)
+    for gem_dir in /opt/homebrew/lib/ruby/gems/*/bin
+        if test -d "$gem_dir"
+            fish_add_path -g "$gem_dir"
+            break
+        end
+    end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════

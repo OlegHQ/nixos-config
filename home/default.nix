@@ -113,11 +113,19 @@ in {
     EDITOR = "nvim";
     PAGER = "less -FirSwX";
     MANPAGER = "${manpager}/bin/manpager";
+    # Set clipboard provider for neovim in SSH sessions  
+    NVIM_CLIPBOARD_PROVIDER = "/home/${config.home.username}/bin/osc52-copy";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;
   # Silence "Last login:" on macOS and other login shells
   home.file.".hushlogin".text = "";
+  
+  # OSC52 clipboard script for SSH/mosh sessions
+  home.file."bin/osc52-copy" = {
+    source = ./configs/osc52-copy;
+    executable = true;
+  };
 
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
@@ -150,9 +158,9 @@ in {
       ]));
 
     shellAliases = gitAliases // (if isLinux then {
-      # macOS-style clipboard commands for muscle memory consistency
-      pbcopy = "xclip";
-      pbpaste = "xclip -o";
+      # OSC52 clipboard for SSH/mosh sessions
+      pbcopy = "/home/${config.home.username}/bin/osc52-copy";
+      pbpaste = "echo ''"; # paste not supported via OSC52
     } else {});
 
     plugins = map (n: {
@@ -178,8 +186,16 @@ in {
 
     extraConfig = ''
       set -ga terminal-overrides ",xterm-256color:Tc"
+      
+      # Enable OSC52 passthrough for SSH/mosh  
       set -g set-clipboard on
-
+      set -ag terminal-overrides ",xterm-256color:Ms=\\E]52;c;%p2%s\\7"
+      set -ag terminal-overrides ",screen-256color:Ms=\\E]52;c;%p2%s\\7"
+      set -ag terminal-overrides ",tmux-256color:Ms=\\E]52;c;%p2%s\\7"
+      
+      # Direct OSC52 copy bindings
+      bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "/home/${config.home.username}/bin/osc52-copy"
+      bind-key -T copy-mode Enter send-keys -X copy-pipe-and-cancel "/home/${config.home.username}/bin/osc52-copy"
 
       # Configure the catppuccin plugin
       set -g @catppuccin_flavor "latte"

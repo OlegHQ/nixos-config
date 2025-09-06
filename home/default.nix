@@ -51,6 +51,34 @@ let
     cat "$1" | col -bx | bat --language man --style plain
   ''));
 
+  # Script to dump terminal/tmux scroll history to file and open in neovim
+  dumptty = pkgs.writeShellScriptBin "dumptty" ''
+    # Generate timestamped filename
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    TMPFILE="/tmp/terminal_dump_$TIMESTAMP.txt"
+    
+    if [ -n "$TMUX" ]; then
+        # We're in tmux - capture the pane history
+        echo "Dumping tmux pane history to $TMPFILE"
+        tmux capture-pane -pS - > "$TMPFILE"
+    else
+        # We're in a regular terminal - scrollback capture is not possible
+        echo "❌ dumptty only works inside tmux!"
+        echo "Regular terminals don't expose their scrollback buffer to programs."
+        echo ""
+        echo "💡 Suggestions:"
+        echo "  • Use tmux for terminal session management"
+        echo "  • Or manually copy/paste the content you need"
+        exit 1
+    fi
+    
+    echo "Saved terminal dump to: $TMPFILE"
+    
+    # Open in neovim and scroll to bottom
+    nvim '+normal G' "$TMPFILE"
+  '';
+
+
 in {
   # HM state version
   home.stateVersion = "18.09";
@@ -89,6 +117,7 @@ in {
 
     pkgs.python3
     pkgs.claude-code
+    dumptty
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux
@@ -193,7 +222,7 @@ in {
       run-shell ${tmuxSources."tmux-pain-control"}/pain_control.tmux
       run-shell ${tmuxSources."tmux-catppuccin"}/catppuccin.tmux
       set -sg escape-time 0
-      setw -g mouse on
+      setw -g mouse off
     '';
   };
 

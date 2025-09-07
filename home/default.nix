@@ -222,7 +222,7 @@ in {
       run-shell ${tmuxSources."tmux-pain-control"}/pain_control.tmux
       run-shell ${tmuxSources."tmux-catppuccin"}/catppuccin.tmux
       set -sg escape-time 0
-      setw -g mouse off
+      setw -g mouse on
     '';
   };
 

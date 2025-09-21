@@ -146,6 +146,7 @@ in {
     EDITOR = "nvim";
     PAGER = "less -FirSwX";
     MANPAGER = "${manpager}/bin/manpager";
+    GEMINI_CLI_SYSTEM_DEFAULTS_PATH = "${config.xdg.configHome}/gemini/settings.json";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;
@@ -159,6 +160,12 @@ in {
   
   # Claude Code settings
   home.file.".claude/settings.json".source = ./configs/claude-settings.json;
+  
+  # Gemini CLI settings
+  xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
+  
+  # usql configuration with light theme
+  home.file.".usqlrc".source = ./configs/usqlrc;
 
   # ═══════════════════════════════════════════════════════════════════════════════
   # Program Configuration

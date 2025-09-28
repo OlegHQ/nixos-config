@@ -117,7 +117,7 @@ in {
 
     pkgs.python3
     pkgs.claude-code
-    pkgs.gemini-cli
+
     dumptty
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
@@ -204,6 +204,7 @@ in {
     userEmail = "oleg@nexo.sh";
     extraConfig = {
       core.editor = "nvim";
+      push.autoSetupRemote = true;
     };
   };
 

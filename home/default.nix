@@ -118,7 +118,9 @@ in {
     pkgs.python3
     pkgs.nodejs_24
 
+    pkgs.uv
     pkgs.claude-code
+    pkgs.codex
 
     dumptty
   ] ++ (lib.optionals isLinux [
@@ -140,6 +142,10 @@ in {
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       ${installKubectlCompletion}/bin/install-kubectl-completion
     '';
+
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
 
   home.sessionVariables = {
     LANG = "en_US.UTF-8";

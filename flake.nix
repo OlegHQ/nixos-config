@@ -103,6 +103,7 @@
           helm-ls = unstable.helm-ls;
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
+          codex = unstable.codex;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

@@ -102,7 +102,7 @@ in {
     pkgs.watch
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
-    pkgs.opam
+    # pkgs.opam
     pkgs.lazygit
 
     pkgs.clang-tools

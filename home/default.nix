@@ -102,7 +102,8 @@ in {
     pkgs.watch
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
-    # pkgs.opam
+    pkgs.opam
+    pkgs.zellij
     pkgs.lazygit
 
     pkgs.clang-tools
@@ -162,6 +163,7 @@ in {
   home.file.".hushlogin".text = "";
   
 
+  xdg.configFile."zellij/config.kdl".text = builtins.readFile ./configs/zellij.kdl;
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;

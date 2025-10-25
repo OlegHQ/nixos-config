@@ -38,11 +38,15 @@
     nvim-gitsigns.url = "github:lewis6991/gitsigns.nvim/f074844b60f9e151970fbcdbeb8a2cd52b6ef25a";
     nvim-gitsigns.flake = false;
 
+    vim-visual-multi.url = "github:mg979/vim-visual-multi/a6975e7c1ee157615bbc80fc25e4392f71c344d4";
+    vim-visual-multi.flake = false;
+
     nvim-lualine.url = "github:nvim-lualine/lualine.nvim/a94fc68960665e54408fe37dcf573193c4ce82c9";
     nvim-lualine.flake = false;
 
     nvim-lsplines.url = "git+https://git.sr.ht/~whynothugo/lsp_lines.nvim?rev=a92c755f182b89ea91bd8a6a2227208026f27b4d";
     nvim-lsplines.flake = false;
+
 
     # Shell & terminal enhancements
     fish-fzf = {

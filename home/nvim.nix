@@ -37,5 +37,11 @@ self: super:
       name = "nvim-lsplines";
       src = inputs.nvim-lsplines;
     };
+
+    vim-visual-multi = vimUtils.buildVimPlugin {
+      name = "vim-visual-multi";
+      src = inputs.vim-visual-multi;
+    };
   };
 }
+

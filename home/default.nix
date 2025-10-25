@@ -272,6 +272,7 @@ in {
       vimPlugins.bufferline-nvim
       vimPlugins.hop-nvim
       customVim.nvim-lsplines
+      customVim.vim-visual-multi
       vimPlugins.indent-blankline-nvim
     ];
   };

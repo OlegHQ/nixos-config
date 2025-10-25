@@ -423,7 +423,8 @@
         "nvim-lsplines": "nvim-lsplines",
         "nvim-lualine": "nvim-lualine",
         "tmux-catppuccin": "tmux-catppuccin",
-        "tmux-pain-control": "tmux-pain-control"
+        "tmux-pain-control": "tmux-pain-control",
+        "vim-visual-multi": "vim-visual-multi"
       }
     },
     "tmux-catppuccin": {
@@ -478,6 +479,23 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "vim-visual-multi": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1725214162,
+        "narHash": "sha256-KzBWkB/PYph6OfuF0GgNFYgqUAwMYbQQZbaaG9XuWZY=",
+        "owner": "mg979",
+        "repo": "vim-visual-multi",
+        "rev": "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mg979",
+        "repo": "vim-visual-multi",
+        "rev": "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
         "type": "github"
       }
     }

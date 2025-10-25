@@ -102,7 +102,6 @@ in {
     pkgs.watch
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
-    pkgs.opam
     pkgs.zellij
     pkgs.lazygit
 

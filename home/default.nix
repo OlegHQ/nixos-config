@@ -192,7 +192,9 @@ in {
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
 
-    shellAliases = gitAliases;
+    shellAliases = gitAliases // {
+      zj = "zellij";
+    };
   };
 
   programs.fish = {
@@ -204,7 +206,9 @@ in {
         "if type -q npm; npm set prefix ~/.npm-global; set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths; end"
       ]));
 
-    shellAliases = gitAliases;
+    shellAliases = gitAliases // {
+      zj = "zellij";
+    };
 
     plugins = map (n: {
       name = n;

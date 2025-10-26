@@ -10,6 +10,10 @@ let
     "tmux-pain-control" = inputs."tmux-pain-control";
     "tmux-catppuccin" = inputs."tmux-catppuccin";
   };
+  zellijChooseTree = pkgs.fetchurl {
+    url = "https://github.com/laperlej/zellij-choose-tree/releases/download/v0.4.2/zellij-choose-tree.wasm";
+    sha256 = "sha256-OGHLzCM9wg0CLm5SSr3bmElcciBIqamalQjgkTuzAeg=";
+  };
   helixImport = import ./helix.nix;
   helix = helixImport { inherit pkgs; };
   # Helper: install kubectl completions for Fish
@@ -163,6 +167,7 @@ in {
   
 
   xdg.configFile."zellij/config.kdl".text = builtins.readFile ./configs/zellij.kdl;
+  xdg.configFile."zellij/plugins/zellij-choose-tree.wasm".source = zellijChooseTree;
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;

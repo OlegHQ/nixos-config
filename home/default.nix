@@ -218,9 +218,9 @@ in {
 
   programs.git = {
     enable = true;
-    userName = "Oleg Pustovit";
-    userEmail = "oleg@nexo.sh";
-    extraConfig = {
+    settings = {
+      user.name = "Oleg Pustovit";
+      user.email = "oleg@nexo.sh";
       core.editor = "nvim";
       push.autoSetupRemote = true;
     };
@@ -256,32 +256,30 @@ in {
   programs.neovim = {
     enable = true;
 
-    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
-
     withPython3 = true;
     viAlias = true;
 
-    plugins = with pkgs; [
-      customVim.nvim-hotpot
-      pkgs.vimPlugins.plenary-nvim
-      pkgs.vimPlugins.telescope-nvim
-      customVim.nvim-lspconfig
-      customVim.nvim-comment
-      pkgs.vimPlugins.nvim-cmp
-      pkgs.vimPlugins.cmp-buffer
-      pkgs.vimPlugins.cmp-nvim-lsp
-      customVim.nvim-gitsigns
-      customVim.nvim-conform
-      pkgs.vimPlugins.nvim-treesitter.withAllGrammars
-      vimPlugins.catppuccin-nvim
-      customVim.nvim-lualine
-      vimPlugins.nvim-autopairs
-      vimPlugins.cmp-path
-      vimPlugins.bufferline-nvim
-      vimPlugins.hop-nvim
-      customVim.nvim-lsplines
-      customVim.vim-visual-multi
-      vimPlugins.indent-blankline-nvim
+    plugins = with pkgs.vimPlugins; [
+      hotpot-nvim
+      plenary-nvim
+      telescope-nvim
+      nvim-lspconfig
+      comment-nvim
+      nvim-cmp
+      cmp-buffer
+      cmp-nvim-lsp
+      gitsigns-nvim
+      conform-nvim
+      nvim-treesitter.withAllGrammars
+      catppuccin-nvim
+      lualine-nvim
+      nvim-autopairs
+      cmp-path
+      bufferline-nvim
+      hop-nvim
+      lsp_lines-nvim
+      vim-visual-multi
+      indent-blankline-nvim
     ];
   };
 }

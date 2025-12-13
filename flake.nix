@@ -4,48 +4,18 @@
 
   inputs = {
     # Core Nix channels
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     # System managers
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-
-    # Development tools
-    neovim-nightly-overlay = {
-      url = "github:nix-community/neovim-nightly-overlay";
-    };
-
-    nvim-hotpot.url = "github:rktjmp/hotpot.nvim/v0.13.0";
-    nvim-hotpot.flake = false;
-    
-    nvim-lspconfig.url = "github:neovim/nvim-lspconfig/03bc581e05e81d33808b42b2d7e76d70adb3b595";
-    nvim-lspconfig.flake = false;
-    
-    nvim-comment.url = "github:numToStr/Comment.nvim/e30b7f2008e52442154b66f7c519bfd2f1e32acb";
-    nvim-comment.flake = false;
-    
-    nvim-conform.url = "github:stevearc/conform.nvim/6feb2f28f9a9385e401857b21eeac3c1b66dd628";
-    nvim-conform.flake = false;
-    
-    nvim-gitsigns.url = "github:lewis6991/gitsigns.nvim/f074844b60f9e151970fbcdbeb8a2cd52b6ef25a";
-    nvim-gitsigns.flake = false;
-
-    vim-visual-multi.url = "github:mg979/vim-visual-multi/a6975e7c1ee157615bbc80fc25e4392f71c344d4";
-    vim-visual-multi.flake = false;
-
-    nvim-lualine.url = "github:nvim-lualine/lualine.nvim/a94fc68960665e54408fe37dcf573193c4ce82c9";
-    nvim-lualine.flake = false;
-
-    nvim-lsplines.url = "git+https://git.sr.ht/~whynothugo/lsp_lines.nvim?rev=a92c755f182b89ea91bd8a6a2227208026f27b4d";
-    nvim-lsplines.flake = false;
 
 
     # Shell & terminal enhancements
@@ -92,7 +62,7 @@
       # Package overlays for enhanced functionality and bleeding-edge tools
       overlays = [
         (final: prev: let
-          unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.system};
+          unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
         in {
           # Bleeding-edge packages from unstable
           vimPlugins = unstable.vimPlugins;

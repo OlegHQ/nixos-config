@@ -123,8 +123,6 @@ in {
     pkgs.nodejs_24
 
     pkgs.dotnet-sdk
-    pkgs.fantomas
-    pkgs.fsautocomplete
 
     pkgs.uv
     pkgs.claude-code
@@ -163,7 +161,8 @@ in {
     PAGER = "less -FirSwX";
     MANPAGER = "${manpager}/bin/manpager";
     GEMINI_CLI_SYSTEM_DEFAULTS_PATH = "${config.xdg.configHome}/gemini/settings.json";
-    # .NET telemetry opt-out
+    # .NET configuration
+    DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
     DOTNET_CLI_TELEMETRY_OPTOUT = "1";
     DOTNET_NOLOGO = "1";
   };
@@ -211,6 +210,7 @@ in {
         (builtins.readFile ./configs/config.fish)
         "set -g SHELL ${pkgs.fish}/bin/fish"
         "if type -q npm; npm set prefix ~/.npm-global; set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths; end"
+        "fish_add_path $HOME/.dotnet/tools"
       ]));
 
     shellAliases = gitAliases // {

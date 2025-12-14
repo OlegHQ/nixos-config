@@ -122,6 +122,10 @@ in {
     pkgs.python3
     pkgs.nodejs_24
 
+    pkgs.dotnet-sdk
+    pkgs.fantomas
+    pkgs.fsautocomplete
+
     pkgs.uv
     pkgs.claude-code
     pkgs.codex
@@ -159,6 +163,9 @@ in {
     PAGER = "less -FirSwX";
     MANPAGER = "${manpager}/bin/manpager";
     GEMINI_CLI_SYSTEM_DEFAULTS_PATH = "${config.xdg.configHome}/gemini/settings.json";
+    # .NET telemetry opt-out
+    DOTNET_CLI_TELEMETRY_OPTOUT = "1";
+    DOTNET_NOLOGO = "1";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;

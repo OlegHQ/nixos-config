@@ -36,9 +36,6 @@
       flake = false;
     };
 
-    # AI commit message generator (Apple Intelligence)
-    # Don't follow our nixpkgs - let it use its own to avoid SDK version conflicts
-    generate-commit-message.url = "github:nexo-tech/generate-commit-message";
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -82,9 +79,6 @@
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
           codex = unstable.codex;
-
-          # AI commit message generator (Apple Intelligence on macOS 26+)
-          gcm = inputs.generate-commit-message.packages.${prev.stdenv.hostPlatform.system}.default;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

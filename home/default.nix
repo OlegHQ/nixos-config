@@ -183,6 +183,10 @@ in {
   
   # Gemini CLI settings
   xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
+
+  # Zed editor settings
+  xdg.configFile."zed/settings.json".source = ./configs/zed-settings.json;
+  xdg.configFile."zed/keymap.json".source = ./configs/zed-keymap.json;
   
   # usql configuration with light theme
   home.file.".usqlrc".source = ./configs/usqlrc;

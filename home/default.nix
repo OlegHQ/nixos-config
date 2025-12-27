@@ -119,6 +119,8 @@ in {
     pkgs.kubernetes-helm
     pkgs.awscli2
 
+    pkgs.glow
+
     pkgs.python3
     pkgs.nodejs_24
 

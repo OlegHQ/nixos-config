@@ -200,12 +200,23 @@ in {
         "WebSearch"
       ];
     };
+    # Disable Claude attribution in git commits and PRs
+    attribution = {
+      commit = "";
+      pr = "";
+    };
   } // lib.optionalAttrs isDarwin {
     hooks = {
       Stop = [{
         hooks = [{
           type = "command";
-          command = "$HOME/.local/bin/claude-notify.sh";
+          command = "$HOME/.local/bin/claude-notify.sh stop";
+        }];
+      }];
+      Notification = [{
+        hooks = [{
+          type = "command";
+          command = "$HOME/.local/bin/claude-notify.sh notification";
         }];
       }];
     };
@@ -223,21 +234,28 @@ in {
     executable = true;
     text = ''
       #!/bin/bash
-      # Claude Code Stop hook - triggers notification when Claude finishes
+      # Claude Code hooks - triggers macOS notifications
+      HOOK_TYPE="$1"
       INPUT=$(cat)
 
-      TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')
       SESSION_ID=$(echo "$INPUT" | jq -r '.session_id' | cut -c1-8)
 
-      # Extract last assistant message from transcript
-      MSG=""
-      if [ -f "$TRANSCRIPT_PATH" ]; then
-        MSG=$(tail -n 30 "$TRANSCRIPT_PATH" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1 | tr '\n' ' ' | cut -c1-80)
-      fi
-
-      MSG=''${MSG:-"Task completed"}
-
-      osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Session: $SESSION_ID\" sound name \"Glass\""
+      case "$HOOK_TYPE" in
+        stop)
+          TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')
+          MSG=""
+          if [ -f "$TRANSCRIPT_PATH" ]; then
+            MSG=$(tail -n 30 "$TRANSCRIPT_PATH" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1 | tr '\n' ' ' | cut -c1-80)
+          fi
+          MSG=''${MSG:-"Task completed"}
+          osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Done\" sound name \"Glass\""
+          ;;
+        notification)
+          # Notification hook - permission requests and questions
+          MSG=$(echo "$INPUT" | jq -r '.message // "Needs your attention"' | cut -c1-80)
+          osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Action needed\" sound name \"Ping\""
+          ;;
+      esac
     '';
   };
   

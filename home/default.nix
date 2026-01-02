@@ -180,8 +180,36 @@ in {
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
   
-  # Claude Code settings
-  home.file.".claude/settings.json".source = ./configs/claude-settings.json;
+  # Claude Code settings (with Stop hook on macOS for notifications)
+  home.file.".claude/settings.json".source = pkgs.writeText "claude-settings.json" (builtins.toJSON ({
+    permissions = {
+      allow = [
+        "Bash"
+        "Read"
+        "Grep"
+        "Glob"
+        "LS"
+        "WebFetch"
+        "WebSearch"
+        "Task"
+        "ExitPlanMode"
+        "TodoWrite"
+        "BashOutput"
+        "KillBash"
+        "WebFetch(domain:docs.anthropic.com)"
+        "WebSearch"
+      ];
+    };
+  } // lib.optionalAttrs isDarwin {
+    hooks = {
+      Stop = [{
+        hooks = [{
+          type = "command";
+          command = "$HOME/.local/bin/claude-notify.sh";
+        }];
+      }];
+    };
+  }));
   
   # Gemini CLI settings
   xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
@@ -189,6 +217,29 @@ in {
   # Zed editor settings
   xdg.configFile."zed/settings.json".source = ./configs/zed-settings.json;
   xdg.configFile."zed/keymap.json".source = ./configs/zed-keymap.json;
+
+  # Claude Code notification script (macOS only)
+  home.file.".local/bin/claude-notify.sh" = lib.mkIf isDarwin {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      # Claude Code Stop hook - triggers notification when Claude finishes
+      INPUT=$(cat)
+
+      TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')
+      SESSION_ID=$(echo "$INPUT" | jq -r '.session_id' | cut -c1-8)
+
+      # Extract last assistant message from transcript
+      MSG=""
+      if [ -f "$TRANSCRIPT_PATH" ]; then
+        MSG=$(tail -n 30 "$TRANSCRIPT_PATH" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1 | tr '\n' ' ' | cut -c1-80)
+      fi
+
+      MSG=''${MSG:-"Task completed"}
+
+      osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Session: $SESSION_ID\" sound name \"Glass\""
+    '';
+  };
   
   # usql configuration with light theme
   home.file.".usqlrc".source = ./configs/usqlrc;

@@ -5,7 +5,7 @@ NIXNAME ?= mac
 UNAME := $(shell uname)
 ARCH := $(shell arch)
 
-.PHONY: switch test build check clean help
+.PHONY: switch full test build check clean help
 
 # Default target
 all: switch
@@ -19,6 +19,17 @@ ifeq ($(UNAME), Darwin)
 else
 	@echo "🐧 Switching Home Manager configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run nixpkgs#home-manager -- switch --flake ".#${USER}-${ARCH}" --impure
+endif
+
+# Apply full configuration (includes nvimconf)
+full:
+ifeq ($(UNAME), Darwin)
+	@echo "🍎 Switching Darwin FULL configuration..."
+	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}-full.system" --impure
+	NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}-full" --impure
+else
+	@echo "🐧 Switching Home Manager FULL configuration..."
+	NIXPKGS_ALLOW_UNFREE=1 nix run nixpkgs#home-manager -- switch --flake ".#${USER}-full-${ARCH}" --impure
 endif
 
 # Test configuration without applying
@@ -53,6 +64,7 @@ clean:
 help:
 	@echo "📚 Available targets:"
 	@echo "  switch  - Apply configuration changes"
+	@echo "  full    - Apply full configuration (includes nvimconf)"
 	@echo "  test    - Test configuration without applying"
 	@echo "  build   - Build configuration"
 	@echo "  check   - Validate flake configuration"

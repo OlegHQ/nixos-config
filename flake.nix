@@ -36,15 +36,21 @@
       url = "github:catppuccin/tmux/2c4cb5a07a3e133ce6d5382db1ab541a0216ddc7";
       flake = false;
     };
-    # AI commit message generator (Apple Intelligence)
-    # Don't follow our nixpkgs - let it use its own to avoid SDK version conflicts
-    generate-commit-message.url = "github:nexo-tech/generate-commit-message";
+    # Neovim configuration module (for full config)
+    nvimconf = {
+      url = "github:nexo-tech/nvim-config";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
     let
-      # System user configuration
-      userName = "snowbear";
+      # System user configuration (auto-detected from environment)
+      # Use SUDO_USER if running under sudo, otherwise fall back to USER
+      userName = let
+        sudoUser = builtins.getEnv "SUDO_USER";
+        envUser = builtins.getEnv "USER";
+      in if sudoUser != "" then sudoUser else if envUser != "" then envUser else "snowbear";
       # Build a nix-darwin system
       mkDarwin = name: { system, user }:
         darwin.lib.darwinSystem rec {
@@ -58,6 +64,30 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.${user} = import ./home/default.nix { inherit inputs; };
+            }
+            { config._module.args = { currentSystemName = name; currentSystem = system; userName = userName; userHomeDarwin = "/Users/${userName}"; }; }
+          ];
+        };
+
+      # Build a nix-darwin system with nvimconf (full config)
+      mkDarwinFull = name: { system, user }:
+        darwin.lib.darwinSystem rec {
+          inherit system inputs;
+          modules = [
+            { nixpkgs.overlays = overlays; }
+            ./darwin/system.nix
+            ./darwin/account.nix
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${user} = {
+                imports = [
+                  (import ./home/default.nix { inherit inputs; })
+                  inputs.nvimconf.homeManagerModules.default
+                ];
+                programs.nvimconf.enable = true;
+              };
             }
             { config._module.args = { currentSystemName = name; currentSystem = system; userName = userName; userHomeDarwin = "/Users/${userName}"; }; }
           ];
@@ -82,9 +112,6 @@
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
           codex = unstable.codex;
-
-          # AI commit message generator (Apple Intelligence on macOS 26+)
-          gcm = inputs.generate-commit-message.packages.${prev.stdenv.hostPlatform.system}.default;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })
@@ -106,12 +133,36 @@
           hmModule
         ];
       };
+
+      # Build a Home Manager configuration with nvimconf (full config)
+      mkHomeFull = system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+        hmModule = import ./home/default.nix { inherit inputs; };
+      in home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          { _module.args.pkgsPath = pkgs.path; }
+          {
+            nixpkgs.overlays = overlays;
+            home.username = userName;
+            home.homeDirectory = "/home/${userName}";
+          }
+          hmModule
+          inputs.nvimconf.homeManagerModules.default
+          { programs.nvimconf.enable = true; }
+        ];
+      };
     in {
-      darwinConfigurations.mac = mkDarwin "mac" { system = "aarch64-darwin"; user = userName; };
+      darwinConfigurations = {
+        mac = mkDarwin "mac" { system = "aarch64-darwin"; user = userName; };
+        mac-full = mkDarwinFull "mac-full" { system = "aarch64-darwin"; user = userName; };
+      };
 
       homeConfigurations = {
         "${userName}-x86_64" = mkHome "x86_64-linux";
         "${userName}-aarch64" = mkHome "aarch64-linux";
+        "${userName}-full-x86_64" = mkHomeFull "x86_64-linux";
+        "${userName}-full-aarch64" = mkHomeFull "aarch64-linux";
       };
     };
 }

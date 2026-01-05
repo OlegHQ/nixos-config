@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "autoconf-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767645295,
+        "narHash": "sha256-pSvlKWjeGV+Ab16/rzjH/L35r+EZb4c5iNj5cu8RKyk=",
+        "owner": "nexo-tech",
+        "repo": "autoconf.nvim",
+        "rev": "b2b23bb0d2a4a989f3c62bed5f873f4294d82c7f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "autoconf.nvim",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -55,43 +71,6 @@
         "type": "github"
       }
     },
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "generate-commit-message": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1766310946,
-        "narHash": "sha256-AjPOHobI67JZCErvRTaIfCTkKY6yVADu9BNPkgul7c0=",
-        "owner": "nexo-tech",
-        "repo": "generate-commit-message",
-        "rev": "478478a7a0125518fbcef301640154e57180a304",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nexo-tech",
-        "repo": "generate-commit-message",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -115,16 +94,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1766070988,
-        "narHash": "sha256-G/WVghka6c4bAzMhTwT2vjLccg/awmHkdKSd2JrycLc=",
-        "owner": "NixOS",
+        "lastModified": 1767480499,
+        "narHash": "sha256-8IQQUorUGiSmFaPnLSo2+T+rjHtiNWc+OAzeHck7N48=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "c6245e83d836d0433170a16eb185cefe0572f8b8",
+        "rev": "30a3c519afcf3f99e2c6df3b359aec5692054d92",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "owner": "nixos",
+        "ref": "nixos-25.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -145,19 +124,25 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "nvimconf": {
+      "inputs": {
+        "autoconf-nvim": "autoconf-nvim",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "themekit-nvim": "themekit-nvim"
+      },
       "locked": {
-        "lastModified": 1767480499,
-        "narHash": "sha256-8IQQUorUGiSmFaPnLSo2+T+rjHtiNWc+OAzeHck7N48=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "30a3c519afcf3f99e2c6df3b359aec5692054d92",
+        "lastModified": 1767646235,
+        "narHash": "sha256-3qhBKPgQwZUCUgHj2CV5NO+s51WSXjnKe5Ima10xDFA=",
+        "owner": "nexo-tech",
+        "repo": "nvim-config",
+        "rev": "b2e93e95ab2533804a7286d74a270df3b31548c1",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-25.11",
-        "repo": "nixpkgs",
+        "owner": "nexo-tech",
+        "repo": "nvim-config",
         "type": "github"
       }
     },
@@ -166,26 +151,27 @@
         "darwin": "darwin",
         "fish-foreign-env": "fish-foreign-env",
         "fish-fzf": "fish-fzf",
-        "generate-commit-message": "generate-commit-message",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "nvimconf": "nvimconf",
         "tmux-catppuccin": "tmux-catppuccin",
         "tmux-pain-control": "tmux-pain-control"
       }
     },
-    "systems": {
+    "themekit-nvim": {
+      "flake": false,
       "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "lastModified": 1767354909,
+        "narHash": "sha256-86LhlWz7Cdr9clUYKm56wpRZdQifEcnyXL9Z822CzyA=",
+        "owner": "nexo-tech",
+        "repo": "themekit.nvim",
+        "rev": "adf62afc156233ae96116c2ae82e3ef22009a8a9",
         "type": "github"
       },
       "original": {
-        "owner": "nix-systems",
-        "repo": "default",
+        "owner": "nexo-tech",
+        "repo": "themekit.nvim",
         "type": "github"
       }
     },

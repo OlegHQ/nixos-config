@@ -2,6 +2,12 @@
 # Elegant prompt, smart integrations, optimized for development workflow
 
 function _git_info
+    # Skip network mounts (Samba, NFS, etc.) - they're too slow
+    switch (pwd)
+        case '/Volumes/*' '/mnt/*' '/net/*'
+            return
+    end
+
     # Only proceed if we are inside a git work tree
     command git rev-parse --is-inside-work-tree >/dev/null 2>/dev/null; or return
 

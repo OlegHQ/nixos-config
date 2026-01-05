@@ -175,10 +175,7 @@ in {
     pkgs.codex
 
     dumptty
-  ] ++ (lib.optionals isDarwin [
-    # macOS-specific packages
-    pkgs.gcm  # AI commit message generator (Apple Intelligence)
-  ]) ++ (lib.optionals isLinux [
+  ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux
     pkgs.gcc

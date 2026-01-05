@@ -36,10 +36,6 @@
       url = "github:catppuccin/tmux/2c4cb5a07a3e133ce6d5382db1ab541a0216ddc7";
       flake = false;
     };
-    # AI commit message generator (Apple Intelligence)
-    # Don't follow our nixpkgs - let it use its own to avoid SDK version conflicts
-    generate-commit-message.url = "github:nexo-tech/generate-commit-message";
-
     # Neovim configuration module (for full config)
     nvimconf = {
       url = "github:nexo-tech/nvim-config";
@@ -50,9 +46,11 @@
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
     let
       # System user configuration (auto-detected from environment)
+      # Use SUDO_USER if running under sudo, otherwise fall back to USER
       userName = let
+        sudoUser = builtins.getEnv "SUDO_USER";
         envUser = builtins.getEnv "USER";
-      in if envUser != "" then envUser else "snowbear";
+      in if sudoUser != "" then sudoUser else if envUser != "" then envUser else "snowbear";
       # Build a nix-darwin system
       mkDarwin = name: { system, user }:
         darwin.lib.darwinSystem rec {
@@ -114,9 +112,6 @@
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
           codex = unstable.codex;
-
-          # AI commit message generator (Apple Intelligence on macOS 26+)
-          gcm = inputs.generate-commit-message.packages.${prev.stdenv.hostPlatform.system}.default;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

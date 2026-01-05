@@ -1,12 +1,16 @@
 # Fish Shell Configuration
 # Elegant prompt, smart integrations, optimized for development workflow
 
+# Helper: detect if current directory is on a slow network mount
+# Uses pwd -P to resolve symlinks (e.g., ~/docs -> /Volumes/docs)
+function _is_slow_fs
+    set -l real_path (pwd -P)
+    string match -q '/Volumes/*' -- $real_path; or string match -q '/mnt/*' -- $real_path; or string match -q '/net/*' -- $real_path
+end
+
 function _git_info
     # Skip network mounts (Samba, NFS, etc.) - they're too slow
-    switch (pwd)
-        case '/Volumes/*' '/mnt/*' '/net/*'
-            return
-    end
+    _is_slow_fs; and return
 
     # Only proceed if we are inside a git work tree
     command git rev-parse --is-inside-work-tree >/dev/null 2>/dev/null; or return
@@ -39,8 +43,8 @@ function fish_prompt
     set -l green (set_color green)
     set -l normal (set_color normal)
 
-    # Current working directory in magenta
-    set -l cwd $magenta(pwd | sed "s:^$HOME:~:")
+    # Current working directory in magenta (use builtin instead of sed)
+    set -l cwd $magenta(string replace -- $HOME '~' $PWD)
 
     # New line before prompt
     echo
@@ -177,5 +181,15 @@ end
 # Development shortcuts
 alias fnix "nix-shell --run fish"  # Quick nix-shell with fish: `fnix -p go`
 
-type -q direnv; and direnv hook fish | source
+# Wrap direnv to skip slow network mounts
+if type -q direnv
+    direnv hook fish | source
+    # Override the direnv hook to skip slow filesystems
+    functions -c __direnv_export_eval __direnv_export_eval_original
+    function __direnv_export_eval
+        _is_slow_fs; and return
+        __direnv_export_eval_original
+    end
+end
+
 type -q opam; and eval (opam env)

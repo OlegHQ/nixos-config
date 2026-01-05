@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "autoconf-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767645295,
+        "narHash": "sha256-pSvlKWjeGV+Ab16/rzjH/L35r+EZb4c5iNj5cu8RKyk=",
+        "owner": "nexo-tech",
+        "repo": "autoconf.nvim",
+        "rev": "b2b23bb0d2a4a989f3c62bed5f873f4294d82c7f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "autoconf.nvim",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -161,6 +177,28 @@
         "type": "github"
       }
     },
+    "nvimconf": {
+      "inputs": {
+        "autoconf-nvim": "autoconf-nvim",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "themekit-nvim": "themekit-nvim"
+      },
+      "locked": {
+        "lastModified": 1767646235,
+        "narHash": "sha256-3qhBKPgQwZUCUgHj2CV5NO+s51WSXjnKe5Ima10xDFA=",
+        "owner": "nexo-tech",
+        "repo": "nvim-config",
+        "rev": "b2e93e95ab2533804a7286d74a270df3b31548c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "nvim-config",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "darwin": "darwin",
@@ -170,6 +208,7 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "nvimconf": "nvimconf",
         "tmux-catppuccin": "tmux-catppuccin",
         "tmux-pain-control": "tmux-pain-control"
       }
@@ -186,6 +225,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "themekit-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767354909,
+        "narHash": "sha256-86LhlWz7Cdr9clUYKm56wpRZdQifEcnyXL9Z822CzyA=",
+        "owner": "nexo-tech",
+        "repo": "themekit.nvim",
+        "rev": "adf62afc156233ae96116c2ae82e3ef22009a8a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "themekit.nvim",
         "type": "github"
       }
     },

@@ -1,0 +1,69 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+  "icon_theme": "Zed (Default)",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  // Disable all AI features
+  "features": {
+    "edit_prediction_provider": "none"
+  },
+  "agent": {
+    "enabled": false,
+    "button": false
+  },
+  // Hide sign-in and collaboration UI
+  "title_bar": {
+    "show_sign_in": false,
+    "show_user_picture": false,
+    "show_user_menu": false,
+    "show_onboarding_banner": false
+  },
+  "collaboration_panel": {
+    "button": false
+  },
+  "notification_panel": {
+    "button": false
+  },
+  "vim_mode": false,
+  "theme": {
+    "mode": "system",
+    "light": "Ayu Light",
+    "dark": "Gruvbox Dark",
+  },
+  "ui_font_size": 14,
+  "ui_font_family": "PragmataPro",
+  "buffer_font_family": "PragmataPro",
+  "buffer_font_size": 13,
+  "lsp": {
+    "fsautocomplete": {
+      "binary": {
+        "path": "~/.dotnet/tools/fsautocomplete",
+        "arguments": ["--adaptive-lsp-server-enabled"],
+      },
+      "initialization_options": {
+        "AutomaticWorkspaceInit": true,
+      },
+    },
+  },
+  "languages": {
+    "F#": {
+      "language_servers": ["fsautocomplete"],
+      "formatter": {
+        "external": {
+          "command": "fantomas",
+          "arguments": ["--stdin", "--stdout"]
+        }
+      },
+      "format_on_save": "on"
+    },
+  },
+}

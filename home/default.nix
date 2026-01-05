@@ -100,6 +100,33 @@ let
     cat "$1" | col -bx | bat --language man --style plain
   ''));
 
+  # Script to dump terminal/tmux scroll history to file and open in neovim
+  dumptty = pkgs.writeShellScriptBin "dumptty" ''
+    # Generate timestamped filename
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    TMPFILE="/tmp/terminal_dump_$TIMESTAMP.txt"
+
+    if [ -n "$TMUX" ]; then
+        # We're in tmux - capture the pane history
+        echo "Dumping tmux pane history to $TMPFILE"
+        tmux capture-pane -pS - > "$TMPFILE"
+    else
+        # We're in a regular terminal - scrollback capture is not possible
+        echo "dumptty only works inside tmux!"
+        echo "Regular terminals don't expose their scrollback buffer to programs."
+        echo ""
+        echo "Suggestions:"
+        echo "  - Use tmux for terminal session management"
+        echo "  - Or manually copy/paste the content you need"
+        exit 1
+    fi
+
+    echo "Saved terminal dump to: $TMPFILE"
+
+    # Open in neovim and scroll to bottom
+    nvim '+normal G' "$TMPFILE"
+  '';
+
 in {
   # HM state version
   home.stateVersion = "18.09";
@@ -136,6 +163,8 @@ in {
     pkgs.kubernetes-helm
     pkgs.awscli2
 
+    pkgs.glow
+
     pkgs.python3
     pkgs.nodejs_24
 
@@ -144,6 +173,8 @@ in {
     pkgs.uv
     pkgs.claude-code
     pkgs.codex
+
+    dumptty
   ] ++ (lib.optionals isDarwin [
     # macOS-specific packages
     pkgs.gcm  # AI commit message generator (Apple Intelligence)
@@ -196,11 +227,66 @@ in {
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
   
-  # Claude Code settings
-  home.file.".claude/settings.json".source = ./configs/claude-settings.json;
+  # Claude Code settings (with Stop hook on macOS for notifications)
+  home.file.".claude/settings.json".source = pkgs.writeText "claude-settings.json" (builtins.toJSON ({
+    permissions = {
+      allow = [
+        "Bash"
+        "Read"
+        "Grep"
+        "Glob"
+        "LS"
+        "WebFetch"
+        "WebSearch"
+        "Task"
+        "ExitPlanMode"
+        "TodoWrite"
+        "BashOutput"
+        "KillBash"
+        "WebFetch(domain:docs.anthropic.com)"
+        "WebSearch"
+      ];
+    };
+  } // lib.optionalAttrs isDarwin {
+    hooks = {
+      Stop = [{
+        hooks = [{
+          type = "command";
+          command = "$HOME/.local/bin/claude-notify.sh";
+        }];
+      }];
+    };
+  }));
   
   # Gemini CLI settings
   xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
+
+  # Zed editor settings
+  xdg.configFile."zed/settings.json".source = ./configs/zed-settings.json;
+  xdg.configFile."zed/keymap.json".source = ./configs/zed-keymap.json;
+
+  # Claude Code notification script (macOS only)
+  home.file.".local/bin/claude-notify.sh" = lib.mkIf isDarwin {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      # Claude Code Stop hook - triggers notification when Claude finishes
+      INPUT=$(cat)
+
+      TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')
+      SESSION_ID=$(echo "$INPUT" | jq -r '.session_id' | cut -c1-8)
+
+      # Extract last assistant message from transcript
+      MSG=""
+      if [ -f "$TRANSCRIPT_PATH" ]; then
+        MSG=$(tail -n 30 "$TRANSCRIPT_PATH" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1 | tr '\n' ' ' | cut -c1-80)
+      fi
+
+      MSG=''${MSG:-"Task completed"}
+
+      osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Session: $SESSION_ID\" sound name \"Glass\""
+    '';
+  };
   
   # usql configuration with light theme
   home.file.".usqlrc".source = ./configs/usqlrc;

@@ -55,10 +55,7 @@ let
     # Fallback: OSC52
     copy_osc52
   '';
-  zellijChooseTree = pkgs.fetchurl {
-    url = "https://github.com/laperlej/zellij-choose-tree/releases/download/v0.4.2/zellij-choose-tree.wasm";
-    sha256 = "sha256-OGHLzCM9wg0CLm5SSr3bmElcciBIqamalQjgkTuzAeg=";
-  };
+
   helixImport = import ./helix.nix;
   helix = helixImport { inherit pkgs; };
   # Helper: install kubectl completions for Fish
@@ -150,7 +147,6 @@ in {
     pkgs.watch
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
-    pkgs.zellij
     pkgs.lazygit
 
     pkgs.clang-tools
@@ -218,8 +214,7 @@ in {
   home.file.".hushlogin".text = "";
   
 
-  xdg.configFile."zellij/config.kdl".text = builtins.readFile ./configs/zellij.kdl;
-  xdg.configFile."zellij/plugins/zellij-choose-tree.wasm".source = zellijChooseTree;
+
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
@@ -299,9 +294,7 @@ in {
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
 
-    shellAliases = gitAliases // {
-      zj = "zellij";
-    };
+    shellAliases = gitAliases;
   };
 
   programs.fish = {
@@ -314,9 +307,7 @@ in {
         "fish_add_path $HOME/.dotnet/tools"
       ]));
 
-    shellAliases = gitAliases // {
-      zj = "zellij";
-    };
+    shellAliases = gitAliases;
 
     plugins = map (n: {
       name = n;

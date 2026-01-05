@@ -88,6 +88,7 @@
                   (import ./home/default.nix { inherit inputs; })
                   inputs.nvimconf.homeManagerModules.default
                 ];
+                programs.nvimconf.enable = true;
               };
             }
             { config._module.args = { currentSystemName = name; currentSystem = system; userName = userName; userHomeDarwin = "/Users/${userName}"; }; }
@@ -153,6 +154,7 @@
           }
           hmModule
           inputs.nvimconf.homeManagerModules.default
+          { programs.nvimconf.enable = true; }
         ];
       };
     in {

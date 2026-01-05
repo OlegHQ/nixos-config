@@ -27,6 +27,7 @@
       url = "github:oh-my-fish/plugin-foreign-env/dddd9213272a0ab848d474d0cbde12ad034e65bc";
       flake = false;
     };
+    # Tmux plugins
     tmux-pain-control = {
       url = "github:tmux-plugins/tmux-pain-control/2db63de3b08fc64831d833240749133cecb67d92";
       flake = false;
@@ -35,7 +36,9 @@
       url = "github:catppuccin/tmux/2c4cb5a07a3e133ce6d5382db1ab541a0216ddc7";
       flake = false;
     };
-
+    # AI commit message generator (Apple Intelligence)
+    # Don't follow our nixpkgs - let it use its own to avoid SDK version conflicts
+    generate-commit-message.url = "github:nexo-tech/generate-commit-message";
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -79,6 +82,9 @@
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
           codex = unstable.codex;
+
+          # AI commit message generator (Apple Intelligence on macOS 26+)
+          gcm = inputs.generate-commit-message.packages.${prev.stdenv.hostPlatform.system}.default;
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

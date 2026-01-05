@@ -10,6 +10,51 @@ let
     "tmux-pain-control" = inputs."tmux-pain-control";
     "tmux-catppuccin" = inputs."tmux-catppuccin";
   };
+  # Smart clipboard yank script - uses native clipboard locally, OSC52 for remote
+  yank = pkgs.writeShellScriptBin "yank" ''
+    input=$(cat)
+
+    copy_osc52() {
+      encoded=$(printf '%s' "$input" | base64 | tr -d '\n')
+      if [ -n "$TMUX" ]; then
+        tty=$(tmux display-message -p '#{client_tty}')
+        printf '\033]52;c;%s\a' "$encoded" > "$tty"
+      else
+        printf '\033]52;c;%s\a' "$encoded"
+      fi
+    }
+
+    # Mac: use pbcopy
+    if command -v pbcopy &>/dev/null; then
+      printf '%s' "$input" | pbcopy
+      exit 0
+    fi
+
+    # Remote session (SSH or mosh): use OSC52
+    if [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ] || [ -n "$MOSH_SERVER_PID" ]; then
+      copy_osc52
+      exit 0
+    fi
+
+    # Local Linux with X11: use xclip
+    if [ -n "$DISPLAY" ]; then
+      if command -v xclip &>/dev/null; then
+        printf '%s' "$input" | xclip -selection clipboard
+        exit 0
+      fi
+    fi
+
+    # Local Linux with Wayland: use wl-copy
+    if [ -n "$WAYLAND_DISPLAY" ]; then
+      if command -v wl-copy &>/dev/null; then
+        printf '%s' "$input" | wl-copy
+        exit 0
+      fi
+    fi
+
+    # Fallback: OSC52
+    copy_osc52
+  '';
   zellijChooseTree = pkgs.fetchurl {
     url = "https://github.com/laperlej/zellij-choose-tree/releases/download/v0.4.2/zellij-choose-tree.wasm";
     sha256 = "sha256-OGHLzCM9wg0CLm5SSr3bmElcciBIqamalQjgkTuzAeg=";
@@ -55,34 +100,6 @@ let
     cat "$1" | col -bx | bat --language man --style plain
   ''));
 
-  # Script to dump terminal/tmux scroll history to file and open in neovim
-  dumptty = pkgs.writeShellScriptBin "dumptty" ''
-    # Generate timestamped filename
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    TMPFILE="/tmp/terminal_dump_$TIMESTAMP.txt"
-    
-    if [ -n "$TMUX" ]; then
-        # We're in tmux - capture the pane history
-        echo "Dumping tmux pane history to $TMPFILE"
-        tmux capture-pane -pS - > "$TMPFILE"
-    else
-        # We're in a regular terminal - scrollback capture is not possible
-        echo "❌ dumptty only works inside tmux!"
-        echo "Regular terminals don't expose their scrollback buffer to programs."
-        echo ""
-        echo "💡 Suggestions:"
-        echo "  • Use tmux for terminal session management"
-        echo "  • Or manually copy/paste the content you need"
-        exit 1
-    fi
-    
-    echo "Saved terminal dump to: $TMPFILE"
-    
-    # Open in neovim and scroll to bottom
-    nvim '+normal G' "$TMPFILE"
-  '';
-
-
 in {
   # HM state version
   home.stateVersion = "18.09";
@@ -127,8 +144,6 @@ in {
     pkgs.uv
     pkgs.claude-code
     pkgs.codex
-
-    dumptty
   ] ++ (lib.optionals isDarwin [
     # macOS-specific packages
     pkgs.gcm  # AI commit message generator (Apple Intelligence)
@@ -241,25 +256,30 @@ in {
     terminal = "xterm-256color";
     shortcut = "a";
     secureSocket = false;
-    
-    # Disable Home Manager clipboard handling - we'll do it ourselves
     disableConfirmationPrompt = true;
+    mouse = true;
+    escapeTime = 0;
 
     extraConfig = ''
       set -ga terminal-overrides ",xterm-256color:Tc"
-      set -s set-clipboard on
-      set -g allow-passthrough
+      set -g allow-passthrough on
+      set -s set-clipboard off
 
-      # Configure the catppuccin plugin
+      # Catppuccin theme
       set -g @catppuccin_flavor "latte"
       set -g @catppuccin_window_status_style "rounded"
 
-      bind -n C-k send-keys "clear"\; send-keys "Enter"
+      # Copy bindings using smart yank
+      bind -T copy-mode MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
+      bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
+      bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
+      bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
 
+      bind -n C-k send-keys "clear" Enter
+
+      # Load Nix plugins
       run-shell ${tmuxSources."tmux-pain-control"}/pain_control.tmux
       run-shell ${tmuxSources."tmux-catppuccin"}/catppuccin.tmux
-      set -sg escape-time 0
-      setw -g mouse on
     '';
   };
 

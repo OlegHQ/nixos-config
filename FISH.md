@@ -13,12 +13,10 @@ Ultra-fast, async prompt with Catppuccin Latte theme and power features.
 | `Alt+.` | Insert last argument from history |
 | `Tab` | Autocomplete with suggestions |
 
-## Abbreviations
+## Aliases
 
-Abbreviations expand inline when you press space - faster than aliases and visible in history.
-
-| Abbr | Expands to |
-|------|------------|
+| Alias | Command |
+|-------|---------|
 | `ga` | `git add` |
 | `gc` | `git commit` |
 | `gco` | `git checkout` |
@@ -31,9 +29,13 @@ Abbreviations expand inline when you press space - faster than aliases and visib
 | `k` | `kubectl` |
 | `kns` | `kubectl config set-context --current --namespace` |
 | `lg` | `lazygit` |
-| `zj` | `zellij` |
 | `l` | `ls -la` |
 | `ll` | `ls -l` |
+
+## Abbreviations (expand inline)
+
+| Abbr | Expands to |
+|------|------------|
 | `..` | `cd ..` |
 | `...` | `cd ../..` |
 | `....` | `cd ../../..` |

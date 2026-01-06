@@ -56,10 +56,7 @@ let
     # Fallback: OSC52
     copy_osc52
   '';
-  zellijChooseTree = pkgs.fetchurl {
-    url = "https://github.com/laperlej/zellij-choose-tree/releases/download/v0.4.2/zellij-choose-tree.wasm";
-    sha256 = "sha256-OGHLzCM9wg0CLm5SSr3bmElcciBIqamalQjgkTuzAeg=";
-  };
+
   helixImport = import ./helix.nix;
   helix = helixImport { inherit pkgs; };
   # Helper: install kubectl completions for Fish
@@ -151,9 +148,9 @@ in {
     pkgs.watch
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
-    pkgs.zellij
     pkgs.lazygit
     pkgs.zoxide
+    pkgs.gh
 
     pkgs.clang-tools
 
@@ -220,8 +217,7 @@ in {
   home.file.".hushlogin".text = "";
   
 
-  xdg.configFile."zellij/config.kdl".text = builtins.readFile ./configs/zellij.kdl;
-  xdg.configFile."zellij/plugins/zellij-choose-tree.wasm".source = zellijChooseTree;
+
   xdg.configFile."ghostty/config".text = builtins.readFile ./configs/ghostty.config;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
@@ -301,9 +297,7 @@ in {
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
 
-    shellAliases = gitAliases // {
-      zj = "zellij";
-    };
+    shellAliases = gitAliases;
   };
 
   # Zoxide - smart directory jumping
@@ -329,14 +323,17 @@ in {
         "fish_add_path $HOME/.dotnet/tools"
       ]));
 
-    # Abbreviations expand inline - faster and visible in history
-    shellAbbrs = gitAliases // {
-      zj = "zellij";
+    # Aliases (don't expand inline)
+    shellAliases = gitAliases // {
       lg = "lazygit";
       l = "ls -la";
       ll = "ls -l";
       k = "kubectl";
       kns = "kubectl config set-context --current --namespace";
+    };
+
+    # Abbreviations for directory navigation (expand inline)
+    shellAbbrs = {
       ".." = "cd ..";
       "..." = "cd ../..";
       "...." = "cd ../../..";
@@ -344,6 +341,50 @@ in {
 
     # Functions as separate files (properly overrides defaults)
     functions = {
+      # Detect slow network mounts (NAS, Samba, NFS)
+      _is_slow_fs = ''
+        set -l real_path (pwd -P)
+        string match -q '/Volumes/*' -- $real_path
+        or string match -q '/mnt/*' -- $real_path
+        or string match -q '/net/*' -- $real_path
+      '';
+
+      # Git info - skips slow mounts
+      _git_info = ''
+        _is_slow_fs; and return
+
+        set -l git_dir (command git rev-parse --git-dir 2>/dev/null)
+        test -z "$git_dir"; and return
+
+        set -l branch
+        if test -f "$git_dir/HEAD"
+            read -l head < "$git_dir/HEAD"
+            set branch (string replace 'ref: refs/heads/' ''' -- "$head")
+            string match -q 'ref:*' -- "$branch"
+            and set branch (command git rev-parse --short HEAD 2>/dev/null)
+        end
+        test -z "$branch"; and return
+
+        set -l dirty
+        not command git diff --quiet HEAD 2>/dev/null
+        and set dirty '+'
+
+        echo -n (set_color 1e66f5)"($branch$dirty)"(set_color normal)
+      '';
+
+      # Command duration - only show for >1s
+      _cmd_duration = ''
+        test $CMD_DURATION -lt 1000; and return
+        set -l s (math "floor($CMD_DURATION / 1000)")
+        set -l m (math "floor($s / 60)")
+        if test $m -gt 0
+            set -l rem (math "$s % 60")
+            echo -n (set_color 8c8fa1)" "$m"m"$rem"s"(set_color normal)
+        else
+            echo -n (set_color 8c8fa1)" "$s"s"(set_color normal)
+        end
+      '';
+
       fish_prompt = builtins.readFile ./configs/fish_prompt.fish;
       fish_right_prompt = ''
         set -l last_status $status

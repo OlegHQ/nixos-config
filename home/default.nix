@@ -25,15 +25,15 @@ let
       fi
     }
 
-    # Mac: use pbcopy
-    if command -v pbcopy &>/dev/null; then
-      printf '%s' "$input" | pbcopy
+    # Remote session (SSH or mosh): use OSC52 to pass through to local clipboard
+    if [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ] || [ -n "$MOSH_SERVER_PID" ]; then
+      copy_osc52
       exit 0
     fi
 
-    # Remote session (SSH or mosh): use OSC52
-    if [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ] || [ -n "$MOSH_SERVER_PID" ]; then
-      copy_osc52
+    # Mac: use pbcopy (only for local sessions)
+    if command -v pbcopy &>/dev/null; then
+      printf '%s' "$input" | pbcopy
       exit 0
     fi
 

@@ -223,6 +223,7 @@ in {
   xdg.configFile."helix/config.toml".text = helix.config;
   
   # Claude Code settings (with Stop hook on macOS for notifications)
+  home.file.".claude/commands/reflect.md".source = ./configs/claude-reflect.md;
   home.file.".claude/settings.json".source = pkgs.writeText "claude-settings.json" (builtins.toJSON ({
     permissions = {
       allow = [

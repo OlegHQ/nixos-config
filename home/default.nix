@@ -240,6 +240,7 @@ in {
         "KillBash"
         "WebFetch(domain:docs.anthropic.com)"
         "WebSearch"
+        "mcp__*"
       ];
     };
     # Disable Claude attribution in git commits and PRs
@@ -315,7 +316,9 @@ in {
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
 
-    shellAliases = gitAliases;
+    shellAliases = gitAliases // {
+      ccc = "claude --dangerously-skip-permissions";
+    };
   };
 
   # Zoxide - smart directory jumping
@@ -348,6 +351,7 @@ in {
       ll = "ls -l";
       k = "kubectl";
       kns = "kubectl config set-context --current --namespace";
+      ccc = "claude --dangerously-skip-permissions";
     };
 
     # Abbreviations for directory navigation (expand inline)

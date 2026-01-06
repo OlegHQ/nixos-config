@@ -27,6 +27,10 @@
       url = "github:oh-my-fish/plugin-foreign-env/dddd9213272a0ab848d474d0cbde12ad034e65bc";
       flake = false;
     };
+    fish-async-prompt = {
+      url = "github:acomagu/fish-async-prompt";
+      flake = false;
+    };
     # Tmux plugins
     tmux-pain-control = {
       url = "github:tmux-plugins/tmux-pain-control/2db63de3b08fc64831d833240749133cecb67d92";

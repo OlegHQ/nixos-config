@@ -37,6 +37,22 @@
         "type": "github"
       }
     },
+    "fish-async-prompt": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767614852,
+        "narHash": "sha256-HWW9191RP//48HkAHOZ7kAAAPSBKZ+BW2FfCZB36Y+g=",
+        "owner": "acomagu",
+        "repo": "fish-async-prompt",
+        "rev": "b90e8a8c6d1634d8f04f1532b164b99530445159",
+        "type": "github"
+      },
+      "original": {
+        "owner": "acomagu",
+        "repo": "fish-async-prompt",
+        "type": "github"
+      }
+    },
     "fish-foreign-env": {
       "flake": false,
       "locked": {
@@ -149,6 +165,7 @@
     "root": {
       "inputs": {
         "darwin": "darwin",
+        "fish-async-prompt": "fish-async-prompt",
         "fish-foreign-env": "fish-foreign-env",
         "fish-fzf": "fish-fzf",
         "home-manager": "home-manager",

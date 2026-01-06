@@ -1,95 +1,147 @@
 # Fish Shell Configuration
-# Elegant prompt, smart integrations, optimized for development workflow
+# Ultra-fast async prompt with Catppuccin Latte theme
 
-# Helper: detect if current directory is on a slow network mount
-# Uses pwd -P to resolve symlinks (e.g., ~/docs -> /Volumes/docs)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Helper Functions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Detect slow network mounts (Samba, NFS, etc.)
 function _is_slow_fs
     set -l real_path (pwd -P)
-    string match -q '/Volumes/*' -- $real_path; or string match -q '/mnt/*' -- $real_path; or string match -q '/net/*' -- $real_path
+    string match -q '/Volumes/*' -- $real_path
+    or string match -q '/mnt/*' -- $real_path
+    or string match -q '/net/*' -- $real_path
 end
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Async Prompt Functions (via fish-async-prompt)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Git info - runs async, never blocks prompt
 function _git_info
-    # Skip network mounts (Samba, NFS, etc.) - they're too slow
     _is_slow_fs; and return
 
-    # Only proceed if we are inside a git work tree
-    command git rev-parse --is-inside-work-tree >/dev/null 2>/dev/null; or return
+    # Fast check: are we in a git repo?
+    set -l git_dir (command git rev-parse --git-dir 2>/dev/null)
+    test -z "$git_dir"; and return
 
-    # Try to get current branch; fallback to short commit hash
-    set -l branch (command git symbolic-ref --quiet --short HEAD 2>/dev/null)
-    or set branch (command git rev-parse --short HEAD 2>/dev/null)
-    or return
-
-    # Determine dirty state (includes untracked)
-    set -l dirty ''
-    set -l git_status (command git status -s --ignore-submodules=dirty 2>/dev/null)
-    if test -n "$git_status"
-        set dirty '±'
+    # Get branch - fast path using .git/HEAD file
+    set -l branch
+    if test -f "$git_dir/HEAD"
+        read -l head < "$git_dir/HEAD"
+        set branch (string replace 'ref: refs/heads/' '' -- "$head")
+        # Detached HEAD - use short SHA
+        string match -q 'ref:*' -- "$branch"
+        and set branch (command git rev-parse --short HEAD 2>/dev/null)
     end
+    test -z "$branch"; and return
 
-    set -l bold_cyan (set_color -o cyan)
-    set -l normal (set_color normal)
-    echo -n -s '(' $bold_cyan $branch $dirty $normal ')'
+    # Dirty state indicator
+    set -l dirty
+    not command git diff --quiet HEAD 2>/dev/null
+    and set dirty '+'
+
+    # Output: (main+) or (main)
+    echo -n (set_color 1e66f5)"($branch$dirty)"(set_color normal)
 end
 
-function fish_prompt
-    set -l last_status $status
+# Command duration - only show for commands >1s
+function _cmd_duration
+    test $CMD_DURATION -lt 1000; and return
 
-    set -l magenta (set_color brblack)
-    set -l bold_cyan (set_color -o cyan)
-    set -l yellow (set_color normal)
-    set -l red (set_color red)
-    set -l blue (set_color blue)
-    set -l green (set_color green)
-    set -l normal (set_color normal)
+    set -l s (math "floor($CMD_DURATION / 1000)")
+    set -l m (math "floor($s / 60)")
 
-    # Current working directory in magenta (use builtin instead of sed)
-    set -l cwd $magenta(string replace -- $HOME '~' $PWD)
-
-    # New line before prompt
-    echo
-
-    # Virtual env in magenta background
-    if set -q VIRTUAL_ENV
-        echo -n -s (set_color -b magenta black) '[' (basename "$VIRTUAL_ENV") ']' $normal ' '
+    if test $m -gt 0
+        set -l rem (math "$s % 60")
+        echo -n (set_color 8c8fa1)" "$m"m"$rem"s"(set_color normal)
+    else
+        echo -n (set_color 8c8fa1)" "$s"s"(set_color normal)
     end
+end
 
-    # Print cwd
-    echo -n -s $cwd $normal
+# Loading indicator while async git runs
+function fish_prompt_loading_indicator
+    echo -n (set_color 9ca0b0)"..."(set_color normal)
+end
 
-    # Show git branch and status
-    set -l gi (_git_info)
-    if test -n "$gi"
-        echo -n -s ' · ' $gi
-    end
+# ═══════════════════════════════════════════════════════════════════════════════
+# Catppuccin Latte Theme
+# ═══════════════════════════════════════════════════════════════════════════════
 
-    # Color for prompt char depends on last command’s status
-    set -l prompt_color $red
-    if test $last_status = 0
-        set prompt_color $normal
-    end
+set -g fish_color_normal 4c4f69
+set -g fish_color_command 1e66f5
+set -g fish_color_param dd7878
+set -g fish_color_keyword d20f39
+set -g fish_color_quote 40a02b
+set -g fish_color_redirection ea76cb
+set -g fish_color_end fe640b
+set -g fish_color_comment 8c8fa1
+set -g fish_color_error d20f39
+set -g fish_color_selection --background=ccd0da
+set -g fish_color_search_match --background=ccd0da
+set -g fish_color_operator ea76cb
+set -g fish_color_escape e64553
+set -g fish_color_autosuggestion 9ca0b0
+set -g fish_color_cancel d20f39
+set -g fish_color_cwd df8e1d
+set -g fish_color_user 179299
+set -g fish_color_host 1e66f5
+set -g fish_color_status d20f39
+set -g fish_color_valid_path --underline
+set -g fish_pager_color_progress 9ca0b0
+set -g fish_pager_color_prefix ea76cb
+set -g fish_pager_color_completion 4c4f69
+set -g fish_pager_color_description 8c8fa1
 
-    # The prompt char
-    echo
-    echo -n -s $prompt_color '⟩ ' $normal
+# ═══════════════════════════════════════════════════════════════════════════════
+# FZF Configuration (Catppuccin Latte)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+set -gx FZF_DEFAULT_OPTS "\
+--height 40% --layout=reverse --border \
+--color=bg+:#ccd0da,bg:#eff1f5,spinner:#1e66f5,hl:#d20f39 \
+--color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#1e66f5 \
+--color=marker:#1e66f5,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"
+
+# Use fd for faster file/directory search
+if command -sq fd
+    set -gx FZF_CTRL_T_COMMAND "fd --type f --hidden --follow --exclude .git"
+    set -gx FZF_ALT_C_COMMAND "fd --type d --hidden --follow --exclude .git"
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Keybindings
+# ═══════════════════════════════════════════════════════════════════════════════
+
+function fish_user_key_bindings
+    # Ctrl+Z to toggle background/foreground
+    bind \cz 'fg 2>/dev/null; commandline -f repaint'
+
+    # Alt+. to insert last argument (like bash)
+    bind \e. history-token-search-backward
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Terminal Integration
 # ═══════════════════════════════════════════════════════════════════════════════
+
 if set -q GHOSTTY_RESOURCES_DIR
     set -l _ghostty_file "$GHOSTTY_RESOURCES_DIR/shell-integration/fish/vendor_conf.d/ghostty-shell-integration.fish"
     test -f $_ghostty_file; and source $_ghostty_file
 end
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Program Setup
-# ═══════════════════════════════════════════════════════════════════════════════
-# Vim directories
-mkdir -p $HOME/.vim/{backup,swap,undo}
+# Terminal title
+function fish_title
+    echo (prompt_pwd): (status current-command)
+end
 
-# Homebrew
-if test -d "/opt/homebrew"
+# ═══════════════════════════════════════════════════════════════════════════════
+# Environment Setup (Guarded for Performance)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Homebrew (macOS) - only initialize once per session
+if not set -q __homebrew_initialized; and test -d "/opt/homebrew"
     set -gx HOMEBREW_PREFIX "/opt/homebrew"
     set -gx HOMEBREW_CELLAR "/opt/homebrew/Cellar"
     set -gx HOMEBREW_REPOSITORY "/opt/homebrew"
@@ -98,98 +150,53 @@ if test -d "/opt/homebrew"
     set -gx MANPATH "/opt/homebrew/share/man" $MANPATH
     set -q INFOPATH; or set INFOPATH ''
     set -gx INFOPATH "/opt/homebrew/share/info" $INFOPATH
-    
-    # Add Homebrew Ruby and gems to PATH for CocoaPods compatibility
+
+    # Ruby and gems for CocoaPods
     fish_add_path -g "/opt/homebrew/opt/ruby/bin"
-    
-    # Add gem bin directory (detect version dynamically)
     for gem_dir in /opt/homebrew/lib/ruby/gems/*/bin
-        if test -d "$gem_dir"
-            fish_add_path -g "$gem_dir"
-            break
-        end
+        test -d "$gem_dir"; and fish_add_path -g "$gem_dir"; and break
     end
+    set -g __homebrew_initialized 1
 end
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Visual Configuration
-# ═══════════════════════════════════════════════════════════════════════════════
-# Clean startup
-set --universal --erase fish_greeting
-function fish_greeting; end
+# Personal paths
+fish_add_path -g $HOME/code/go/bin $HOME/bin
 
-# Command text (e.g., ls, git, etc.)
-set fish_color_command 005fd7
+# GPG TTY for interactive sessions
+isatty; and set -x GPG_TTY (tty)
 
-# Parameters/Arguments
-set fish_color_param 005f87
+# Linux truecolor support
+string match -q "Linux" (uname); and set -x COLORTERM truecolor
 
-# Paths
-set fish_color_cwd 0087af
-
-# Search Match
-set fish_color_match 00afff --bold
-
-# User input text
-set fish_color_normal black
-
-# Error messages
-set fish_color_error ff0000
-
-# Comments
-set fish_color_comment 5f5f5f
-
-# Selection in menus
-set fish_color_selection black --background=87afff
-
-# Autosuggestions
-set fish_color_autosuggestion 8a8a8a
-
-# Valid syntax (prompt text)
-set fish_color_valid_path 0087af --bold
-
-# Syntax highlighting for invalid commands
-set fish_color_operator 005f87
-set fish_color_escape 005fd7 --bold
-set fish_color_quote 00875f
-set fish_color_redirection 870000 --bold
 # Directory colors
 set -Ux LSCOLORS gxfxbEaEBxxEhEhBaDaCaD
 
-# Check if the operating system is Linux
-if string match -q "Linux" (uname)
-    # Set COLORTERM to truecolor
-    set -x COLORTERM truecolor
-end
-
-
 # ═══════════════════════════════════════════════════════════════════════════════
-# Path Management
+# Direnv Integration (Skip Slow Mounts)
 # ═══════════════════════════════════════════════════════════════════════════════
-# Personal development paths
-fish_add_path -g $HOME/code/go/bin
-fish_add_path -g $HOME/bin
 
-# Exported variables
-if isatty
-    set -x GPG_TTY (tty)
-end
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# Aliases & Development Hooks
-# ═══════════════════════════════════════════════════════════════════════════════
-# Development shortcuts
-alias fnix "nix-shell --run fish"  # Quick nix-shell with fish: `fnix -p go`
-
-# Wrap direnv to skip slow network mounts
-if type -q direnv
+if command -sq direnv
     direnv hook fish | source
-    # Override the direnv hook to skip slow filesystems
     functions -c __direnv_export_eval __direnv_export_eval_original
-    function __direnv_export_eval
+    function __direnv_export_eval --on-event fish_prompt
         _is_slow_fs; and return
         __direnv_export_eval_original
     end
 end
 
-type -q opam; and eval (opam env)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Lazy-Loaded Tools (Performance Optimization)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# opam - only load when first used
+function opam --wraps=opam
+    functions -e opam
+    command -sq opam; and eval (command opam env)
+    command opam $argv
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Shortcuts
+# ═══════════════════════════════════════════════════════════════════════════════
+
+alias fnix "nix-shell --run fish"

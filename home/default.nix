@@ -5,6 +5,7 @@ let
   fishSources = {
     "fish-fzf" = inputs."fish-fzf";
     "fish-foreign-env" = inputs."fish-foreign-env";
+    "fish-async-prompt" = inputs."fish-async-prompt";
   };
   tmuxSources = {
     "tmux-pain-control" = inputs."tmux-pain-control";
@@ -152,6 +153,7 @@ in {
     pkgs.nodePackages_latest.typescript-language-server
     pkgs.zellij
     pkgs.lazygit
+    pkgs.zoxide
 
     pkgs.clang-tools
 
@@ -304,24 +306,57 @@ in {
     };
   };
 
+  # Zoxide - smart directory jumping
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd" "cd" ];
+  };
+
   programs.fish = {
     enable = true;
+
+    # One-time setup (login shells only)
+    loginShellInit = ''
+      mkdir -p $HOME/.vim/{backup,swap,undo}
+    '';
+
     interactiveShellInit = lib.strings.concatStrings
       (lib.strings.intersperse "\n" ([
         (builtins.readFile ./configs/config.fish)
         "set -g SHELL ${pkgs.fish}/bin/fish"
-        "if type -q npm; npm set prefix ~/.npm-global; set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths; end"
+        "command -sq npm; and npm set prefix ~/.npm-global 2>/dev/null; and fish_add_path -g $HOME/.npm-global/bin"
         "fish_add_path $HOME/.dotnet/tools"
       ]));
 
-    shellAliases = gitAliases // {
+    # Abbreviations expand inline - faster and visible in history
+    shellAbbrs = gitAliases // {
       zj = "zellij";
+      lg = "lazygit";
+      l = "ls -la";
+      ll = "ls -l";
+      k = "kubectl";
+      kns = "kubectl config set-context --current --namespace";
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      "...." = "cd ../../..";
+    };
+
+    # Functions as separate files (properly overrides defaults)
+    functions = {
+      fish_prompt = builtins.readFile ./configs/fish_prompt.fish;
+      fish_right_prompt = ''
+        set -l last_status $status
+        test $last_status -ne 0
+        and echo -n (set_color d20f39)"["$last_status"]"(set_color normal)
+      '';
+      fish_greeting = "";
     };
 
     plugins = map (n: {
       name = n;
       src = fishSources.${n};
-    }) [ "fish-fzf" "fish-foreign-env" ];
+    }) [ "fish-fzf" "fish-foreign-env" "fish-async-prompt" ];
   };
 
   programs.git = {

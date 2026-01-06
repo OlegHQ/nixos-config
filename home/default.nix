@@ -5,6 +5,7 @@ let
   fishSources = {
     "fish-fzf" = inputs."fish-fzf";
     "fish-foreign-env" = inputs."fish-foreign-env";
+    "fish-async-prompt" = inputs."fish-async-prompt";
   };
   tmuxSources = {
     "tmux-pain-control" = inputs."tmux-pain-control";
@@ -148,6 +149,8 @@ in {
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
     pkgs.lazygit
+    pkgs.zoxide
+    pkgs.gh
 
     pkgs.clang-tools
 
@@ -315,22 +318,104 @@ in {
     shellAliases = gitAliases;
   };
 
+  # Zoxide - smart directory jumping
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd" "cd" ];
+  };
+
   programs.fish = {
     enable = true;
+
+    # One-time setup (login shells only)
+    loginShellInit = ''
+      mkdir -p $HOME/.vim/{backup,swap,undo}
+    '';
+
     interactiveShellInit = lib.strings.concatStrings
       (lib.strings.intersperse "\n" ([
         (builtins.readFile ./configs/config.fish)
         "set -g SHELL ${pkgs.fish}/bin/fish"
-        "if type -q npm; npm set prefix ~/.npm-global; set -Ux fish_user_paths $HOME/.npm-global/bin $fish_user_paths; end"
+        "command -sq npm; and npm set prefix ~/.npm-global 2>/dev/null; and fish_add_path -g $HOME/.npm-global/bin"
         "fish_add_path $HOME/.dotnet/tools"
       ]));
 
-    shellAliases = gitAliases;
+    # Aliases (don't expand inline)
+    shellAliases = gitAliases // {
+      lg = "lazygit";
+      l = "ls -la";
+      ll = "ls -l";
+      k = "kubectl";
+      kns = "kubectl config set-context --current --namespace";
+    };
+
+    # Abbreviations for directory navigation (expand inline)
+    shellAbbrs = {
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      "...." = "cd ../../..";
+    };
+
+    # Functions as separate files (properly overrides defaults)
+    functions = {
+      # Detect slow network mounts (NAS, Samba, NFS)
+      _is_slow_fs = ''
+        set -l real_path (pwd -P)
+        string match -q '/Volumes/*' -- $real_path
+        or string match -q '/mnt/*' -- $real_path
+        or string match -q '/net/*' -- $real_path
+      '';
+
+      # Git info - skips slow mounts
+      _git_info = ''
+        _is_slow_fs; and return
+
+        set -l git_dir (command git rev-parse --git-dir 2>/dev/null)
+        test -z "$git_dir"; and return
+
+        set -l branch
+        if test -f "$git_dir/HEAD"
+            read -l head < "$git_dir/HEAD"
+            set branch (string replace 'ref: refs/heads/' ''' -- "$head")
+            string match -q 'ref:*' -- "$branch"
+            and set branch (command git rev-parse --short HEAD 2>/dev/null)
+        end
+        test -z "$branch"; and return
+
+        set -l dirty
+        not command git diff --quiet HEAD 2>/dev/null
+        and set dirty '+'
+
+        echo -n (set_color 1e66f5)"($branch$dirty)"(set_color normal)
+      '';
+
+      # Command duration - only show for >1s
+      _cmd_duration = ''
+        test $CMD_DURATION -lt 1000; and return
+        set -l s (math "floor($CMD_DURATION / 1000)")
+        set -l m (math "floor($s / 60)")
+        if test $m -gt 0
+            set -l rem (math "$s % 60")
+            echo -n (set_color 8c8fa1)" "$m"m"$rem"s"(set_color normal)
+        else
+            echo -n (set_color 8c8fa1)" "$s"s"(set_color normal)
+        end
+      '';
+
+      fish_prompt = builtins.readFile ./configs/fish_prompt.fish;
+      fish_right_prompt = ''
+        set -l last_status $status
+        test $last_status -ne 0
+        and echo -n (set_color d20f39)"["$last_status"]"(set_color normal)
+      '';
+      fish_greeting = "";
+    };
 
     plugins = map (n: {
       name = n;
       src = fishSources.${n};
-    }) [ "fish-fzf" "fish-foreign-env" ];
+    }) [ "fish-fzf" "fish-foreign-env" "fish-async-prompt" ];
   };
 
   programs.git = {

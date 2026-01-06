@@ -148,6 +148,7 @@ in {
     pkgs.tree-sitter
     pkgs.nodePackages_latest.typescript-language-server
     pkgs.lazygit
+    pkgs.gh
 
     pkgs.clang-tools
 

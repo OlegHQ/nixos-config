@@ -45,6 +45,11 @@
       url = "github:nexo-tech/nvim-config";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Claude Code configuration module
+    claude-config = {
+      url = "github:nexo-tech/claude-config";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -67,7 +72,13 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.${user} = import ./home/default.nix { inherit inputs; };
+              home-manager.users.${user} = {
+                imports = [
+                  (import ./home/default.nix { inherit inputs; })
+                  inputs.claude-config.homeManagerModules.default
+                ];
+                programs.claude-config.enable = true;
+              };
             }
             { config._module.args = { currentSystemName = name; currentSystem = system; userName = userName; userHomeDarwin = "/Users/${userName}"; }; }
           ];
@@ -89,8 +100,10 @@
                 imports = [
                   (import ./home/default.nix { inherit inputs; })
                   inputs.nvimconf.homeManagerModules.default
+                  inputs.claude-config.homeManagerModules.default
                 ];
                 programs.nvimconf.enable = true;
+                programs.claude-config.enable = true;
               };
             }
             { config._module.args = { currentSystemName = name; currentSystem = system; userName = userName; userHomeDarwin = "/Users/${userName}"; }; }
@@ -135,6 +148,8 @@
             home.homeDirectory = "/home/${userName}";
           }
           hmModule
+          inputs.claude-config.homeManagerModules.default
+          { programs.claude-config.enable = true; }
         ];
       };
 
@@ -153,7 +168,8 @@
           }
           hmModule
           inputs.nvimconf.homeManagerModules.default
-          { programs.nvimconf.enable = true; }
+          inputs.claude-config.homeManagerModules.default
+          { programs.nvimconf.enable = true; programs.claude-config.enable = true; }
         ];
       };
     in {

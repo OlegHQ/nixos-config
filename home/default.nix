@@ -222,50 +222,6 @@ in {
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
   
-  # Claude Code settings (with Stop hook on macOS for notifications)
-  home.file.".claude/commands/reflect.md".source = ./configs/claude-reflect.md;
-  home.file.".claude/settings.json".source = pkgs.writeText "claude-settings.json" (builtins.toJSON ({
-    permissions = {
-      allow = [
-        "Bash"
-        "Read"
-        "Grep"
-        "Glob"
-        "LS"
-        "WebFetch"
-        "WebSearch"
-        "Task"
-        "ExitPlanMode"
-        "TodoWrite"
-        "BashOutput"
-        "KillBash"
-        "WebFetch(domain:docs.anthropic.com)"
-        "WebSearch"
-        "mcp__*"
-      ];
-    };
-    # Disable Claude attribution in git commits and PRs
-    attribution = {
-      commit = "";
-      pr = "";
-    };
-  } // lib.optionalAttrs isDarwin {
-    hooks = {
-      Stop = [{
-        hooks = [{
-          type = "command";
-          command = "$HOME/.local/bin/claude-notify.sh stop";
-        }];
-      }];
-      Notification = [{
-        hooks = [{
-          type = "command";
-          command = "$HOME/.local/bin/claude-notify.sh notification";
-        }];
-      }];
-    };
-  }));
-  
   # Gemini CLI settings
   xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
 
@@ -273,36 +229,6 @@ in {
   xdg.configFile."zed/settings.json".source = ./configs/zed-settings.json;
   xdg.configFile."zed/keymap.json".source = ./configs/zed-keymap.json;
 
-  # Claude Code notification script (macOS only)
-  home.file.".local/bin/claude-notify.sh" = lib.mkIf isDarwin {
-    executable = true;
-    text = ''
-      #!/bin/bash
-      # Claude Code hooks - triggers macOS notifications
-      HOOK_TYPE="$1"
-      INPUT=$(cat)
-
-      SESSION_ID=$(echo "$INPUT" | jq -r '.session_id' | cut -c1-8)
-
-      case "$HOOK_TYPE" in
-        stop)
-          TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')
-          MSG=""
-          if [ -f "$TRANSCRIPT_PATH" ]; then
-            MSG=$(tail -n 30 "$TRANSCRIPT_PATH" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1 | tr '\n' ' ' | cut -c1-80)
-          fi
-          MSG=''${MSG:-"Task completed"}
-          osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Done\" sound name \"Glass\""
-          ;;
-        notification)
-          # Notification hook - permission requests and questions
-          MSG=$(echo "$INPUT" | jq -r '.message // "Needs your attention"' | cut -c1-80)
-          osascript -e "display notification \"$MSG\" with title \"Claude Code\" subtitle \"Action needed\" sound name \"Ping\""
-          ;;
-      esac
-    '';
-  };
-  
   # usql configuration with light theme
   home.file.".usqlrc".source = ./configs/usqlrc;
 

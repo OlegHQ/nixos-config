@@ -16,6 +16,26 @@
         "type": "github"
       }
     },
+    "claude-config": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1767882672,
+        "narHash": "sha256-JiMovMfgzfjvb0yUkAoEEzH4zLXR61YiTh9Adc1SBgY=",
+        "owner": "nexo-tech",
+        "repo": "claude-config",
+        "rev": "1706f99bb93ac33e446b794da93bbf8e52d12a41",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "claude-config",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -164,6 +184,7 @@
     },
     "root": {
       "inputs": {
+        "claude-config": "claude-config",
         "darwin": "darwin",
         "fish-async-prompt": "fish-async-prompt",
         "fish-foreign-env": "fish-foreign-env",

@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "anthropic-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1766254184,
+        "narHash": "sha256-pllFZoWRdtLliz/5pLWks0V9nKFMzeWoRcmFgu2UWi8=",
+        "owner": "anthropics",
+        "repo": "skills",
+        "rev": "69c0b1a0674149f27b61b2635f935524b6add202",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "autoconf-nvim": {
       "flake": false,
       "locked": {
@@ -18,16 +34,17 @@
     },
     "claude-config": {
       "inputs": {
+        "anthropic-skills": "anthropic-skills",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1767882672,
-        "narHash": "sha256-JiMovMfgzfjvb0yUkAoEEzH4zLXR61YiTh9Adc1SBgY=",
+        "lastModified": 1767884419,
+        "narHash": "sha256-p5IglXyWQKLf6PvH3ubB4xJbEbr32hd5xbQztHTiCqU=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "1706f99bb93ac33e446b794da93bbf8e52d12a41",
+        "rev": "87587c5c4d8c6d1dc132d1886a86365ecb159646",
         "type": "github"
       },
       "original": {

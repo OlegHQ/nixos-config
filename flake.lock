@@ -35,21 +35,38 @@
     "claude-config": {
       "inputs": {
         "anthropic-skills": "anthropic-skills",
+        "claude-plugins-official": "claude-plugins-official",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1767884787,
-        "narHash": "sha256-y9Lcab+7v0QKjjGLGujxh8BFVTcJL2K6+/QtFUcO+Ow=",
+        "lastModified": 1767984696,
+        "narHash": "sha256-O+Ic+ttILB00Nh2t0UiUJf/B35y21ZXn8KzsvSQsXBE=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "2b3877cfc1d254532ef7a489f1d6ccad67276d75",
+        "rev": "6338f284624781e0cea757ad0fd90707108758b8",
         "type": "github"
       },
       "original": {
         "owner": "nexo-tech",
         "repo": "claude-config",
+        "type": "github"
+      }
+    },
+    "claude-plugins-official": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767923969,
+        "narHash": "sha256-dRhjF5MmByvg/0tixaiLHtdsT7aN9JHNVM9bLzyEhBg=",
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "rev": "f1be96f0fb58d5aaf2840ca7d7036d5c0923742c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
         "type": "github"
       }
     },

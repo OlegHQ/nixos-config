@@ -41,11 +41,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767985677,
-        "narHash": "sha256-UVBOC/eZOK+HQZwYNDODGrcUw7VD0LUtTVXWUczxILk=",
+        "lastModified": 1767985962,
+        "narHash": "sha256-Ud4qow1nJVlYsGdK2b+R7dkJYfeN7O88bWLKeoC23ns=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "f556292f0ced9b3a17fcf41d8ad48a45cd0cdaf0",
+        "rev": "8ce058224a1c0389f6ef90285748d48801e17c42",
         "type": "github"
       },
       "original": {

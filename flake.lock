@@ -38,14 +38,15 @@
         "claude-plugins-official": "claude-plugins-official",
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1767985962,
-        "narHash": "sha256-Ud4qow1nJVlYsGdK2b+R7dkJYfeN7O88bWLKeoC23ns=",
+        "lastModified": 1767989652,
+        "narHash": "sha256-y1muqJOM1D7lbbDKMRjQPXEpOFr2vu8HysWGRd8dQnE=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "8ce058224a1c0389f6ef90285748d48801e17c42",
+        "rev": "9e6254033aba61da6f5a5e473013a0858e400fde",
         "type": "github"
       },
       "original": {
@@ -141,6 +142,24 @@
         "type": "github"
       }
     },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -229,6 +248,43 @@
         "nvimconf": "nvimconf",
         "tmux-catppuccin": "tmux-catppuccin",
         "tmux-pain-control": "tmux-pain-control"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "tgnotify": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "claude-config",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1767989367,
+        "narHash": "sha256-xSRup4k7ahA4mOWYp+eX8Mh2/sgyf3ObK5yUmZ2jcjk=",
+        "owner": "nexo-tech",
+        "repo": "tgnotify",
+        "rev": "2570f72a3d41aa8cc3054895ac0063b3fcd3f3d2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nexo-tech",
+        "repo": "tgnotify",
+        "type": "github"
       }
     },
     "themekit-nvim": {

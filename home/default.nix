@@ -151,6 +151,8 @@ in {
     pkgs.lazygit
     pkgs.zoxide
     pkgs.gh
+    pkgs.bun
+    pkgs.go
 
     pkgs.clang-tools
 

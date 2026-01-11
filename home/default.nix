@@ -153,6 +153,7 @@ in {
     pkgs.gh
     pkgs.bun
     pkgs.go
+    pkgs.uv
 
     pkgs.clang-tools
 

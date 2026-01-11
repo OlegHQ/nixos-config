@@ -112,12 +112,11 @@
 
       # Package overlays for enhanced functionality and bleeding-edge tools
       overlays = [
+        # Bleeding-edge packages from unstable
         (final: prev: let
           unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
         in {
-          # Bleeding-edge packages from unstable
           vimPlugins = unstable.vimPlugins;
-
           bun = unstable.bun;
           helix = unstable.helix;
           gdb = unstable.gdb;
@@ -129,6 +128,9 @@
           gemini-cli = unstable.gemini-cli;
           claude-code = unstable.claude-code;
           codex = unstable.codex;
+
+          # Packages with broken builds in stable nixpkgs-25.11
+          dotnet-sdk = unstable.dotnet-sdk;  # requires LLVM rebuild in stable
         })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })

@@ -35,22 +35,39 @@
     "claude-config": {
       "inputs": {
         "anthropic-skills": "anthropic-skills",
+        "claude-plugins-official": "claude-plugins-official",
         "nixpkgs": [
           "nixpkgs"
         ],
         "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1768127317,
-        "narHash": "sha256-d04pz23kqVxONnlTNomBxlViSlMkAd8ZsYjzDdrspvo=",
+        "lastModified": 1768149640,
+        "narHash": "sha256-u+ojDOpyNnqHBZKWlPSLb2Ff9cMElfVeGbnZRk+A2mM=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "b668d3487e05e203aba402d6127268198642e5d7",
+        "rev": "070a47f5e8d9db5ec1ba8be24060360e46f74e34",
         "type": "github"
       },
       "original": {
         "owner": "nexo-tech",
         "repo": "claude-config",
+        "type": "github"
+      }
+    },
+    "claude-plugins-official": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767923969,
+        "narHash": "sha256-dRhjF5MmByvg/0tixaiLHtdsT7aN9JHNVM9bLzyEhBg=",
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "rev": "f1be96f0fb58d5aaf2840ca7d7036d5c0923742c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
         "type": "github"
       }
     },
@@ -166,11 +183,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1767799921,
-        "narHash": "sha256-r4GVX+FToWVE2My8VVZH4V0pTIpnu2ZE8/Z4uxGEMBE=",
+        "lastModified": 1768028080,
+        "narHash": "sha256-50aDK+8eLvsLK39TzQhKNq50/HcXyP4hyxOYoPoVxjo=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d351d0653aeb7877273920cd3e823994e7579b0b",
+        "rev": "d03088749a110d52a4739348f39a63f84bb0be14",
         "type": "github"
       },
       "original": {
@@ -182,11 +199,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1767364772,
-        "narHash": "sha256-fFUnEYMla8b7UKjijLnMe+oVFOz6HjijGGNS1l7dYaQ=",
+        "lastModified": 1768032153,
+        "narHash": "sha256-6kD1MdY9fsE6FgSwdnx29hdH2UcBKs3/+JJleMShuJg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "16c7794d0a28b5a37904d55bcca36003b9109aaa",
+        "rev": "3146c6aa9995e7351a398e17470e15305e6e18ff",
         "type": "github"
       },
       "original": {

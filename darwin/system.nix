@@ -42,7 +42,7 @@
   '';
 
   environment.shells = with pkgs; [ bashInteractive zsh fish ];
-  environment.systemPackages = with pkgs; [ cachix rustup gcc wget ];
+  environment.systemPackages = with pkgs; [ rustup gcc wget ];
 
   # File associations using CustomUserPreferences
   system.defaults.CustomUserPreferences = {

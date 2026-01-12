@@ -165,7 +165,11 @@ in {
     pkgs.zoxide
     pkgs.gh
     pkgs.bun
+
     pkgs.go
+    pkgs.air
+    pkgs.templ
+
     pkgs.uv
 
     pkgs.clang-tools

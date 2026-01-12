@@ -42,11 +42,11 @@
         "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1768173800,
-        "narHash": "sha256-cVq/0SAHjIgevno+lGXDNkWXpxzzWhlFyiXC0gm5G9M=",
+        "lastModified": 1768234696,
+        "narHash": "sha256-aJJWe3dAtXuBnwyxl+3tIW6yAewKmihOjuEsRtTpr4Q=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "e2db6985a01c3d57a9c3f4b5be701f33afb7a5c7",
+        "rev": "aca1987ee31346cc62823034eea3171033216b45",
         "type": "github"
       },
       "original": {

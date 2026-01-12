@@ -42,11 +42,11 @@
         "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1768234696,
-        "narHash": "sha256-aJJWe3dAtXuBnwyxl+3tIW6yAewKmihOjuEsRtTpr4Q=",
+        "lastModified": 1768251831,
+        "narHash": "sha256-oXrWzZAQXNtgulJugz42ll4xfE12Thfv08yXwofdbsg=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "aca1987ee31346cc62823034eea3171033216b45",
+        "rev": "acd1817f051d2cb1ae5df9b696ec2e9acd164793",
         "type": "github"
       },
       "original": {
@@ -274,11 +274,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767989367,
-        "narHash": "sha256-xSRup4k7ahA4mOWYp+eX8Mh2/sgyf3ObK5yUmZ2jcjk=",
+        "lastModified": 1768251799,
+        "narHash": "sha256-LDyWbtPjEDpcRH/Ns+so507aNrpjUPKnqJSPZz4nFjs=",
         "owner": "nexo-tech",
         "repo": "tgnotify",
-        "rev": "2570f72a3d41aa8cc3054895ac0063b3fcd3f3d2",
+        "rev": "04e8165e54ebddb36ac6ca2887d11976afa8eebe",
         "type": "github"
       },
       "original": {

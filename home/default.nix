@@ -125,6 +125,19 @@ let
     nvim '+normal G' "$TMPFILE"
   '';
 
+  # Kill processes by port number - AI-friendly output
+  kp = pkgs.buildGoModule {
+    pname = "kp";
+    version = "1.0.0";
+    src = ./packages/kp;
+    vendorHash = null;
+  };
+
+  # Unlock macOS keychain (for codesigning, Claude, etc)
+  claude-unlock = pkgs.writeShellScriptBin "claude-unlock" ''
+    security unlock-keychain ~/Library/Keychains/login.keychain-db
+  '';
+
 in {
   # HM state version
   home.stateVersion = "18.09";
@@ -177,6 +190,8 @@ in {
     pkgs.codex
 
     dumptty
+    kp
+    claude-unlock
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux

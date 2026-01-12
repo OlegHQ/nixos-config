@@ -213,6 +213,8 @@ in {
     DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
     DOTNET_CLI_TELEMETRY_OPTOUT = "1";
     DOTNET_NOLOGO = "1";
+    # Go configuration - install binaries to ~/.local/bin (already in PATH)
+    GOBIN = "$HOME/.local/bin";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;
@@ -270,6 +272,7 @@ in {
       (lib.strings.intersperse "\n" ([
         (builtins.readFile ./configs/config.fish)
         "set -g SHELL ${pkgs.fish}/bin/fish"
+        "fish_add_path $HOME/.local/bin"
         "command -sq npm; and npm set prefix ~/.npm-global 2>/dev/null; and fish_add_path -g $HOME/.npm-global/bin"
         "fish_add_path $HOME/.dotnet/tools"
       ]));

@@ -5,7 +5,7 @@ NIXNAME ?= mac
 UNAME := $(shell uname)
 ARCH := $(shell arch)
 
-.PHONY: switch full test build check clean help
+.PHONY: switch full test build check clean help update-nexo
 
 # Default target
 all: switch
@@ -60,14 +60,20 @@ clean:
 	@echo "🧹 Cleaning build artifacts..."
 	rm -rf result
 
+# Update nexo-tech flake inputs
+update-nexo:
+	@echo "🔄 Updating nexo-tech modules..."
+	nix flake update nvimconf claude-config
+
 # Show help
 help:
 	@echo "📚 Available targets:"
-	@echo "  switch  - Apply configuration changes"
-	@echo "  full    - Apply full configuration (includes nvimconf)"
-	@echo "  test    - Test configuration without applying"
-	@echo "  build   - Build configuration"
-	@echo "  check   - Validate flake configuration"
-	@echo "  clean   - Clean build artifacts"
-	@echo "  help    - Show this help message"
+	@echo "  switch      - Apply configuration changes"
+	@echo "  full        - Apply full configuration (includes nvimconf)"
+	@echo "  test        - Test configuration without applying"
+	@echo "  build       - Build configuration"
+	@echo "  check       - Validate flake configuration"
+	@echo "  clean       - Clean build artifacts"
+	@echo "  update-nexo - Update nexo-tech flake inputs (nvimconf, claude-config)"
+	@echo "  help        - Show this help message"
 

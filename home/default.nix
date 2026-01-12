@@ -165,6 +165,7 @@ in {
     pkgs.zoxide
     pkgs.gh
     pkgs.bun
+    pkgs.mongosh
 
     pkgs.go
     pkgs.air

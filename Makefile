@@ -5,7 +5,7 @@ NIXNAME ?= mac
 UNAME := $(shell uname)
 ARCH := $(shell arch)
 
-.PHONY: switch full test build check clean help update-nexo update-claude
+.PHONY: switch full test build check clean help update-nexo 
 
 # Default target
 all: switch
@@ -65,12 +65,6 @@ update-nexo:
 	@echo "🔄 Updating nexo-tech modules..."
 	nix flake update nvimconf claude-config
 
-# Update Claude Code CLI
-update-claude:
-	@echo "🤖 Updating Claude Code..."
-	npm update -g @anthropic-ai/claude-code
-
-# Show help
 help:
 	@echo "📚 Available targets:"
 	@echo "  switch      - Apply configuration changes"

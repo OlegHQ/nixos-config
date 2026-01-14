@@ -39,14 +39,15 @@
         "nixpkgs": [
           "nixpkgs"
         ],
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1768338019,
-        "narHash": "sha256-003Srrh65R6XzipxPMAMgVhCEIJljikEmnrz+OF88/A=",
+        "lastModified": 1768398506,
+        "narHash": "sha256-9zLzr0teI77S2xrQyNwKz8FJ1wdeUws/9AXRLG1Yd00=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "1bdaac47f523242897988428f403fae77d17c90d",
+        "rev": "b9f95bb181ef713af0e689f960f3225f2cb1b261",
         "type": "github"
       },
       "original": {
@@ -199,6 +200,22 @@
     },
     "nixpkgs-unstable": {
       "locked": {
+        "lastModified": 1768127708,
+        "narHash": "sha256-1Sm77VfZh3mU0F5OqKABNLWxOuDeHIlcFjsXeeiPazs=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "ffbc9f8cbaacfb331b6017d5a5abb21a492c9a38",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable_2": {
+      "locked": {
         "lastModified": 1768178648,
         "narHash": "sha256-kz/F6mhESPvU1diB7tOM3nLcBfQe7GU7GQCymRlTi/s=",
         "owner": "nixos",
@@ -244,7 +261,7 @@
         "fish-fzf": "fish-fzf",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs-unstable": "nixpkgs-unstable_2",
         "nvimconf": "nvimconf",
         "tmux-catppuccin": "tmux-catppuccin",
         "tmux-pain-control": "tmux-pain-control"
@@ -270,15 +287,15 @@
         "flake-utils": "flake-utils",
         "nixpkgs": [
           "claude-config",
-          "nixpkgs"
+          "nixpkgs-unstable"
         ]
       },
       "locked": {
-        "lastModified": 1768251799,
-        "narHash": "sha256-LDyWbtPjEDpcRH/Ns+so507aNrpjUPKnqJSPZz4nFjs=",
+        "lastModified": 1768398384,
+        "narHash": "sha256-feTGGC+js/sh8ift4PVykLb4wgoSl9/t4qgUo1AjJvM=",
         "owner": "nexo-tech",
         "repo": "tgnotify",
-        "rev": "04e8165e54ebddb36ac6ca2887d11976afa8eebe",
+        "rev": "4a2732badd1c5eedfa35b8378779e74c10fa5049",
         "type": "github"
       },
       "original": {

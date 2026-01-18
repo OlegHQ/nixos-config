@@ -379,7 +379,7 @@ in {
     enable = true;
     settings = {
       user.name = "Oleg Pustovit";
-      user.email = "oleg@nexo.sh";
+      user.email = "me@opustovit.com";
       core.editor = "nvim";
       push.autoSetupRemote = true;
     };

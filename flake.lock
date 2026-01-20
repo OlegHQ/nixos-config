@@ -36,6 +36,7 @@
       "inputs": {
         "anthropic-skills": "anthropic-skills",
         "claude-plugins-official": "claude-plugins-official",
+        "humanizer": "humanizer",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -43,11 +44,11 @@
         "tgnotify": "tgnotify"
       },
       "locked": {
-        "lastModified": 1768771754,
-        "narHash": "sha256-D/3kw0MG4uouIXbLGwBhZA+Mt29RMrs2GCGAWRzgo/s=",
+        "lastModified": 1768900146,
+        "narHash": "sha256-GvmjGN3SewZaxcjwsuoYcmKUKsS5xqfp97oJ/ZFDPTg=",
         "owner": "nexo-tech",
         "repo": "claude-config",
-        "rev": "7d76cfeeb36628803b0ca6332f058e0295660ded",
+        "rev": "fec08b6edc648fd59e509489687a8eec3731154d",
         "type": "github"
       },
       "original": {
@@ -179,6 +180,22 @@
         "owner": "nix-community",
         "ref": "release-25.11",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "humanizer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1768809452,
+        "narHash": "sha256-4gh92+5AQ6AH7BUduKXLM3vLA3FQNvX5sGn4tJ2Pxh8=",
+        "owner": "blader",
+        "repo": "humanizer",
+        "rev": "3b117912054aab527533523a173999df0bce862f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "blader",
+        "repo": "humanizer",
         "type": "github"
       }
     },

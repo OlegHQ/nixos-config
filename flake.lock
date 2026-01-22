@@ -41,18 +41,20 @@
           "nixpkgs"
         ],
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "tgnotify": "tgnotify"
+        "tgnotify": "tgnotify",
+        "writing-interviewer": "writing-interviewer"
       },
       "locked": {
-        "lastModified": 1768900146,
-        "narHash": "sha256-GvmjGN3SewZaxcjwsuoYcmKUKsS5xqfp97oJ/ZFDPTg=",
-        "owner": "nexo-tech",
+        "lastModified": 1769080308,
+        "narHash": "sha256-/He0BYSg+9vq0DewRQLW0WJfCUUTUpaiP2s3SIpaa7s=",
+        "owner": "OlegHQ",
         "repo": "claude-config",
-        "rev": "fec08b6edc648fd59e509489687a8eec3731154d",
+        "rev": "e3a8caed2ca7164f9891eb4ceff2cc2c6cc99a30",
         "type": "github"
       },
       "original": {
-        "owner": "nexo-tech",
+        "owner": "OlegHQ",
+        "ref": "main",
         "repo": "claude-config",
         "type": "github"
       }
@@ -368,6 +370,22 @@
         "owner": "tmux-plugins",
         "repo": "tmux-pain-control",
         "rev": "2db63de3b08fc64831d833240749133cecb67d92",
+        "type": "github"
+      }
+    },
+    "writing-interviewer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1768497705,
+        "narHash": "sha256-PPXyHuapH7T94lbez53uc7FpmiF6FNUZfiownyxKItc=",
+        "owner": "KarthikRaju391",
+        "repo": "writing-interviewer-skill",
+        "rev": "313a3177453ce9767a667b777465c9c807a12a97",
+        "type": "github"
+      },
+      "original": {
+        "owner": "KarthikRaju391",
+        "repo": "writing-interviewer-skill",
         "type": "github"
       }
     }

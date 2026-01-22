@@ -47,7 +47,7 @@
     };
     # Claude Code configuration module
     claude-config = {
-      url = "github:nexo-tech/claude-config";
+      url = "github:OlegHQ/claude-config?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

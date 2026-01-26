@@ -90,7 +90,6 @@
       "shift-left": "editor::SelectLeft",
       "ctrl-shift-b": "editor::SelectLeft",
       "shift-right": "editor::SelectRight",
-      "ctrl-shift-f": "editor::SelectRight",
       "alt-shift-left": "editor::SelectToPreviousWordStart",
       "alt-shift-b": "editor::SelectToPreviousWordStart",
       "alt-shift-right": "editor::SelectToNextWordEnd",
@@ -101,7 +100,7 @@
       "cmd-shift-down": "editor::SelectToEnd",
       "cmd-a": "editor::SelectAll",
       "cmd-l": "editor::SelectLine",
-      "cmd-shift-f": "editor::Format",
+      "alt-shift-f": "editor::Format",
       "cmd-shift-left": [
         "editor::SelectToBeginningOfLine",
         {

@@ -45,11 +45,11 @@
         "writing-interviewer": "writing-interviewer"
       },
       "locked": {
-        "lastModified": 1769544475,
-        "narHash": "sha256-Nn7YfK1sMnSRoiZBWIRh/3Hxm1rqmH40Xy4FWvTtVUc=",
+        "lastModified": 1769546299,
+        "narHash": "sha256-oOVk2aIudbvH3VgpfwdlN32+JSzJPaZkB2wnXFbCRmo=",
         "owner": "OlegHQ",
         "repo": "claude-config",
-        "rev": "590838071101a2842448d9cb1d4399a416ccd215",
+        "rev": "fa3dab44fee72bf6d30d792426fc05fb14a94fe5",
         "type": "github"
       },
       "original": {
@@ -258,11 +258,11 @@
         "themekit-nvim": "themekit-nvim"
       },
       "locked": {
-        "lastModified": 1767646235,
-        "narHash": "sha256-3qhBKPgQwZUCUgHj2CV5NO+s51WSXjnKe5Ima10xDFA=",
+        "lastModified": 1769543534,
+        "narHash": "sha256-boKoe4imAPKIAvF+yv4aQ7UtDDLBS6aizX3rv+m4N2w=",
         "ref": "dev",
-        "rev": "b2e93e95ab2533804a7286d74a270df3b31548c1",
-        "revCount": 18,
+        "rev": "cdda63ef8c959d0d1721e666549bcfdd58839dd0",
+        "revCount": 19,
         "type": "git",
         "url": "ssh://git@github-personal/oleghq/nvim-config.git"
       },

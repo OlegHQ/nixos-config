@@ -120,6 +120,7 @@
                 ];
                 programs.nvimconf.enable = true;
                 programs.nvimconf.theme = "catppuccin_macchiato";
+                programs.nvimconf.themeMode = "dark";
                 programs.claude-config.enable = true;
                 programs.claude-config.themeMode = "dark";
               };
@@ -206,6 +207,7 @@
             {
               programs.nvimconf.enable = true;
               programs.nvimconf.theme = "catppuccin_macchiato";
+              programs.nvimconf.themeMode = "dark";
               programs.claude-config.enable = true;
               programs.claude-config.themeMode = "dark";
             }

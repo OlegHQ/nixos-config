@@ -43,7 +43,7 @@
     };
     # Neovim configuration module (for full config)
     nvimconf = {
-      url = "git+ssh://git@github-personal/oleghq/nvim-config.git?ref=dev";
+      url = "github:OlegHQ/nvim-config?ref=dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Claude Code configuration module

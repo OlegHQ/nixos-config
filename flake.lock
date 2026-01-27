@@ -258,18 +258,18 @@
         "themekit-nvim": "themekit-nvim"
       },
       "locked": {
-        "lastModified": 1769543534,
-        "narHash": "sha256-boKoe4imAPKIAvF+yv4aQ7UtDDLBS6aizX3rv+m4N2w=",
-        "ref": "dev",
-        "rev": "cdda63ef8c959d0d1721e666549bcfdd58839dd0",
-        "revCount": 19,
-        "type": "git",
-        "url": "ssh://git@github-personal/oleghq/nvim-config.git"
+        "lastModified": 1769547104,
+        "narHash": "sha256-yHH8lYuT6UdSB4+bYQ7M29KUzZ1ygSUXgpn0gZyHsY8=",
+        "owner": "OlegHQ",
+        "repo": "nvim-config",
+        "rev": "5743f21b9ee3424df13255005b81f27efbb515e6",
+        "type": "github"
       },
       "original": {
+        "owner": "OlegHQ",
         "ref": "dev",
-        "type": "git",
-        "url": "ssh://git@github-personal/oleghq/nvim-config.git"
+        "repo": "nvim-config",
+        "type": "github"
       }
     },
     "root": {

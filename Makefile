@@ -36,7 +36,7 @@ endif
 test:
 ifeq ($(UNAME), Darwin)
 	@echo "🧪 Testing Darwin configuration..."
-	nix build ".#darwinConfigurations.${NIXNAME}.system" --dry-run
+	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}.system" --dry-run --impure
 else
 	@echo "🧪 Testing Home Manager configuration..."
 	nix run nixpkgs#home-manager -- build --flake ".#${USER}-${ARCH}" --dry-run
@@ -53,7 +53,7 @@ endif
 # Validate flake
 check:
 	@echo "✅ Checking flake configuration..."
-	nix flake check
+	NIXPKGS_ALLOW_UNFREE=1 nix flake check --impure
 
 # Clean build artifacts
 clean:

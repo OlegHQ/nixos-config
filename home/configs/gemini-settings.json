@@ -58,7 +58,7 @@
     "sandbox": false
   },
   "ui": {
-    "theme": "GitHub Light",
+    "theme": "GitHub Dark",
     "vimMode": true,
     "hideTips": true,
     "hideBanner": false,

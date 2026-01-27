@@ -5,14 +5,14 @@
 
 set -l last_status $status
 
-# Catppuccin Latte colors
-set -l ctp_lavender 7287fd
-set -l ctp_blue 1e66f5
-set -l ctp_sapphire 209fb5
-set -l ctp_teal 179299
-set -l ctp_mauve 8839ef
-set -l ctp_red d20f39
-set -l ctp_overlay 9ca0b0
+# Catppuccin Macchiato colors
+set -l ctp_lavender b7bdf8
+set -l ctp_blue 8aadf4
+set -l ctp_sapphire 7dc4e4
+set -l ctp_teal 8bd5ca
+set -l ctp_mauve c6a0f6
+set -l ctp_red ed8796
+set -l ctp_overlay 8087a2
 
 # Blank line before prompt
 echo

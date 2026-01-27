@@ -1,12 +1,12 @@
-# usql configuration for light terminals
-# Set syntax highlighting to a light theme suitable for light terminals
-\set SYNTAX_HL_STYLE friendly
+# usql configuration for dark terminals
+# Use a dark-friendly syntax highlighting style
+\set SYNTAX_HL_STYLE dracula
 
-# Set a clean, colored prompt for better visibility
+# Prompt colors tuned for dark backgrounds
 \set PROMPT1 '\033[36m%S\033[0m\033[32m%m\033[0m\033[33m%/\033[0m\033[35m%R\033[0m\033[0m%# '
 
 # Enable syntax highlighting
 \set SYNTAX_HL true
 
 # Welcome message
-\echo 'usql configured with light theme for better readability'
+\echo 'usql configured with dark theme for better readability'

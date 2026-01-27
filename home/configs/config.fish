@@ -1,44 +1,44 @@
 # Fish Shell Configuration
-# Ultra-fast async prompt with Catppuccin Latte theme
+# Ultra-fast async prompt with Catppuccin Macchiato theme
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Catppuccin Latte Theme
+# Catppuccin Macchiato Theme
 # ═══════════════════════════════════════════════════════════════════════════════
 
-set -g fish_color_normal 4c4f69
-set -g fish_color_command 1e66f5
-set -g fish_color_param dd7878
-set -g fish_color_keyword d20f39
-set -g fish_color_quote 40a02b
-set -g fish_color_redirection ea76cb
-set -g fish_color_end fe640b
-set -g fish_color_comment 8c8fa1
-set -g fish_color_error d20f39
-set -g fish_color_selection --background=ccd0da
-set -g fish_color_search_match --background=ccd0da
-set -g fish_color_operator ea76cb
-set -g fish_color_escape e64553
-set -g fish_color_autosuggestion 9ca0b0
-set -g fish_color_cancel d20f39
-set -g fish_color_cwd df8e1d
-set -g fish_color_user 179299
-set -g fish_color_host 1e66f5
-set -g fish_color_status d20f39
+set -g fish_color_normal cad3f5
+set -g fish_color_command 8aadf4
+set -g fish_color_param f0c6c6
+set -g fish_color_keyword ed8796
+set -g fish_color_quote a6da95
+set -g fish_color_redirection f5bde6
+set -g fish_color_end f5a97f
+set -g fish_color_comment 939ab7
+set -g fish_color_error ed8796
+set -g fish_color_selection --background=363a4f
+set -g fish_color_search_match --background=363a4f
+set -g fish_color_operator f5bde6
+set -g fish_color_escape ee99a0
+set -g fish_color_autosuggestion 8087a2
+set -g fish_color_cancel ed8796
+set -g fish_color_cwd eed49f
+set -g fish_color_user 8bd5ca
+set -g fish_color_host 8aadf4
+set -g fish_color_status ed8796
 set -g fish_color_valid_path --underline
-set -g fish_pager_color_progress 9ca0b0
-set -g fish_pager_color_prefix ea76cb
-set -g fish_pager_color_completion 4c4f69
-set -g fish_pager_color_description 8c8fa1
+set -g fish_pager_color_progress 8087a2
+set -g fish_pager_color_prefix f5bde6
+set -g fish_pager_color_completion cad3f5
+set -g fish_pager_color_description 939ab7
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FZF Configuration (Catppuccin Latte)
+# FZF Configuration (Catppuccin Macchiato)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 set -gx FZF_DEFAULT_OPTS "\
 --height 40% --layout=reverse --border \
---color=bg+:#ccd0da,bg:#eff1f5,spinner:#1e66f5,hl:#d20f39 \
---color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#1e66f5 \
---color=marker:#1e66f5,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"
+--color=bg+:#363a4f,bg:#24273a,spinner:#8aadf4,hl:#ed8796 \
+--color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#8aadf4 \
+--color=marker:#8aadf4,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796"
 
 # Use fd for faster file/directory search
 if command -sq fd

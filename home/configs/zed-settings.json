@@ -35,9 +35,9 @@
   },
   "vim_mode": false,
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "Ayu Light",
-    "dark": "Gruvbox Dark",
+    "dark": "Catppuccin Macchiato",
   },
   "ui_font_size": 14,
   "ui_font_family": "PragmataPro",

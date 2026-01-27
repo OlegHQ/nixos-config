@@ -260,15 +260,16 @@
       "locked": {
         "lastModified": 1767646235,
         "narHash": "sha256-3qhBKPgQwZUCUgHj2CV5NO+s51WSXjnKe5Ima10xDFA=",
-        "owner": "nexo-tech",
-        "repo": "nvim-config",
+        "ref": "dev",
         "rev": "b2e93e95ab2533804a7286d74a270df3b31548c1",
-        "type": "github"
+        "revCount": 18,
+        "type": "git",
+        "url": "ssh://git@github-personal/oleghq/nvim-config.git"
       },
       "original": {
-        "owner": "nexo-tech",
-        "repo": "nvim-config",
-        "type": "github"
+        "ref": "dev",
+        "type": "git",
+        "url": "ssh://git@github-personal/oleghq/nvim-config.git"
       }
     },
     "root": {

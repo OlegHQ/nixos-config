@@ -351,7 +351,7 @@ in {
     claude-unlock
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
-  ] ++ (lib.optionals isLinux [
+  ]) ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux
     pkgs.gcc

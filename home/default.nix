@@ -350,8 +350,7 @@ in {
     kp
     claude-unlock
   ] ++ (lib.optionals isDarwin [
-    # TODO: install https://github.com/antoniorodr/memo
-    # pkgs.memo 
+    pkgs.himalaya
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux

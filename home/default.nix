@@ -2,7 +2,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  themeMode = "dark"; # "dark" or "light"
+  themeMode = "dark"; # "dark" or "light" (global)
 
   catppuccin = {
     latte = {
@@ -349,6 +349,9 @@ in {
     dumptty
     kp
     claude-unlock
+  ] ++ (lib.optionals isDarwin [
+    # TODO: install https://github.com/antoniorodr/memo
+    # pkgs.memo 
   ] ++ (lib.optionals isLinux [
     # Linux-specific packages
     pkgs.util-linux

@@ -85,6 +85,7 @@
                   inputs.claude-config.homeManagerModules.default
                 ];
                 programs.claude-config.enable = true;
+                programs.claude-config.themeMode = "dark";
               };
             }
             {
@@ -119,6 +120,7 @@
                 ];
                 programs.nvimconf.enable = true;
                 programs.claude-config.enable = true;
+                programs.claude-config.themeMode = "dark";
               };
             }
             {
@@ -176,7 +178,10 @@
             }
             hmModule
             inputs.claude-config.homeManagerModules.default
-            { programs.claude-config.enable = true; }
+            {
+              programs.claude-config.enable = true;
+              programs.claude-config.themeMode = "dark";
+            }
           ];
         };
 
@@ -200,6 +205,7 @@
             {
               programs.nvimconf.enable = true;
               programs.claude-config.enable = true;
+              programs.claude-config.themeMode = "dark";
             }
           ];
         };

@@ -45,11 +45,11 @@
         "writing-interviewer": "writing-interviewer"
       },
       "locked": {
-        "lastModified": 1769080308,
-        "narHash": "sha256-/He0BYSg+9vq0DewRQLW0WJfCUUTUpaiP2s3SIpaa7s=",
+        "lastModified": 1769544475,
+        "narHash": "sha256-Nn7YfK1sMnSRoiZBWIRh/3Hxm1rqmH40Xy4FWvTtVUc=",
         "owner": "OlegHQ",
         "repo": "claude-config",
-        "rev": "e3a8caed2ca7164f9891eb4ceff2cc2c6cc99a30",
+        "rev": "590838071101a2842448d9cb1d4399a416ccd215",
         "type": "github"
       },
       "original": {

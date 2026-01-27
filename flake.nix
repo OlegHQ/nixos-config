@@ -119,6 +119,7 @@
                   inputs.claude-config.homeManagerModules.default
                 ];
                 programs.nvimconf.enable = true;
+                programs.nvimconf.theme = "catppuccin_macchiato";
                 programs.claude-config.enable = true;
                 programs.claude-config.themeMode = "dark";
               };
@@ -204,6 +205,7 @@
             inputs.claude-config.homeManagerModules.default
             {
               programs.nvimconf.enable = true;
+              programs.nvimconf.theme = "catppuccin_macchiato";
               programs.claude-config.enable = true;
               programs.claude-config.themeMode = "dark";
             }

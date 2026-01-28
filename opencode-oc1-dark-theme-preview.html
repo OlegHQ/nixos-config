@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OC-1 Dark Theme Preview - OpenCode</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #131010;
+      color: #fcf9f9b2;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    h1 {
+      color: #fdfbfbf0;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      color: #faf5f467;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    h2 {
+      color: #fab283;
+      margin: 2rem 0 1rem;
+      font-size: 1.25rem;
+      border-bottom: 1px solid #f7ecec3f;
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      color: #fcf9f9b2;
+      margin: 1.5rem 0 0.75rem;
+      font-size: 1rem;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .color-card {
+      background: #e6c6c60b;
+      border: 1px solid #f7ecec3f;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .color-swatch {
+      height: 60px;
+      width: 100%;
+      position: relative;
+    }
+
+    .color-swatch.checkered {
+      background-image:
+        linear-gradient(45deg, #252121 25%, transparent 25%),
+        linear-gradient(-45deg, #252121 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #252121 75%),
+        linear-gradient(-45deg, transparent 75%, #252121 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+
+    .color-swatch-inner {
+      position: absolute;
+      inset: 0;
+    }
+
+    .color-info {
+      padding: 0.75rem;
+    }
+
+    .color-name {
+      font-size: 0.75rem;
+      color: #faf5f467;
+      margin-bottom: 0.25rem;
+      word-break: break-word;
+    }
+
+    .color-hex {
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #fdfbfbf0;
+    }
+
+    .seeds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .seed-card {
+      text-align: center;
+    }
+
+    .seed-swatch {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 0.5rem;
+      border: 2px solid #f7ecec3f;
+    }
+
+    .seed-name {
+      font-size: 0.8rem;
+      color: #faf5f467;
+    }
+
+    .seed-hex {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #fdfbfbf0;
+    }
+
+    .syntax-preview {
+      background: #1b1818;
+      border: 1px solid #f7ecec3f;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    .markdown-preview {
+      background: #1b1818;
+      border: 1px solid #f7ecec3f;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .avatar-grid {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f7ecec3f;
+      color: #faf5f467;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>OC-1 Dark Theme</h1>
+  <p class="subtitle">OpenCode theme with all CSS variables resolved to hex values</p>
+
+  <!-- Seeds -->
+  <h2>Seeds (Base Colors)</h2>
+  <div class="seeds-grid">
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #716c6b;"></div>
+      <div class="seed-name">neutral</div>
+      <div class="seed-hex">#716c6b</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #fab283;"></div>
+      <div class="seed-name">primary</div>
+      <div class="seed-hex">#fab283</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #12c905;"></div>
+      <div class="seed-name">success</div>
+      <div class="seed-hex">#12c905</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #fcd53a;"></div>
+      <div class="seed-name">warning</div>
+      <div class="seed-hex">#fcd53a</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #fc533a;"></div>
+      <div class="seed-name">error</div>
+      <div class="seed-hex">#fc533a</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #edb2f1;"></div>
+      <div class="seed-name">info</div>
+      <div class="seed-hex">#edb2f1</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #034cff;"></div>
+      <div class="seed-name">interactive</div>
+      <div class="seed-hex">#034cff</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #c8ffc4;"></div>
+      <div class="seed-name">diffAdd</div>
+      <div class="seed-hex">#c8ffc4</div>
+    </div>
+    <div class="seed-card">
+      <div class="seed-swatch" style="background-color: #fc533a;"></div>
+      <div class="seed-name">diffDelete</div>
+      <div class="seed-hex">#fc533a</div>
+    </div>
+  </div>
+
+  <!-- Background Colors -->
+  <h2>Background Colors</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #131010;"></div>
+      <div class="color-info">
+        <div class="color-name">background-base</div>
+        <div class="color-hex">#131010</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #1c1717;"></div>
+      <div class="color-info">
+        <div class="color-name">background-weak</div>
+        <div class="color-hex">#1c1717</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #151313;"></div>
+      <div class="color-info">
+        <div class="color-name">background-strong</div>
+        <div class="color-hex">#151313</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #191515;"></div>
+      <div class="color-info">
+        <div class="color-name">background-stronger</div>
+        <div class="color-hex">#191515</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Surface Colors -->
+  <h2>Surface Colors</h2>
+  <h3>Base Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #e6c6c60b;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-base</div>
+        <div class="color-hex">#e6c6c60b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #e0b7b716;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-base-hover</div>
+        <div class="color-hex">#e0b7b716</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #edd5d516;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-base-active</div>
+        <div class="color-hex">#edd5d516</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #0048fe1c;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-base-interactive-active</div>
+        <div class="color-hex">#0048fe1c</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Raised Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #edd5d516;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-raised-base</div>
+        <div class="color-hex">#edd5d516</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #f2e1e11e;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-raised-base-hover</div>
+        <div class="color-hex">#f2e1e11e</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #f2e1e11e;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-raised-strong</div>
+        <div class="color-hex">#f2e1e11e</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #f5e8e831;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-raised-stronger</div>
+        <div class="color-hex">#f5e8e831</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Inset Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #0e0b0b7f;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-inset-base</div>
+        <div class="color-hex">#0e0b0b7f</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #060505cc;"></div></div>
+      <div class="color-info">
+        <div class="color-name">surface-inset-strong</div>
+        <div class="color-hex">#060505cc</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #131010;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-float-base</div>
+        <div class="color-hex">#131010</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #1b1818;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-float-base-hover</div>
+        <div class="color-hex">#1b1818</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Interactive Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0c2255;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-interactive-base</div>
+        <div class="color-hex">#0c2255</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0A1D4D;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-interactive-hover</div>
+        <div class="color-hex">#0A1D4D</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0d172b;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-interactive-weak</div>
+        <div class="color-hex">#0d172b</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Status Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #152d13;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-success-base</div>
+        <div class="color-hex">#152d13</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #12c905;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-success-strong</div>
+        <div class="color-hex">#12c905</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fff6be;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-warning-base</div>
+        <div class="color-hex">#fff6be</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ffdc17;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-warning-strong</div>
+        <div class="color-hex">#ffdc17</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #3c140d;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-critical-base</div>
+        <div class="color-hex">#3c140d</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fc533a;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-critical-strong</div>
+        <div class="color-hex">#fc533a</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fceafd;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-info-base</div>
+        <div class="color-hex">#fceafd</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #a753ae;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-info-strong</div>
+        <div class="color-hex">#a753ae</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Diff Surfaces</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #1a2a19;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-add-base</div>
+        <div class="color-hex">#1a2a19</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9dde99;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-add-stronger</div>
+        <div class="color-hex">#9dde99</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #3c140d;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-delete-base</div>
+        <div class="color-hex">#3c140d</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ff917b;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-delete-stronger</div>
+        <div class="color-hex">#ff917b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0f1b2d;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-hidden-base</div>
+        <div class="color-hex">#0f1b2d</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #51a8ff;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-diff-hidden-stronger</div>
+        <div class="color-hex">#51a8ff</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Brand Surface</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #dcde8d;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-brand-base</div>
+        <div class="color-hex">#dcde8d</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #d2d384;"></div>
+      <div class="color-info">
+        <div class="color-name">surface-brand-hover</div>
+        <div class="color-hex">#d2d384</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Colors -->
+  <h2>Text Colors</h2>
+  <h3>Base Text</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #fcf9f9b2;"></div></div>
+      <div class="color-info">
+        <div class="color-name">text-base</div>
+        <div class="color-hex">#fcf9f9b2</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #faf5f467;"></div></div>
+      <div class="color-info">
+        <div class="color-name">text-weak</div>
+        <div class="color-hex">#faf5f467</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #faf5f559;"></div></div>
+      <div class="color-info">
+        <div class="color-name">text-weaker</div>
+        <div class="color-hex">#faf5f559</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #fdfbfbf0;"></div></div>
+      <div class="color-info">
+        <div class="color-name">text-strong</div>
+        <div class="color-hex">#fdfbfbf0</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #89b5ff;"></div>
+      <div class="color-info">
+        <div class="color-name">text-interactive-base</div>
+        <div class="color-hex">#89b5ff</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Status Text</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #12c905;"></div>
+      <div class="color-info">
+        <div class="color-name">text-on-success-base</div>
+        <div class="color-hex">#12c905</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #aff7a8;"></div>
+      <div class="color-info">
+        <div class="color-name">text-on-success-strong</div>
+        <div class="color-hex">#aff7a8</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fc533a;"></div>
+      <div class="color-info">
+        <div class="color-name">text-on-critical-base</div>
+        <div class="color-hex">#fc533a</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ffd1c8;"></div>
+      <div class="color-info">
+        <div class="color-name">text-on-critical-strong</div>
+        <div class="color-hex">#ffd1c8</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Diff Text</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9dde99;"></div>
+      <div class="color-info">
+        <div class="color-name">text-diff-add-base</div>
+        <div class="color-hex">#9dde99</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fc533a;"></div>
+      <div class="color-info">
+        <div class="color-name">text-diff-delete-base</div>
+        <div class="color-hex">#fc533a</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Border Colors -->
+  <h2>Border Colors</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #f7ecec3f;"></div></div>
+      <div class="color-info">
+        <div class="color-name">border-base</div>
+        <div class="color-hex">#f7ecec3f</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #faf5f559;"></div></div>
+      <div class="color-info">
+        <div class="color-name">border-hover</div>
+        <div class="color-hex">#faf5f559</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #f5e8e831;"></div></div>
+      <div class="color-info">
+        <div class="color-name">border-weak-base</div>
+        <div class="color-hex">#f5e8e831</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #faf5f559;"></div></div>
+      <div class="color-info">
+        <div class="color-name">border-strong-base</div>
+        <div class="color-hex">#faf5f559</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #98bfff;"></div>
+      <div class="color-info">
+        <div class="color-name">border-interactive-base</div>
+        <div class="color-hex">#98bfff</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #034cff;"></div>
+      <div class="color-info">
+        <div class="color-name">border-interactive-active</div>
+        <div class="color-hex">#034cff</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #631409;"></div>
+      <div class="color-info">
+        <div class="color-name">border-critical-base</div>
+        <div class="color-hex">#631409</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9fe598;"></div>
+      <div class="color-info">
+        <div class="color-name">border-success-base</div>
+        <div class="color-hex">#9fe598</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Icon Colors -->
+  <h2>Icon Colors</h2>
+  <h3>Base Icons</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #716c6b;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-base</div>
+        <div class="color-hex">#716c6b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #7f7979;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-hover</div>
+        <div class="color-hex">#7f7979</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #b7b1b1;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-active</div>
+        <div class="color-hex">#b7b1b1</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #f1ecec;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-strong-base</div>
+        <div class="color-hex">#f1ecec</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #3e3939;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-weak-base</div>
+        <div class="color-hex">#3e3939</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Status Icons</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #12c905;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-success-base</div>
+        <div class="color-hex">#12c905</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #693f05;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-warning-base</div>
+        <div class="color-hex">#693f05</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fc533a;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-critical-base</div>
+        <div class="color-hex">#fc533a</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #6c486e;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-info-base</div>
+        <div class="color-hex">#6c486e</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #034cff;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-interactive-base</div>
+        <div class="color-hex">#034cff</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Agent Icons</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #8b5cf6;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-agent-plan-base</div>
+        <div class="color-hex">#8b5cf6</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ffb224;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-agent-docs-base</div>
+        <div class="color-hex">#ffb224</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #06b6d4;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-agent-ask-base</div>
+        <div class="color-hex">#06b6d4</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #89b5ff;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-agent-build-base</div>
+        <div class="color-hex">#89b5ff</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Diff Icons</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9dde99;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-diff-add-base</div>
+        <div class="color-hex">#9dde99</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fc533a;"></div>
+      <div class="color-info">
+        <div class="color-name">icon-diff-delete-base</div>
+        <div class="color-hex">#fc533a</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button Colors -->
+  <h2>Button Colors</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #f1ecec;"></div>
+      <div class="color-info">
+        <div class="color-name">button-primary-base</div>
+        <div class="color-hex">#f1ecec</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #231f1f;"></div>
+      <div class="color-info">
+        <div class="color-name">button-secondary-base</div>
+        <div class="color-hex">#231f1f</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #2a2727;"></div>
+      <div class="color-info">
+        <div class="color-name">button-secondary-hover</div>
+        <div class="color-hex">#2a2727</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #e6c6c60b;"></div></div>
+      <div class="color-info">
+        <div class="color-name">button-ghost-hover</div>
+        <div class="color-hex">#e6c6c60b</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Colors -->
+  <h2>Input Colors</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #1b1818;"></div>
+      <div class="color-info">
+        <div class="color-name">input-base</div>
+        <div class="color-hex">#1b1818</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #091120;"></div>
+      <div class="color-info">
+        <div class="color-name">input-active</div>
+        <div class="color-hex">#091120</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0d172b;"></div>
+      <div class="color-info">
+        <div class="color-name">input-selected</div>
+        <div class="color-hex">#0d172b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #2d2828;"></div>
+      <div class="color-info">
+        <div class="color-name">input-disabled</div>
+        <div class="color-hex">#2d2828</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Syntax Highlighting -->
+  <h2>Syntax Highlighting</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #faf5f467;"></div></div>
+      <div class="color-info">
+        <div class="color-name">syntax-comment</div>
+        <div class="color-hex">#faf5f467</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #00ceb9;"></div>
+      <div class="color-info">
+        <div class="color-name">syntax-string</div>
+        <div class="color-hex">#00ceb9</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ffba92;"></div>
+      <div class="color-info">
+        <div class="color-name">syntax-primitive</div>
+        <div class="color-hex">#ffba92</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch checkered"><div class="color-swatch-inner" style="background-color: #fdfbfbf0;"></div></div>
+      <div class="color-info">
+        <div class="color-name">syntax-variable</div>
+        <div class="color-hex">#fdfbfbf0</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ff9ae2;"></div>
+      <div class="color-info">
+        <div class="color-name">syntax-property</div>
+        <div class="color-hex">#ff9ae2</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ecf58c;"></div>
+      <div class="color-info">
+        <div class="color-name">syntax-type</div>
+        <div class="color-hex">#ecf58c</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #93e9f6;"></div>
+      <div class="color-info">
+        <div class="color-name">syntax-constant</div>
+        <div class="color-hex">#93e9f6</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Syntax Preview</h3>
+  <div class="syntax-preview">
+    <span style="color: #faf5f467;">// This is a comment</span><br>
+    <span style="color: #faf5f467;">const</span> <span style="color: #fdfbfbf0;">userName</span> <span style="color: #faf5f467;">=</span> <span style="color: #00ceb9;">"OpenCode"</span><span style="color: #faf5f467;">;</span><br>
+    <span style="color: #faf5f467;">const</span> <span style="color: #fdfbfbf0;">count</span> <span style="color: #faf5f467;">=</span> <span style="color: #ffba92;">42</span><span style="color: #faf5f467;">;</span><br>
+    <span style="color: #faf5f467;">const</span> <span style="color: #fdfbfbf0;">isActive</span> <span style="color: #faf5f467;">=</span> <span style="color: #ffba92;">true</span><span style="color: #faf5f467;">;</span><br><br>
+    <span style="color: #ecf58c;">interface</span> <span style="color: #ecf58c;">User</span> <span style="color: #faf5f467;">{</span><br>
+    &nbsp;&nbsp;<span style="color: #ff9ae2;">name</span><span style="color: #faf5f467;">:</span> <span style="color: #ecf58c;">string</span><span style="color: #faf5f467;">;</span><br>
+    &nbsp;&nbsp;<span style="color: #ff9ae2;">id</span><span style="color: #faf5f467;">:</span> <span style="color: #ecf58c;">number</span><span style="color: #faf5f467;">;</span><br>
+    <span style="color: #faf5f467;">}</span><br><br>
+    <span style="color: #faf5f467;">const</span> <span style="color: #93e9f6;">MAX_SIZE</span> <span style="color: #faf5f467;">=</span> <span style="color: #ffba92;">100</span><span style="color: #faf5f467;">;</span>
+  </div>
+
+  <!-- Markdown Colors -->
+  <h2>Markdown Colors</h2>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9d7cd8;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-heading</div>
+        <div class="color-hex">#9d7cd8</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #eeeeee;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-text</div>
+        <div class="color-hex">#eeeeee</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #fab283;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-link</div>
+        <div class="color-hex">#fab283</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #56b6c2;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-link-text</div>
+        <div class="color-hex">#56b6c2</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #7fd88f;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-code</div>
+        <div class="color-hex">#7fd88f</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #e5c07b;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-block-quote</div>
+        <div class="color-hex">#e5c07b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #f5a742;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-strong</div>
+        <div class="color-hex">#f5a742</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #808080;"></div>
+      <div class="color-info">
+        <div class="color-name">markdown-horizontal-rule</div>
+        <div class="color-hex">#808080</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Markdown Preview</h3>
+  <div class="markdown-preview">
+    <div style="color: #9d7cd8; font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;"># Heading</div>
+    <div style="color: #eeeeee; margin-bottom: 0.5rem;">This is regular text with <span style="color: #f5a742; font-weight: bold;">**bold**</span> and <span style="color: #e5c07b; font-style: italic;">*italic*</span> formatting.</div>
+    <div style="color: #eeeeee; margin-bottom: 0.5rem;">Here's a <span style="color: #fab283;">[link](</span><span style="color: #56b6c2;">https://example.com</span><span style="color: #fab283;">)</span> to somewhere.</div>
+    <div style="color: #eeeeee; margin-bottom: 0.5rem;">Inline <span style="color: #7fd88f; background: #252121; padding: 2px 6px; border-radius: 3px;">`code`</span> looks like this.</div>
+    <div style="border-left: 3px solid #e5c07b; padding-left: 1rem; color: #e5c07b; margin: 0.5rem 0;">> This is a blockquote</div>
+    <div style="color: #fab283; margin-bottom: 0.25rem;">- <span style="color: #eeeeee;">List item one</span></div>
+    <div style="color: #fab283; margin-bottom: 0.25rem;">- <span style="color: #eeeeee;">List item two</span></div>
+  </div>
+
+  <!-- Avatar Colors -->
+  <h2>Avatar Colors</h2>
+  <div class="avatar-grid">
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #501b3f; color: #e34ba9;">AB</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Pink</div>
+    </div>
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #033a34; color: #95f3d9;">CD</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Mint</div>
+    </div>
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #5f2a06; color: #ff802b;">EF</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Orange</div>
+    </div>
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #432155; color: #9d5bd2;">GH</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Purple</div>
+    </div>
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #0f3058; color: #369eff;">IJ</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Cyan</div>
+    </div>
+    <div style="text-align: center;">
+      <div class="avatar" style="background-color: #2b3711; color: #c4f042;">KL</div>
+      <div style="font-size: 0.7rem; color: #faf5f467; margin-top: 0.25rem;">Lime</div>
+    </div>
+  </div>
+
+  <h3>Avatar Color Values</h3>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #501b3f;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-pink</div>
+        <div class="color-hex">#501b3f</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #e34ba9;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-pink</div>
+        <div class="color-hex">#e34ba9</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #033a34;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-mint</div>
+        <div class="color-hex">#033a34</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #95f3d9;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-mint</div>
+        <div class="color-hex">#95f3d9</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #5f2a06;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-orange</div>
+        <div class="color-hex">#5f2a06</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #ff802b;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-orange</div>
+        <div class="color-hex">#ff802b</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #432155;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-purple</div>
+        <div class="color-hex">#432155</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #9d5bd2;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-purple</div>
+        <div class="color-hex">#9d5bd2</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #0f3058;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-cyan</div>
+        <div class="color-hex">#0f3058</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #369eff;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-cyan</div>
+        <div class="color-hex">#369eff</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #2b3711;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-background-lime</div>
+        <div class="color-hex">#2b3711</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background-color: #c4f042;"></div>
+      <div class="color-info">
+        <div class="color-name">avatar-text-lime</div>
+        <div class="color-hex">#c4f042</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Generated from OpenCode OC-1 theme definition</p>
+    <p>Source files: <code>packages/ui/src/theme/themes/oc-1.json</code> and <code>packages/ui/src/styles/colors.css</code></p>
+  </footer>
+</body>
+</html>

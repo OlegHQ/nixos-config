@@ -119,7 +119,7 @@
                   inputs.claude-config.homeManagerModules.default
                 ];
                 programs.nvimconf.enable = true;
-                programs.nvimconf.theme = "catppuccin_macchiato";
+                programs.nvimconf.theme = "opencode_oc1_dark";
                 programs.nvimconf.themeMode = "dark";
                 programs.claude-config.enable = true;
                 programs.claude-config.themeMode = "dark";
@@ -147,18 +147,11 @@
             vimPlugins = unstable.vimPlugins;
             bun = unstable.bun;
             helix = unstable.helix;
-            gdb = unstable.gdb;
             d2 = unstable.d2;
-            k3d = unstable.k3d;
             kubectl = unstable.kubectl;
             awscli2 = unstable.awscli2;
             helm-ls = unstable.helm-ls;
             gemini-cli = unstable.gemini-cli;
-            claude-code = unstable.claude-code;
-            codex = unstable.codex;
-
-            # Packages with broken builds in stable nixpkgs-25.11
-            dotnet-sdk = unstable.dotnet-sdk; # requires LLVM rebuild in stable
           })
         # Custom Neovim configuration overlay with pinned plugin versions
         (import ./home/nvim.nix { inherit inputs; })
@@ -206,7 +199,7 @@
             inputs.claude-config.homeManagerModules.default
             {
               programs.nvimconf.enable = true;
-              programs.nvimconf.theme = "catppuccin_macchiato";
+              programs.nvimconf.theme = "opencode_oc1_dark";
               programs.nvimconf.themeMode = "dark";
               programs.claude-config.enable = true;
               programs.claude-config.themeMode = "dark";

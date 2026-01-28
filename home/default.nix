@@ -3,6 +3,7 @@
 
 let
   themeMode = "dark"; # "dark" or "light" (global)
+  themeFamily = "opencode"; # "catppuccin" or "opencode"
 
   catppuccin = {
     latte = {
@@ -46,11 +47,67 @@ let
     };
   };
 
+  opencode_oc1 = {
+    dark = {
+      # Backgrounds
+      base = "131010";
+      mantle = "151313";
+      crust = "1c1717";
+      surface0 = "191515";
+      surface1 = "252121";
+      surface2 = "2d2828";
+
+      # Text (blended from alpha)
+      text = "b5b0b0";
+      subtext1 = "efeaea";
+      subtext0 = "706a6a";
+
+      # Overlays
+      overlay0 = "4b4646";
+      overlay1 = "645f5f";
+      overlay2 = "716c6b";
+
+      # Catppuccin-compatible aliases
+      blue = "89b5ff";
+      red = "fc533a";
+      green = "12c905";
+      yellow = "fcd53a";
+      pink = "ff9ae2";
+      mauve = "9d7cd8";
+      peach = "fab283";
+      teal = "00ceb9";
+      lavender = "edb2f1";
+      flamingo = "ffba92";
+      rosewater = "f1ecec";
+      sapphire = "56b6c2";
+      sky = "93e9f6";
+      maroon = "ff917b";
+
+      # Semantic
+      primary = "fab283";
+      success = "12c905";
+      warning = "fcd53a";
+      error = "fc533a";
+      info = "edb2f1";
+      interactive = "89b5ff";
+
+      # Syntax
+      string = "00ceb9";
+      primitive = "ffba92";
+      property = "ff9ae2";
+      type = "ecf58c";
+      constant = "93e9f6";
+    };
+  };
+
   palette =
-    if themeMode == "dark" then catppuccin.macchiato else catppuccin.latte;
+    if themeFamily == "opencode" then
+      (if themeMode == "dark" then opencode_oc1.dark else opencode_oc1.dark)
+    else
+      (if themeMode == "dark" then catppuccin.macchiato else catppuccin.latte);
 
   fishTheme = ''
-    # Catppuccin theme (generated from `themeMode`)
+    # Fish theme (generated from themeFamily: ${themeFamily}, mode: ${themeMode})
     set -g fish_color_normal ${palette.text}
     set -g fish_color_command ${palette.blue}
     set -g fish_color_param ${palette.flamingo}
@@ -93,7 +150,7 @@ let
 
     set -l last_status $status
 
-    # Catppuccin colors (generated from `themeMode`)
+    # Theme colors (generated from themeFamily: ${themeFamily})
     set -l ctp_lavender ${palette.lavender}
     set -l ctp_blue ${palette.blue}
     set -l ctp_sapphire ${palette.sapphire}
@@ -134,14 +191,48 @@ let
     end
   '';
 
-  ghosttyTheme = if themeMode == "dark" then
-    "Catppuccin Macchiato"
-  else
-    "Tinacious Design Light";
+  ghosttyTheme =
+    if themeFamily == "opencode" then
+      "OpenCode-OC1-Dark"
+    else if themeMode == "dark" then
+      "Catppuccin Macchiato"
+    else
+      "Tinacious Design Light";
+
+  # Ghostty custom theme file content for OpenCode OC-1 Dark
+  ghosttyOC1Theme = ''
+    background = 131010
+    foreground = b5b0b0
+    cursor-color = fab283
+    selection-background = 252121
+    selection-foreground = efeaea
+
+    # Normal colors (0-7)
+    palette = 0=#131010
+    palette = 1=#fc533a
+    palette = 2=#12c905
+    palette = 3=#fcd53a
+    palette = 4=#89b5ff
+    palette = 5=#9d7cd8
+    palette = 6=#00ceb9
+    palette = 7=#b5b0b0
+
+    # Bright colors (8-15)
+    palette = 8=#706a6a
+    palette = 9=#ff917b
+    palette = 10=#4ee541
+    palette = 11=#fce06a
+    palette = 12=#a8c8ff
+    palette = 13=#b99ce8
+    palette = 14=#3ddbc8
+    palette = 15=#efeaea
+  '';
 
   ghosttyConfig = ''
     theme = "${ghosttyTheme}"
     font-family = "PragmataPro Liga"
+    cursor-style = block
+    shell-integration-features = no-cursor
     keybind = "ctrl+l=unbind"
 
     # Enable OSC52 clipboard support for SSH/mosh
@@ -152,6 +243,320 @@ let
   '';
 
   tmuxCatppuccinFlavor = if themeMode == "dark" then "macchiato" else "latte";
+
+  # OpenCode OC-1 tmux inline styles
+  tmuxOC1Styles = ''
+    # OpenCode OC-1 Dark theme for tmux
+    set -g status-style "bg=#151313,fg=#b5b0b0"
+    set -g status-left "#[bg=#fab283,fg=#131010,bold] #S #[bg=#151313,fg=#fab283]"
+    set -g status-right "#[fg=#706a6a]%Y-%m-%d #[fg=#b5b0b0]%H:%M "
+    set -g status-left-length 50
+    set -g status-right-length 50
+
+    # Window status
+    set -g window-status-format "#[fg=#706a6a] #I:#W "
+    set -g window-status-current-format "#[bg=#252121,fg=#89b5ff,bold] #I:#W #[bg=#151313]"
+    set -g window-status-separator ""
+
+    # Pane borders
+    set -g pane-border-style "fg=#252121"
+    set -g pane-active-border-style "fg=#fab283"
+
+    # Message style
+    set -g message-style "bg=#252121,fg=#efeaea"
+    set -g message-command-style "bg=#252121,fg=#efeaea"
+
+    # Mode style (copy mode highlight)
+    set -g mode-style "bg=#252121,fg=#efeaea"
+  '';
+
+  # Helix OpenCode OC-1 Dark theme
+  helixOC1Theme = ''
+    # OpenCode OC-1 Dark Theme for Helix
+    # Syntax highlighting
+    "attribute" = "type"
+    "type" = "type"
+    "type.enum.variant" = "teal"
+    "constructor" = "constant"
+    "constant" = "constant"
+    "constant.character" = "teal"
+    "constant.character.escape" = "pink"
+    "string" = "string"
+    "string.regexp" = "pink"
+    "string.special" = "blue"
+    "string.special.symbol" = "red"
+    "comment" = { fg = "comment", modifiers = ["italic"] }
+    "variable" = "text"
+    "variable.parameter" = { fg = "primitive", modifiers = ["italic"] }
+    "variable.builtin" = "red"
+    "variable.other.member" = "blue"
+    "label" = "sapphire"
+    "punctuation" = "overlay2"
+    "punctuation.special" = "sky"
+    "keyword" = "info"
+    "keyword.control.conditional" = { fg = "info", modifiers = ["italic"] }
+    "operator" = "constant"
+    "function" = "interactive"
+    "function.macro" = "info"
+    "tag" = "interactive"
+    "namespace" = { fg = "type", modifiers = ["italic"] }
+    "special" = "interactive"
+
+    # Markup
+    "markup.heading.1" = "error"
+    "markup.heading.2" = "primary"
+    "markup.heading.3" = "warning"
+    "markup.heading.4" = "success"
+    "markup.heading.5" = "sapphire"
+    "markup.heading.6" = "lavender"
+    "markup.list" = "teal"
+    "markup.list.unchecked" = "overlay2"
+    "markup.list.checked" = "success"
+    "markup.bold" = { fg = "error", modifiers = ["bold"] }
+    "markup.italic" = { fg = "error", modifiers = ["italic"] }
+    "markup.link.url" = { fg = "interactive", modifiers = ["italic", "underlined"] }
+    "markup.link.text" = "lavender"
+    "markup.link.label" = "sapphire"
+    "markup.raw" = "success"
+    "markup.quote" = "pink"
+
+    # Diff
+    "diff.plus" = "success"
+    "diff.minus" = "error"
+    "diff.delta" = "interactive"
+
+    # UI
+    "ui.background" = { fg = "text", bg = "base" }
+    "ui.linenr" = { fg = "surface1" }
+    "ui.linenr.selected" = { fg = "info" }
+    "ui.statusline" = { fg = "subtext1", bg = "mantle" }
+    "ui.statusline.inactive" = { fg = "surface2", bg = "mantle" }
+    "ui.statusline.normal" = { fg = "base", bg = "rosewater", modifiers = ["bold"] }
+    "ui.statusline.insert" = { fg = "base", bg = "success", modifiers = ["bold"] }
+    "ui.statusline.select" = { fg = "base", bg = "info", modifiers = ["bold"] }
+    "ui.popup" = { fg = "text", bg = "surface0" }
+    "ui.window" = { fg = "crust" }
+    "ui.help" = { fg = "overlay2", bg = "surface0" }
+    "ui.bufferline" = { fg = "subtext0", bg = "mantle" }
+    "ui.bufferline.active" = { fg = "info", bg = "base", underline = { color = "info", style = "line" } }
+    "ui.bufferline.background" = { bg = "crust" }
+    "ui.text" = "text"
+    "ui.text.focus" = { fg = "text", bg = "surface0", modifiers = ["bold"] }
+    "ui.text.inactive" = { fg = "overlay1" }
+    "ui.text.directory" = { fg = "interactive" }
+    "ui.virtual" = "overlay0"
+    "ui.virtual.ruler" = { bg = "surface0" }
+    "ui.virtual.indent-guide" = "surface0"
+    "ui.virtual.inlay-hint" = { fg = "surface1", bg = "mantle" }
+    "ui.virtual.jump-label" = { fg = "rosewater", modifiers = ["bold"] }
+    "ui.selection" = { bg = "surface1" }
+    "ui.cursor" = { fg = "base", bg = "secondary_cursor" }
+    "ui.cursor.primary" = { fg = "base", bg = "primary" }
+    "ui.cursor.match" = { fg = "primary", modifiers = ["bold"] }
+    "ui.cursor.primary.normal" = { fg = "base", bg = "rosewater" }
+    "ui.cursor.primary.insert" = { fg = "base", bg = "success" }
+    "ui.cursor.primary.select" = { fg = "base", bg = "info" }
+    "ui.cursor.normal" = { fg = "base", bg = "secondary_cursor_normal" }
+    "ui.cursor.insert" = { fg = "base", bg = "secondary_cursor_insert" }
+    "ui.cursor.select" = { fg = "base", bg = "secondary_cursor_select" }
+    "ui.cursorline.primary" = { bg = "cursorline" }
+    "ui.highlight" = { bg = "surface1", modifiers = ["bold"] }
+    "ui.menu" = { fg = "overlay2", bg = "surface0" }
+    "ui.menu.selected" = { fg = "text", bg = "surface1", modifiers = ["bold"] }
+
+    # Diagnostics
+    "diagnostic.error" = { underline = { color = "error", style = "curl" } }
+    "diagnostic.warning" = { underline = { color = "warning", style = "curl" } }
+    "diagnostic.info" = { underline = { color = "constant", style = "curl" } }
+    "diagnostic.hint" = { underline = { color = "string", style = "curl" } }
+    "diagnostic.unnecessary" = { modifiers = ["dim"] }
+
+    error = "error"
+    warning = "warning"
+    info = "sky"
+    hint = "teal"
+
+    [palette]
+    # Backgrounds
+    base = "#131010"
+    mantle = "#151313"
+    crust = "#1c1717"
+    surface0 = "#191515"
+    surface1 = "#252121"
+    surface2 = "#2d2828"
+
+    # Text (blended from alpha)
+    text = "#b5b0b0"
+    subtext1 = "#efeaea"
+    subtext0 = "#706a6a"
+
+    # Overlays
+    overlay0 = "#4b4646"
+    overlay1 = "#645f5f"
+    overlay2 = "#716c6b"
+
+    # Syntax
+    string = "#00ceb9"
+    primitive = "#ffba92"
+    property = "#ff9ae2"
+    type = "#ecf58c"
+    constant = "#93e9f6"
+    comment = "#706a6a"
+
+    # Semantic
+    primary = "#fab283"
+    success = "#12c905"
+    warning = "#fcd53a"
+    error = "#fc533a"
+    info = "#edb2f1"
+    interactive = "#89b5ff"
+
+    # Catppuccin-compatible
+    rosewater = "#f1ecec"
+    flamingo = "#ffba92"
+    pink = "#ff9ae2"
+    mauve = "#9d7cd8"
+    red = "#fc533a"
+    maroon = "#ff917b"
+    peach = "#fab283"
+    yellow = "#fcd53a"
+    green = "#12c905"
+    teal = "#00ceb9"
+    sky = "#93e9f6"
+    sapphire = "#56b6c2"
+    blue = "#89b5ff"
+    lavender = "#edb2f1"
+
+    # Cursor states
+    cursorline = "#1c1717"
+    secondary_cursor = "#706a6a"
+    secondary_cursor_normal = "#706a6a"
+    secondary_cursor_insert = "#267f20"
+    secondary_cursor_select = "#878ec0"
+  '';
+
+  # Zed OpenCode OC-1 Dark theme JSON (raw string to avoid Nix attribute conflicts)
+  zedOC1Theme = ''
+    {
+      "$schema": "https://zed.dev/schema/themes/v0.1.0.json",
+      "name": "OpenCode OC-1 Dark",
+      "author": "OpenCode",
+      "themes": [
+        {
+          "name": "OpenCode OC-1 Dark",
+          "appearance": "dark",
+          "style": {
+            "background": "#131010",
+            "editor.background": "#131010",
+            "editor.foreground": "#b5b0b0",
+            "editor.gutter.background": "#131010",
+            "editor.line_number": "#4b4646",
+            "editor.active_line_number": "#edb2f1",
+            "editor.active_line.background": "#1c1717",
+            "syntax.attribute": {"color": "#ecf58c"},
+            "syntax.boolean": {"color": "#93e9f6"},
+            "syntax.comment": {"color": "#706a6a", "font_style": "italic"},
+            "syntax.constant": {"color": "#93e9f6"},
+            "syntax.constructor": {"color": "#93e9f6"},
+            "syntax.function": {"color": "#89b5ff"},
+            "syntax.keyword": {"color": "#edb2f1"},
+            "syntax.number": {"color": "#ffba92"},
+            "syntax.operator": {"color": "#93e9f6"},
+            "syntax.property": {"color": "#ff9ae2"},
+            "syntax.punctuation": {"color": "#716c6b"},
+            "syntax.string": {"color": "#00ceb9"},
+            "syntax.type": {"color": "#ecf58c"},
+            "syntax.variable": {"color": "#b5b0b0"},
+            "syntax.variable.special": {"color": "#ffba92", "font_style": "italic"},
+            "text": "#b5b0b0",
+            "text.muted": "#706a6a",
+            "text.placeholder": "#4b4646",
+            "text.accent": "#89b5ff",
+            "status_bar.background": "#151313",
+            "title_bar.background": "#151313",
+            "toolbar.background": "#151313",
+            "tab_bar.background": "#151313",
+            "tab.active_background": "#131010",
+            "tab.inactive_background": "#151313",
+            "panel.background": "#131010",
+            "border": "#252121",
+            "border.focused": "#fab283",
+            "border.selected": "#fab283",
+            "border.transparent": "#25212100",
+            "border.disabled": "#2d2828",
+            "elevated_surface.background": "#191515",
+            "surface.background": "#151313",
+            "element.background": "#191515",
+            "element.hover": "#252121",
+            "element.active": "#2d2828",
+            "element.selected": "#252121",
+            "element.disabled": "#191515",
+            "ghost_element.background": "#19151500",
+            "ghost_element.hover": "#252121",
+            "ghost_element.active": "#2d2828",
+            "ghost_element.selected": "#252121",
+            "ghost_element.disabled": "#191515",
+            "drop_target.background": "#252121",
+            "icon": "#b5b0b0",
+            "icon.muted": "#706a6a",
+            "icon.disabled": "#4b4646",
+            "icon.placeholder": "#4b4646",
+            "icon.accent": "#89b5ff",
+            "scrollbar.thumb.background": "#25212180",
+            "scrollbar.thumb.border": "#25212100",
+            "scrollbar.thumb.hover_background": "#2d2828",
+            "scrollbar.track.background": "#13101000",
+            "scrollbar.track.border": "#25212100",
+            "terminal.background": "#131010",
+            "terminal.foreground": "#b5b0b0",
+            "terminal.ansi.black": "#131010",
+            "terminal.ansi.red": "#fc533a",
+            "terminal.ansi.green": "#12c905",
+            "terminal.ansi.yellow": "#fcd53a",
+            "terminal.ansi.blue": "#89b5ff",
+            "terminal.ansi.magenta": "#9d7cd8",
+            "terminal.ansi.cyan": "#00ceb9",
+            "terminal.ansi.white": "#b5b0b0",
+            "terminal.ansi.bright_black": "#706a6a",
+            "terminal.ansi.bright_red": "#ff917b",
+            "terminal.ansi.bright_green": "#4ee541",
+            "terminal.ansi.bright_yellow": "#fce06a",
+            "terminal.ansi.bright_blue": "#a8c8ff",
+            "terminal.ansi.bright_magenta": "#b99ce8",
+            "terminal.ansi.bright_cyan": "#3ddbc8",
+            "terminal.ansi.bright_white": "#efeaea",
+            "link_text.hover": "#89b5ff",
+            "error": "#fc533a",
+            "error.background": "#fc533a20",
+            "error.border": "#fc533a",
+            "warning": "#fcd53a",
+            "warning.background": "#fcd53a20",
+            "warning.border": "#fcd53a",
+            "success": "#12c905",
+            "success.background": "#12c90520",
+            "success.border": "#12c905",
+            "info": "#89b5ff",
+            "info.background": "#89b5ff20",
+            "info.border": "#89b5ff",
+            "hint": "#00ceb9",
+            "hint.background": "#00ceb920",
+            "hint.border": "#00ceb9",
+            "predictive": "#706a6a",
+            "renamed": "#89b5ff",
+            "deleted": "#fc533a",
+            "modified": "#fcd53a",
+            "created": "#12c905",
+            "hidden": "#706a6a",
+            "conflict": "#ff9ae2",
+            "ignored": "#4b4646",
+            "players": [
+              {"cursor": "#fab283", "background": "#fab28320", "selection": "#fab28330"}
+            ]
+          }
+        }
+      ]
+    }
+  '';
 
   fishSources = {
     "fish-fzf" = inputs."fish-fzf";
@@ -285,11 +690,6 @@ let
     vendorHash = null;
   };
 
-  # Unlock macOS keychain (for codesigning, Claude, etc)
-  claude-unlock = pkgs.writeShellScriptBin "claude-unlock" ''
-    security unlock-keychain ~/Library/Keychains/login.keychain-db
-  '';
-
 in {
   # HM state version
   home.stateVersion = "18.09";
@@ -324,7 +724,6 @@ in {
     pkgs.templ
 
     pkgs.uv
-
     pkgs.clang-tools
 
     pkgs.fswatch
@@ -340,15 +739,10 @@ in {
     pkgs.python3
     pkgs.nodejs_24
 
-    pkgs.dotnet-sdk
-
     pkgs.uv
-    pkgs.claude-code
-    pkgs.codex
 
     dumptty
     kp
-    claude-unlock
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
   ]) ++ (lib.optionals isLinux [
@@ -395,8 +789,10 @@ in {
   home.file.".hushlogin".text = "";
 
   xdg.configFile."ghostty/config".text = ghosttyConfig;
+  xdg.configFile."ghostty/themes/OpenCode-OC1-Dark".text = ghosttyOC1Theme;
   xdg.configFile."helix/languages.toml".text = helix.languages;
   xdg.configFile."helix/config.toml".text = helix.config;
+  xdg.configFile."helix/themes/opencode_oc1_dark.toml".text = helixOC1Theme;
 
   # Gemini CLI settings
   xdg.configFile."gemini/settings.json".source = ./configs/gemini-settings.json;
@@ -404,6 +800,7 @@ in {
   # Zed editor settings
   xdg.configFile."zed/settings.json".source = ./configs/zed-settings.json;
   xdg.configFile."zed/keymap.json".source = ./configs/zed-keymap.json;
+  xdg.configFile."zed/themes/opencode-oc1-dark.json".text = zedOC1Theme;
 
   # usql configuration
   home.file.".usqlrc".source = ./configs/usqlrc;
@@ -551,10 +948,6 @@ in {
       set -g allow-passthrough on
       set -s set-clipboard off
 
-      # Catppuccin theme
-      set -g @catppuccin_flavor "${tmuxCatppuccinFlavor}"
-      set -g @catppuccin_window_status_style "rounded"
-
       # Copy bindings using smart yank
       bind -T copy-mode MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
       bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "${yank}/bin/yank"
@@ -563,10 +956,14 @@ in {
 
       bind -n C-k send-keys "clear" Enter
 
-      # Load Nix plugins
+      # Load pain-control plugin
       run-shell ${tmuxSources."tmux-pain-control"}/pain_control.tmux
+    '' + (if themeFamily == "opencode" then tmuxOC1Styles else ''
+      # Catppuccin theme
+      set -g @catppuccin_flavor "${tmuxCatppuccinFlavor}"
+      set -g @catppuccin_window_status_style "rounded"
       run-shell ${tmuxSources."tmux-catppuccin"}/catppuccin.tmux
-    '';
+    '');
   };
 
   programs.neovim = {

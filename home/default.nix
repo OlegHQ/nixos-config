@@ -468,6 +468,31 @@ let
             "syntax.type": {"color": "#ecf58c"},
             "syntax.variable": {"color": "#b5b0b0"},
             "syntax.variable.special": {"color": "#ffba92", "font_style": "italic"},
+            "syntax.comment.doc": {"color": "#706a6a", "font_style": "italic"},
+            "syntax.constant.builtin": {"color": "#93e9f6", "font_style": "italic"},
+            "syntax.string.escape": {"color": "#ffba92"},
+            "syntax.string.regex": {"color": "#00ceb9"},
+            "syntax.string.special": {"color": "#00ceb9"},
+            "syntax.string.special.symbol": {"color": "#00ceb9"},
+            "syntax.punctuation.bracket": {"color": "#716c6b"},
+            "syntax.punctuation.delimiter": {"color": "#716c6b"},
+            "syntax.punctuation.list_marker": {"color": "#edb2f1"},
+            "syntax.punctuation.special": {"color": "#716c6b"},
+            "syntax.type.builtin": {"color": "#ecf58c", "font_style": "italic"},
+            "syntax.enum": {"color": "#ecf58c"},
+            "syntax.variant": {"color": "#93e9f6"},
+            "syntax.variable.parameter": {"color": "#ffba92"},
+            "syntax.embedded": {"color": "#b5b0b0"},
+            "syntax.label": {"color": "#edb2f1"},
+            "syntax.preproc": {"color": "#edb2f1"},
+            "syntax.tag": {"color": "#89b5ff"},
+            "syntax.tag.doctype": {"color": "#706a6a"},
+            "syntax.emphasis": {"font_style": "italic"},
+            "syntax.emphasis.strong": {"font_weight": 700},
+            "syntax.link_text": {"color": "#89b5ff"},
+            "syntax.link_uri": {"color": "#00ceb9"},
+            "syntax.text.literal": {"color": "#00ceb9"},
+            "syntax.title": {"color": "#edb2f1", "font_weight": 700},
             "text": "#b5b0b0",
             "text.muted": "#706a6a",
             "text.placeholder": "#4b4646",
@@ -945,6 +970,7 @@ in {
 
     extraConfig = ''
       set -ga terminal-overrides ",xterm-256color:Tc"
+      set -ga terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[ q'
       set -g allow-passthrough on
       set -s set-clipboard off
 

@@ -742,6 +742,7 @@ in {
     pkgs.lazygit
     pkgs.zoxide
     pkgs.gh
+    pkgs.glab
     pkgs.bun
     pkgs.mongosh
 

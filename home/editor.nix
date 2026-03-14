@@ -27,10 +27,7 @@ in {
       indent-blankline-nvim
 
       { plugin = comment-nvim; optional = true; }
-      { plugin = nvim-cmp; optional = true; }
-      { plugin = cmp-buffer; optional = true; }
-      { plugin = cmp-nvim-lsp; optional = true; }
-      { plugin = cmp-path; optional = true; }
+      blink-cmp
     ];
   };
 

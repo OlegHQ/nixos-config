@@ -1001,22 +1001,29 @@ in {
     viAlias = true;
 
     plugins = with pkgs.vimPlugins; [
+      # Start plugins (loaded at startup)
       fzf-lua
       nvim-lspconfig
-      comment-nvim
-      nvim-cmp
-      cmp-buffer
-      cmp-nvim-lsp
       gitsigns-nvim
       conform-nvim
-      nvim-treesitter.withAllGrammars
+      (nvim-treesitter.withPlugins (p: with p; [
+        lua nix bash fish python typescript javascript tsx
+        json toml yaml html css markdown markdown_inline
+        rust go c cpp dockerfile git_config gitignore
+        sql graphql proto terraform hcl
+      ]))
       lualine-nvim
       nvim-autopairs
-      cmp-path
       bufferline-nvim
-      hop-nvim
       lsp_lines-nvim
       indent-blankline-nvim
+
+      # Opt plugins (loaded on demand via packadd)
+      { plugin = comment-nvim; optional = true; }
+      { plugin = nvim-cmp; optional = true; }
+      { plugin = cmp-buffer; optional = true; }
+      { plugin = cmp-nvim-lsp; optional = true; }
+      { plugin = cmp-path; optional = true; }
     ];
   };
 

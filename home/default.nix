@@ -1001,9 +1001,7 @@ in {
     viAlias = true;
 
     plugins = with pkgs.vimPlugins; [
-      hotpot-nvim
-      plenary-nvim
-      telescope-nvim
+      fzf-lua
       nvim-lspconfig
       comment-nvim
       nvim-cmp
@@ -1012,14 +1010,12 @@ in {
       gitsigns-nvim
       conform-nvim
       nvim-treesitter.withAllGrammars
-      catppuccin-nvim
       lualine-nvim
       nvim-autopairs
       cmp-path
       bufferline-nvim
       hop-nvim
       lsp_lines-nvim
-      vim-visual-multi
       indent-blankline-nvim
     ];
   };

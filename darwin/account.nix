@@ -1,11 +1,8 @@
-{ pkgs, config, ... }:
+{ pkgs, userName, userHomeDarwin, ... }:
 
 {
-  # User account configuration for nix-darwin integration
-  
-  # Configure user shell and home directory for proper nix-darwin operation
-  users.users.${config._module.args.userName} = {
-    home = config._module.args.userHomeDarwin;
+  users.users.${userName} = {
+    home = userHomeDarwin;
     shell = pkgs.fish;
   };
 }

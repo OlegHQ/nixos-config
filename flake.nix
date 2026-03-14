@@ -1,9 +1,8 @@
-# Advanced NixOS flake configuration with multi-platform support
 {
-  description = "Advanced NixOS configuration with Darwin support";
+  description = "NixOS/Darwin configuration with Home Manager";
 
   inputs = {
-    # Core Nix channels
+    # Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
@@ -17,36 +16,35 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Shell & terminal enhancements
+    # Shell plugins
     fish-fzf = {
       url = "github:jethrokuan/fzf/24f4739fc1dffafcc0da3ccfbbd14d9c7d31827a";
       flake = false;
     };
     fish-foreign-env = {
-      url =
-        "github:oh-my-fish/plugin-foreign-env/dddd9213272a0ab848d474d0cbde12ad034e65bc";
+      url = "github:oh-my-fish/plugin-foreign-env/dddd9213272a0ab848d474d0cbde12ad034e65bc";
       flake = false;
     };
     fish-async-prompt = {
       url = "github:acomagu/fish-async-prompt";
       flake = false;
     };
+
     # Tmux plugins
     tmux-pain-control = {
-      url =
-        "github:tmux-plugins/tmux-pain-control/2db63de3b08fc64831d833240749133cecb67d92";
+      url = "github:tmux-plugins/tmux-pain-control/2db63de3b08fc64831d833240749133cecb67d92";
       flake = false;
     };
     tmux-catppuccin = {
       url = "github:catppuccin/tmux/2c4cb5a07a3e133ce6d5382db1ab541a0216ddc7";
       flake = false;
     };
-    # Neovim configuration module (for full config)
+
+    # Editor & tool configs
     nvimconf = {
       url = "github:OlegHQ/nvim-config?ref=dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Claude Code configuration module
     claude-config = {
       url = "github:OlegHQ/claude-config?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -55,94 +53,13 @@
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
     let
-      # System user configuration (auto-detected from environment)
-      # Use SUDO_USER if running under sudo, otherwise fall back to USER
-      userName = let
-        sudoUser = builtins.getEnv "SUDO_USER";
-        envUser = builtins.getEnv "USER";
-      in if sudoUser != "" then
-        sudoUser
-      else if envUser != "" then
-        envUser
-      else
-        "snowbear";
-      # Build a nix-darwin system
-      mkDarwin = name:
-        { system, user }:
-        darwin.lib.darwinSystem rec {
-          inherit system inputs;
-          modules = [
-            { nixpkgs.overlays = overlays; }
-            ./darwin/system.nix
-            ./darwin/account.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${user} = {
-                imports = [
-                  (import ./home/default.nix { inherit inputs; })
-                  inputs.claude-config.homeManagerModules.default
-                ];
-                programs.claude-config.enable = true;
-                programs.claude-config.themeMode = "dark";
-              };
-            }
-            {
-              config._module.args = {
-                currentSystemName = name;
-                currentSystem = system;
-                userName = userName;
-                userHomeDarwin = "/Users/${userName}";
-              };
-            }
-          ];
-        };
+      # Default user — override via _module.args if needed
+      defaultUser = "snowbear";
 
-      # Build a nix-darwin system with nvimconf (full config)
-      mkDarwinFull = name:
-        { system, user }:
-        darwin.lib.darwinSystem rec {
-          inherit system inputs;
-          modules = [
-            { nixpkgs.overlays = overlays; }
-            ./darwin/system.nix
-            ./darwin/account.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${user} = {
-                imports = [
-                  (import ./home/default.nix { inherit inputs; })
-                  inputs.nvimconf.homeManagerModules.default
-                  inputs.claude-config.homeManagerModules.default
-                ];
-                programs.nvimconf.enable = true;
-                programs.nvimconf.theme = "opencode_oc1_dark";
-                programs.nvimconf.themeMode = "dark";
-                programs.claude-config.enable = true;
-                programs.claude-config.themeMode = "dark";
-              };
-            }
-            {
-              config._module.args = {
-                currentSystemName = name;
-                currentSystem = system;
-                userName = userName;
-                userHomeDarwin = "/Users/${userName}";
-              };
-            }
-          ];
-        };
-
-      # Package overlays for enhanced functionality and bleeding-edge tools
+      # Bleeding-edge packages from unstable
       overlays = [
-        # Bleeding-edge packages from unstable
         (final: prev:
-          let
-            unstable =
-              inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
+          let unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
           in {
             vimPlugins = unstable.vimPlugins;
             bun = unstable.bun;
@@ -153,77 +70,97 @@
             helm-ls = unstable.helm-ls;
             gemini-cli = unstable.gemini-cli;
           })
-        # Custom Neovim configuration overlay with pinned plugin versions
-        (import ./home/nvim.nix { inherit inputs; })
       ];
 
-      # Build a Home Manager configuration for a given linux system
-      mkHome = system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          hmModule = import ./home/default.nix { inherit inputs; };
-        in home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+      # Shared HM modules for nvimconf + claude-config
+      hmExtras = { full ? false }: [
+        inputs.claude-config.homeManagerModules.default
+        { programs.claude-config.enable = true;
+          programs.claude-config.themeMode = "dark"; }
+      ] ++ (if full then [
+        inputs.nvimconf.homeManagerModules.default
+        { programs.nvimconf.enable = true;
+          programs.nvimconf.theme = "opencode_oc1_dark";
+          programs.nvimconf.themeMode = "dark"; }
+      ] else []);
+
+      # Single parameterized Darwin builder (was mkDarwin + mkDarwinFull)
+      mkDarwin = name: { system, user, full ? false }:
+        darwin.lib.darwinSystem {
+          inherit system inputs;
           modules = [
-            { _module.args.pkgsPath = pkgs.path; }
+            { nixpkgs.overlays = overlays; }
+            ./darwin/system.nix
+            ./darwin/account.nix
+            home-manager.darwinModules.home-manager
             {
-              nixpkgs.overlays = overlays;
-              home.username = userName;
-              home.homeDirectory = "/home/${userName}";
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${user} = {
+                imports = [
+                  (import ./home/default.nix { inherit inputs; })
+                ] ++ hmExtras { inherit full; };
+              };
             }
-            hmModule
-            inputs.claude-config.homeManagerModules.default
             {
-              programs.claude-config.enable = true;
-              programs.claude-config.themeMode = "dark";
+              config._module.args = {
+                currentSystemName = name;
+                currentSystem = system;
+                userName = user;
+                userHomeDarwin = "/Users/${user}";
+              };
             }
           ];
         };
 
-      # Build a Home Manager configuration with nvimconf (full config)
-      mkHomeFull = system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          hmModule = import ./home/default.nix { inherit inputs; };
+      # Single parameterized Home Manager builder (was mkHome + mkHomeFull)
+      mkHome = { system, user, full ? false }:
+        let pkgs = nixpkgs.legacyPackages.${system};
         in home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
             { _module.args.pkgsPath = pkgs.path; }
             {
               nixpkgs.overlays = overlays;
-              home.username = userName;
-              home.homeDirectory = "/home/${userName}";
+              home.username = user;
+              home.homeDirectory = "/home/${user}";
             }
-            hmModule
-            inputs.nvimconf.homeManagerModules.default
-            inputs.claude-config.homeManagerModules.default
-            {
-              programs.nvimconf.enable = true;
-              programs.nvimconf.theme = "opencode_oc1_dark";
-              programs.nvimconf.themeMode = "dark";
-              programs.claude-config.enable = true;
-              programs.claude-config.themeMode = "dark";
-            }
-          ];
+            (import ./home/default.nix { inherit inputs; })
+          ] ++ hmExtras { inherit full; };
         };
+
     in {
       darwinConfigurations = {
         mac = mkDarwin "mac" {
           system = "aarch64-darwin";
-          user = userName;
+          user = defaultUser;
         };
-        mac-full = mkDarwinFull "mac-full" {
+        mac-full = mkDarwin "mac-full" {
           system = "aarch64-darwin";
-          user = userName;
+          user = defaultUser;
+          full = true;
         };
       };
 
       homeConfigurations = {
-        "${userName}-x86_64" = mkHome "x86_64-linux";
-        "${userName}-aarch64" = mkHome "aarch64-linux";
-        "${userName}-full-x86_64" = mkHomeFull "x86_64-linux";
-        "${userName}-full-aarch64" = mkHomeFull "aarch64-linux";
+        "${defaultUser}-x86_64" = mkHome {
+          system = "x86_64-linux";
+          user = defaultUser;
+        };
+        "${defaultUser}-aarch64" = mkHome {
+          system = "aarch64-linux";
+          user = defaultUser;
+        };
+        "${defaultUser}-full-x86_64" = mkHome {
+          system = "x86_64-linux";
+          user = defaultUser;
+          full = true;
+        };
+        "${defaultUser}-full-aarch64" = mkHome {
+          system = "aarch64-linux";
+          user = defaultUser;
+          full = true;
+        };
       };
     };
 }
-

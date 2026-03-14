@@ -1,23 +1,22 @@
-{ config, pkgs, userName, ... }: {
-  # macOS system configuration with nix-darwin
-  system.stateVersion = 5;
+{ config, pkgs, userName, ... }:
 
-  # Required for CustomUserPreferences
+let
+  mkHandler = contentType: {
+    LSHandlerContentType = contentType;
+    LSHandlerRoleAll = "com.mitchellh.ghostty";
+    LSHandlerPreferredVersions = { LSHandlerRoleAll = "-"; };
+  };
+
+in {
+  system.stateVersion = 5;
   system.primaryUser = userName;
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Nix daemon configuration managed by external installer
-  # nix.useDaemon = true;
-
-  # Nix configuration settings
+  # Nix managed by external installer
   nix = {
     enable = false;
-    
-    # Suppress legacy channel warnings
     nixPath = pkgs.lib.mkForce [ ];
-
     settings = {
       substituters = [ "https://cache.nixos.org/" ];
       trusted-public-keys = [
@@ -26,7 +25,6 @@
     };
   };
 
-  # Shell configuration
   programs.zsh.enable = true;
   programs.zsh.shellInit = ''
     if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
@@ -44,75 +42,18 @@
   environment.shells = with pkgs; [ bashInteractive zsh fish ];
   environment.systemPackages = with pkgs; [ rustup gcc wget ];
 
-  # File associations using CustomUserPreferences
   system.defaults.CustomUserPreferences = {
     "com.apple.LaunchServices" = {
-      LSHandlers = [
-        # Text files and source code open with Ghostty (which will use nvim due to EDITOR)
-        {
-          LSHandlerContentType = "public.plain-text";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        {
-          LSHandlerContentType = "public.source-code";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        {
-          LSHandlerContentType = "public.shell-script";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        # Markdown files
-        {
-          LSHandlerContentType = "net.daringfireball.markdown";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        # Lua files
-        {
-          LSHandlerContentType = "public.lua-script";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        # Files without extension (like LICENSE)
-        {
-          LSHandlerContentType = "public.data";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        # Text-based files
-        {
-          LSHandlerContentType = "public.text";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
-        # Executables open with Ghostty (default terminal)
-        {
-          LSHandlerContentType = "public.unix-executable";
-          LSHandlerRoleAll = "com.mitchellh.ghostty";
-          LSHandlerPreferredVersions = {
-            LSHandlerRoleAll = "-";
-          };
-        }
+      LSHandlers = map mkHandler [
+        "public.plain-text"
+        "public.source-code"
+        "public.shell-script"
+        "net.daringfireball.markdown"
+        "public.lua-script"
+        "public.data"
+        "public.text"
+        "public.unix-executable"
       ];
     };
   };
 }
-
-

@@ -60,9 +60,8 @@ clean:
 	@echo "🧹 Cleaning build artifacts..."
 	rm -rf result
 
-# Update nexo-tech flake inputs
 update-nexo:
-	@echo "🔄 Updating nexo-tech modules..."
+	@echo "🔄 Updating OlegHQ modules..."
 	nix flake update nvimconf claude-config
 
 help:
@@ -73,7 +72,7 @@ help:
 	@echo "  build       - Build configuration"
 	@echo "  check       - Validate flake configuration"
 	@echo "  clean       - Clean build artifacts"
-	@echo "  update-nexo   - Update nexo-tech flake inputs (nvimconf, claude-config)"
+	@echo "  update-nexo   - Update OlegHQ flake inputs (nvimconf, claude-config)"
 	@echo "  update-claude - Update Claude Code CLI"
 	@echo "  help          - Show this help message"
 

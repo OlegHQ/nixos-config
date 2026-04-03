@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "anthropic-skills": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770171633,
-        "narHash": "sha256-8tANLG91vLbC30IFpEakPBN9bUjJJldpvX28w9e9y80=",
-        "owner": "anthropics",
-        "repo": "skills",
-        "rev": "a5bcdd7e58cdff48566bf876f0a72a2008dcefbc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anthropics",
-        "repo": "skills",
-        "type": "github"
-      }
-    },
     "autoconf-nvim": {
       "flake": false,
       "locked": {
@@ -29,49 +13,6 @@
       "original": {
         "owner": "OlegHQ",
         "repo": "autoconf.nvim",
-        "type": "github"
-      }
-    },
-    "claude-config": {
-      "inputs": {
-        "anthropic-skills": "anthropic-skills",
-        "claude-plugins-official": "claude-plugins-official",
-        "humanizer": "humanizer",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "nixpkgs-unstable": "nixpkgs-unstable",
-        "tgnotify": "tgnotify",
-        "writing-interviewer": "writing-interviewer"
-      },
-      "locked": {
-        "lastModified": 1772057857,
-        "narHash": "sha256-j4KrbsRs57D6yopXTFb8cCf8QtFvqlMAGyAETvZn9Iw=",
-        "owner": "OlegHQ",
-        "repo": "claude-config",
-        "rev": "0bb1c2e39cd4ad882f6b6d3aac0dcb06e9a947ab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "OlegHQ",
-        "ref": "main",
-        "repo": "claude-config",
-        "type": "github"
-      }
-    },
-    "claude-plugins-official": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770328672,
-        "narHash": "sha256-L1YiqwropW/Uic0ggeoIajb3YxZTK9ZEWVQAvJs+j8k=",
-        "owner": "anthropics",
-        "repo": "claude-plugins-official",
-        "rev": "236752ad9ab36029b648bfd94707944760242768",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anthropics",
-        "repo": "claude-plugins-official",
         "type": "github"
       }
     },
@@ -146,24 +87,6 @@
         "type": "github"
       }
     },
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -185,22 +108,6 @@
         "type": "github"
       }
     },
-    "humanizer": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1769136397,
-        "narHash": "sha256-wkrarl0kHUdfQM5pTMikB/yQm0kngmhsMlqoxZ63Fqs=",
-        "owner": "blader",
-        "repo": "humanizer",
-        "rev": "c78047bd4300e5a995d37ae8c7684aa2d53326cd",
-        "type": "github"
-      },
-      "original": {
-        "owner": "blader",
-        "repo": "humanizer",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1773375660,
@@ -218,22 +125,6 @@
       }
     },
     "nixpkgs-unstable": {
-      "locked": {
-        "lastModified": 1770197578,
-        "narHash": "sha256-AYqlWrX09+HvGs8zM6ebZ1pwUqjkfpnv8mewYwAo+iM=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "00c21e4c93d963c50d4c0c89bfa84ed6e0694df2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-unstable_2": {
       "locked": {
         "lastModified": 1773385838,
         "narHash": "sha256-ylF2AGl08seexxlLvMqj3jd+yZq56W9zicwe51mp0Pw=",
@@ -274,54 +165,16 @@
     },
     "root": {
       "inputs": {
-        "claude-config": "claude-config",
         "darwin": "darwin",
         "fish-async-prompt": "fish-async-prompt",
         "fish-foreign-env": "fish-foreign-env",
         "fish-fzf": "fish-fzf",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable_2",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "nvimconf": "nvimconf",
         "tmux-catppuccin": "tmux-catppuccin",
         "tmux-pain-control": "tmux-pain-control"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "tgnotify": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "claude-config",
-          "nixpkgs-unstable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1768398384,
-        "narHash": "sha256-feTGGC+js/sh8ift4PVykLb4wgoSl9/t4qgUo1AjJvM=",
-        "owner": "nexo-tech",
-        "repo": "tgnotify",
-        "rev": "4a2732badd1c5eedfa35b8378779e74c10fa5049",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nexo-tech",
-        "repo": "tgnotify",
-        "type": "github"
       }
     },
     "themekit-nvim": {
@@ -371,22 +224,6 @@
         "owner": "tmux-plugins",
         "repo": "tmux-pain-control",
         "rev": "2db63de3b08fc64831d833240749133cecb67d92",
-        "type": "github"
-      }
-    },
-    "writing-interviewer": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1768497705,
-        "narHash": "sha256-PPXyHuapH7T94lbez53uc7FpmiF6FNUZfiownyxKItc=",
-        "owner": "KarthikRaju391",
-        "repo": "writing-interviewer-skill",
-        "rev": "313a3177453ce9767a667b777465c9c807a12a97",
-        "type": "github"
-      },
-      "original": {
-        "owner": "KarthikRaju391",
-        "repo": "writing-interviewer-skill",
         "type": "github"
       }
     }

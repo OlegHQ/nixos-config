@@ -62,7 +62,7 @@ clean:
 
 update-nexo:
 	@echo "🔄 Updating OlegHQ modules..."
-	nix flake update nvimconf claude-config
+	nix flake update nvimconf
 
 help:
 	@echo "📚 Available targets:"
@@ -72,7 +72,7 @@ help:
 	@echo "  build       - Build configuration"
 	@echo "  check       - Validate flake configuration"
 	@echo "  clean       - Clean build artifacts"
-	@echo "  update-nexo   - Update OlegHQ flake inputs (nvimconf, claude-config)"
+	@echo "  update-nexo   - Update OlegHQ nvimconf flake input"
 	@echo "  update-claude - Update Claude Code CLI"
 	@echo "  help          - Show this help message"
 

@@ -45,10 +45,6 @@
       url = "github:OlegHQ/nvim-config?ref=dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    claude-config = {
-      url = "github:OlegHQ/claude-config?ref=main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -72,12 +68,8 @@
           })
       ];
 
-      # Shared HM modules for nvimconf + claude-config
-      hmExtras = { full ? false }: [
-        inputs.claude-config.homeManagerModules.default
-        { programs.claude-config.enable = true;
-          programs.claude-config.themeMode = "dark"; }
-      ] ++ (if full then [
+      # Optional HM modules (nvimconf when full = true)
+      hmExtras = { full ? false }: (if full then [
         inputs.nvimconf.homeManagerModules.default
         { programs.nvimconf.enable = true;
           programs.nvimconf.theme = "opencode_oc1_dark";

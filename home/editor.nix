@@ -25,6 +25,7 @@ in {
       bufferline-nvim
       lsp_lines-nvim
       indent-blankline-nvim
+      mini-files
 
       { plugin = comment-nvim; optional = true; }
       blink-cmp

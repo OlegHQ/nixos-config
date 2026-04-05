@@ -99,6 +99,7 @@ in {
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
   ]) ++ (lib.optionals isLinux [
+    pkgs.rustup
     pkgs.util-linux
     pkgs.gcc
     pkgs.bzip2

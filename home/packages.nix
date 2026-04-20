@@ -79,7 +79,6 @@ in {
     pkgs.templ
 
     pkgs.uv
-    pkgs.clang-tools
 
     pkgs.fswatch
     pkgs.watchman
@@ -101,7 +100,6 @@ in {
   ]) ++ (lib.optionals isLinux [
     pkgs.rustup
     pkgs.util-linux
-    pkgs.gcc
     pkgs.bzip2
     pkgs.gmp
     pkgs.pkg-config

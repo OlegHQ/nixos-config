@@ -195,6 +195,6 @@ in {
     plugins = map (n: {
       name = n;
       src = fishSources.${n};
-    }) [ "fish-fzf" "fish-foreign-env" "fish-async-prompt" ];
+    }) [ "fish-fzf" "fish-foreign-env" ];
   };
 }

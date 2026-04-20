@@ -40,7 +40,7 @@ in {
   '';
 
   environment.shells = with pkgs; [ bashInteractive zsh fish ];
-  environment.systemPackages = with pkgs; [ rustup gcc wget ];
+  environment.systemPackages = with pkgs; [ rustup wget ];
 
   system.defaults.CustomUserPreferences = {
     "com.apple.LaunchServices" = {

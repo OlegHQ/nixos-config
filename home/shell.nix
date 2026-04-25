@@ -118,6 +118,7 @@ in {
 
     interactiveShellInit = lib.strings.concatStrings
       (lib.strings.intersperse "\n" ([
+        "set -gx PATH /nix/var/nix/profiles/default/bin $HOME/.nix-profile/bin $PATH"
         (builtins.readFile ./configs/config.fish)
         fishTheme
         "set -g SHELL ${pkgs.fish}/bin/fish"
@@ -195,6 +196,6 @@ in {
     plugins = map (n: {
       name = n;
       src = fishSources.${n};
-    }) [ "fish-fzf" "fish-foreign-env" ];
+    }) [ "fish-fzf" "fish-foreign-env" "fish-async-prompt" ];
   };
 }

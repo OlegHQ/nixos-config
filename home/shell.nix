@@ -9,7 +9,6 @@ let
   fishSources = {
     "fish-fzf" = inputs."fish-fzf";
     "fish-foreign-env" = inputs."fish-foreign-env";
-    "fish-async-prompt" = inputs."fish-async-prompt";
   };
 
   gitAliases = {
@@ -150,6 +149,9 @@ in {
         or string match -q '/net/*' -- $real_path
       '';
 
+      # Synchronous, fast: only reads .git/HEAD. The dirty marker comes from
+      # _git_dirty_async (cached, eventually consistent — lags by one prompt
+      # event after a change, which is invisible in practice).
       _git_info = ''
         _is_slow_fs; and return
 
@@ -166,11 +168,60 @@ in {
         test -z "$branch"; and return
 
         set -l dirty
-        not command git diff --quiet HEAD 2>/dev/null
-        and set dirty '+'
+        if test "$_git_dirty_key" = "$PWD"; and test "$_git_dirty_value" = 1
+            set dirty '+'
+        end
 
         echo -n (set_color ${p.blue})"($branch$dirty)"(set_color normal)
       '';
+
+      # Background `git diff --quiet` whose result is read on the next prompt
+      # event. Pure file-based polling — no signals, no plugin, no disown race.
+      _git_dirty_async = {
+        body = ''
+          if not set -q _git_dirty_tmpdir
+              set -g _git_dirty_tmpdir (command mktemp -d)
+          end
+          set -l result_file "$_git_dirty_tmpdir/r"
+
+          if test -f "$result_file"
+              read -gz _git_dirty_value <"$result_file"
+              command rm -f "$result_file"
+          end
+
+          if test "$_git_dirty_key" = "$PWD"; and not set -q _git_dirty_inflight
+              return
+          end
+          set -g _git_dirty_key "$PWD"
+          set -e _git_dirty_inflight
+
+          _is_slow_fs; and set -g _git_dirty_value 0; and return
+
+          set -l target "$PWD"
+          fish --no-config -c "
+              cd '$target' 2>/dev/null; or exit
+              if command git rev-parse --git-dir >/dev/null 2>/dev/null
+                  if not command git diff --quiet HEAD 2>/dev/null
+                      echo -n 1 >'$result_file.tmp'
+                  else
+                      echo -n 0 >'$result_file.tmp'
+                  end
+                  command mv '$result_file.tmp' '$result_file'
+              end
+          " &
+          disown 2>/dev/null
+        '';
+        onEvent = "fish_prompt";
+      };
+
+      _git_dirty_cleanup = {
+        body = ''
+          if set -q _git_dirty_tmpdir
+              command rm -rf "$_git_dirty_tmpdir"
+          end
+        '';
+        onEvent = "fish_exit";
+      };
 
       _cmd_duration = ''
         test $CMD_DURATION -lt 1000; and return
@@ -196,6 +247,6 @@ in {
     plugins = map (n: {
       name = n;
       src = fishSources.${n};
-    }) [ "fish-fzf" "fish-foreign-env" "fish-async-prompt" ];
+    }) [ "fish-fzf" "fish-foreign-env" ];
   };
 }

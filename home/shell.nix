@@ -205,15 +205,7 @@ in {
           command git rev-parse --git-dir >/dev/null 2>/dev/null; or return
 
           set -l target "$PWD"
-          fish --no-config -c "
-              cd '$target' 2>/dev/null; or exit
-              if command git diff --quiet HEAD 2>/dev/null
-                  command printf 0 >'$rf.tmp'
-              else
-                  command printf 1 >'$rf.tmp'
-              end
-              command mv '$rf.tmp' '$rf'
-          " &
+          command sh -c "cd '$target' 2>/dev/null && (git diff --quiet HEAD 2>/dev/null && printf 0 || printf 1) > '$rf.tmp' && mv '$rf.tmp' '$rf'" </dev/null >/dev/null 2>&1 &
           disown 2>/dev/null
         '';
         onEvent = "fish_prompt";

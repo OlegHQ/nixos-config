@@ -66,6 +66,13 @@
             helm-ls = unstable.helm-ls;
             gemini-cli = unstable.gemini-cli;
           })
+        # direnv's fish-based test suite gets killed in the darwin sandbox; skip it.
+        (final: prev: {
+          direnv = prev.direnv.overrideAttrs (old: {
+            doCheck = false;
+            doInstallCheck = false;
+          });
+        })
       ];
 
       # Optional HM modules (nvimconf when full = true)

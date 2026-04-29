@@ -48,6 +48,9 @@ let
   '';
 
 in {
-  xdg.configFile."ghostty/config".text = ghosttyConfig;
-  xdg.configFile."ghostty/themes/OpenCode-OC1-Dark".text = ghosttyOC1Theme;
+  xdg.configFile = {
+    "ghostty/config".text = ghosttyConfig;
+  } // lib.optionalAttrs (theme.themeFamily == "opencode") {
+    "ghostty/themes/OpenCode-OC1-Dark".text = ghosttyOC1Theme;
+  };
 }

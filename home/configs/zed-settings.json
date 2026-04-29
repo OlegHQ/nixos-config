@@ -35,9 +35,9 @@
   },
   "vim_mode": false,
   "theme": {
-    "mode": "dark",
-    "light": "Ayu Light",
-    "dark": "OpenCode OC-1 Dark",
+    "mode": "light",
+    "light": "Catppuccin Latte",
+    "dark": "Catppuccin Mocha",
   },
   "ui_font_size": 14,
   "ui_font_family": "PragmataPro",

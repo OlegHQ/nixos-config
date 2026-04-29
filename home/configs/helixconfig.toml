@@ -1,4 +1,4 @@
-theme = "opencode_oc1_dark"
+theme = "catppuccin_latte"
 
 [editor]
 line-number = "relative"

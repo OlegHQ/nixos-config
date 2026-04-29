@@ -1,8 +1,8 @@
 # Single source of truth for theme colors across all applications.
 # Every app-specific config (fish, ghostty, tmux, etc.) derives from this palette.
 let
-  themeMode = "dark"; # "dark" or "light"
-  themeFamily = "opencode"; # "opencode" or "catppuccin"
+  themeMode = "light"; # "dark" or "light"
+  themeFamily = "catppuccin"; # "opencode" or "catppuccin"
 
   catppuccin = {
     latte = {
@@ -116,7 +116,7 @@ in {
   ghosttyThemeName =
     if themeFamily == "opencode" then "OpenCode-OC1-Dark"
     else if themeMode == "dark" then "Catppuccin Macchiato"
-    else "Tinacious Design Light";
+    else "Catppuccin Latte";
 
   tmuxCatppuccinFlavor = if themeMode == "dark" then "macchiato" else "latte";
 }

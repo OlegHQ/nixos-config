@@ -79,8 +79,8 @@
       hmExtras = { full ? false }: (if full then [
         inputs.nvimconf.homeManagerModules.default
         { programs.nvimconf.enable = true;
-          programs.nvimconf.theme = "opencode_oc1_dark";
-          programs.nvimconf.themeMode = "dark"; }
+          programs.nvimconf.theme = "catppuccin_latte";
+          programs.nvimconf.themeMode = "light"; }
       ] else []);
 
       # Single parameterized Darwin builder (was mkDarwin + mkDarwinFull)

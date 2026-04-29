@@ -149,11 +149,11 @@
         "themekit-nvim": "themekit-nvim"
       },
       "locked": {
-        "lastModified": 1775244787,
-        "narHash": "sha256-qoX9Ng025JgehxSwqKaxK8KmtNhjvR1bO3IwVPBjJR4=",
+        "lastModified": 1777455009,
+        "narHash": "sha256-gq0n9eh5smk2jViaRNI3BsYsuNC40mXVQHqWNA6DY+U=",
         "owner": "OlegHQ",
         "repo": "nvim-config",
-        "rev": "e3cf7178ce8f01377ec8c8b5efffa34dbe9a021b",
+        "rev": "b8f1907be5e8627e34732ac99db8df1eb7cf9520",
         "type": "github"
       },
       "original": {

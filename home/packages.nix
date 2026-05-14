@@ -39,6 +39,10 @@ let
     vendorHash = null;
   };
 
+  keychainUnlock = pkgs.writeShellScriptBin "keychain-unlock" ''
+    /usr/bin/security unlock-keychain "$HOME/Library/Keychains/login.keychain-db"
+  '';
+
   installKubectlCompletion =
     pkgs.writeShellScriptBin "install-kubectl-completion" ''
       FISH_CONFIG_DIR="$HOME/.config/fish"
@@ -97,6 +101,7 @@ in {
     kp
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
+    keychainUnlock
   ]) ++ (lib.optionals isLinux [
     pkgs.rustup
     pkgs.util-linux

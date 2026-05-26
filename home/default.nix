@@ -16,7 +16,7 @@
 
   xdg.enable = true;
 
-  home.sessionPath = [ "$HOME/.local/bin" ];
+  home.sessionPath = [ "$HOME/.local/bin" "$HOME/.cargo/bin" ];
 
   home.sessionVariables = {
     LANG = "en_US.UTF-8";

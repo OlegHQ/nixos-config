@@ -23,9 +23,7 @@ Welcome to my battle-tested NixOS configuration - a meticulously crafted system 
 
 ### Development Environment
 
-- **Languages**: TypeScript, Python, OCaml, Rust toolchain
-- **Cloud**: AWS CLI, kubectl, Helm
-- **Containers**: K3d for local Kubernetes development
+- **Languages**: TypeScript, Python, Go
 - **Monitoring**: htop, lazygit, ripgrep, fd, fzf
 
 ## 🚀 Quick Start
@@ -69,8 +67,7 @@ nix run nixpkgs#home-manager -- switch --flake .#snowbear-aarch64
 │   └── account.nix        # User account setup
 ├── home/                  # Home Manager configuration
 │   ├── default.nix        # Main home configuration
-│   ├── helix.nix          # Helix editor setup
-│   ├── nvim.nix           # Neovim configuration
+│   ├── editor.nix         # Neovim configuration
 │   └── configs/           # Application configs
 └── Makefile              # Build automation
 ```

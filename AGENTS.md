@@ -52,8 +52,7 @@ This is a sophisticated Nix flake configuration supporting both macOS (via nix-d
 │   └── account.nix        # User account configuration
 ├── home/
 │   ├── default.nix        # Main Home Manager config
-│   ├── helix.nix          # Helix editor configuration
-│   ├── nvim.nix           # Neovim overlay with pinned plugins
+│   ├── editor.nix         # Neovim configuration
 │   └── configs/           # Application configuration files
 └── Makefile              # Cross-platform build automation
 ```
@@ -71,19 +70,15 @@ This is a sophisticated Nix flake configuration supporting both macOS (via nix-d
 4. **User Parameterization**: Single `userName` variable controls user across all configurations
 
 ### Development Environment Features
-- **Primary Editor**: Neovim with extensive plugin setup and LSP support
-- **Alternative Editor**: Helix with LSP support and custom language configurations
-- **Shell**: Fish with fzf integration and kubectl completions
+- **Primary Editor**: Neovim with curated plugin setup
+- **Shell**: Fish with fzf integration
 - **Terminal**: Ghostty with optimized settings
 - **Version Control**: Git with sensible aliases and lazygit
-- **Development Tools**: Full TypeScript, Python, OCaml, Rust toolchain
-- **Cloud Tools**: AWS CLI, kubectl, Helm, k3d for Kubernetes development
+- **Development Tools**: Curated CLI and language tooling
 
 ### Configuration Management
 - direnv integration for per-project environments
 - Catppuccin theme across all applications
 - Cross-platform clipboard aliases (pbcopy/pbpaste on Linux)
-- Automatic kubectl completion installation
 
 This configuration prioritizes reproducibility, performance, and cross-platform consistency while maintaining a curated set of modern development tools.
-

@@ -24,13 +24,9 @@
     LC_ALL = "en_US.UTF-8";
     EDITOR = "nvim";
     PAGER = "less -FirSwX";
-    GEMINI_CLI_SYSTEM_DEFAULTS_PATH =
-      "${config.xdg.configHome}/gemini/settings.json";
-    DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
     DOTNET_CLI_TELEMETRY_OPTOUT = "1";
     DOTNET_NOLOGO = "1";
     GOBIN = "$HOME/.local/bin";
-    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;
@@ -38,7 +34,6 @@
   home.file.".usqlrc".source = ./configs/usqlrc;
 
   xdg.configFile = {
-    "gemini/settings.json".source = ./configs/gemini-settings.json;
     "zed/settings.json".source = ./configs/zed-settings.json;
     "zed/keymap.json".source = ./configs/zed-keymap.json;
     "zed/themes/opencode-oc1-dark.json".source = ./configs/opencode-oc1-dark-zed.json;

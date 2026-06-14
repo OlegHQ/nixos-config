@@ -1,9 +1,7 @@
 # Neovim and Helix editor configuration
 { config, lib, pkgs, ... }:
 
-let
-  helix = import ./helix.nix { inherit pkgs; };
-in {
+{
   programs.neovim = {
     enable = true;
     withPython3 = true;
@@ -32,11 +30,4 @@ in {
     ];
   };
 
-  home.packages = helix.packages;
-
-  xdg.configFile = {
-    "helix/languages.toml".text = helix.languages;
-    "helix/config.toml".text = helix.config;
-    "helix/themes/opencode_oc1_dark.toml".source = ./configs/helix-oc1-theme.toml;
-  };
 }

@@ -40,11 +40,6 @@
       flake = false;
     };
 
-    # Editor & tool configs
-    nvimconf = {
-      url = "github:OlegHQ/nvim-config?ref=dev";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -59,12 +54,8 @@
           in {
             vimPlugins = unstable.vimPlugins;
             bun = unstable.bun;
-            helix = unstable.helix;
             d2 = unstable.d2;
-            kubectl = unstable.kubectl;
-            awscli2 = unstable.awscli2;
             helm-ls = unstable.helm-ls;
-            gemini-cli = unstable.gemini-cli;
           })
         # direnv's fish-based test suite gets killed in the darwin sandbox; skip it.
         (final: prev: {
@@ -75,13 +66,7 @@
         })
       ];
 
-      # Optional HM modules (nvimconf when full = true)
-      hmExtras = { full ? false }: (if full then [
-        inputs.nvimconf.homeManagerModules.default
-        { programs.nvimconf.enable = true;
-          programs.nvimconf.theme = "catppuccin_latte";
-          programs.nvimconf.themeMode = "light"; }
-      ] else []);
+      hmExtras = { full ? false }: [];
 
       # Single parameterized Darwin builder (was mkDarwin + mkDarwinFull)
       mkDarwin = name: { system, user, full ? false }:

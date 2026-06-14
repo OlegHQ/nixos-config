@@ -5,7 +5,7 @@ NIXNAME ?= mac
 UNAME := $(shell uname)
 ARCH := $(shell arch)
 
-.PHONY: switch full test build check clean help update-nexo 
+.PHONY: switch full test build check clean prune help
 
 # Default target
 all: switch
@@ -15,21 +15,25 @@ switch:
 ifeq ($(UNAME), Darwin)
 	@echo "🍎 Switching Darwin configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}.system" --impure
-	NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}" --impure
+	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}" --impure
+	$(MAKE) prune
 else
 	@echo "🐧 Switching Home Manager configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run nixpkgs#home-manager -- switch --flake ".#${USER}-${ARCH}" --impure
+	$(MAKE) prune
 endif
 
-# Apply full configuration (includes nvimconf)
+# Apply full configuration
 full:
 ifeq ($(UNAME), Darwin)
 	@echo "🍎 Switching Darwin FULL configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.${NIXNAME}-full.system" --impure
-	NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}-full" --impure
+	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}-full" --impure
+	$(MAKE) prune
 else
 	@echo "🐧 Switching Home Manager FULL configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run nixpkgs#home-manager -- switch --flake ".#${USER}-full-${ARCH}" --impure
+	$(MAKE) prune
 endif
 
 # Test configuration without applying
@@ -60,19 +64,23 @@ clean:
 	@echo "🧹 Cleaning build artifacts..."
 	rm -rf result
 
-update-nexo:
-	@echo "🔄 Updating OlegHQ modules..."
-	nix flake update nvimconf
+prune:
+	@echo "🧹 Pruning old Nix generations and garbage..."
+	rm -f result "$(HOME)/.config/nvim/nixos-config/result"
+	-nix profile wipe-history --profile "$(HOME)/.local/state/nix/profiles/home-manager" --older-than 7d
+	-nix profile wipe-history --profile "$(HOME)/.local/state/nix/profiles/profile" --older-than 7d
+ifeq ($(UNAME), Darwin)
+	-sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations old
+	-sudo nix-env --profile /nix/var/nix/profiles/per-user/root/profile --delete-generations old
+endif
+	nix store gc
 
 help:
 	@echo "📚 Available targets:"
 	@echo "  switch      - Apply configuration changes"
-	@echo "  full        - Apply full configuration (includes nvimconf)"
+	@echo "  full        - Apply full configuration"
 	@echo "  test        - Test configuration without applying"
 	@echo "  build       - Build configuration"
 	@echo "  check       - Validate flake configuration"
 	@echo "  clean       - Clean build artifacts"
-	@echo "  update-nexo   - Update OlegHQ nvimconf flake input"
-	@echo "  update-claude - Update Claude Code CLI"
 	@echo "  help          - Show this help message"
-

@@ -97,9 +97,7 @@ in {
     enable = true;
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
-    shellAliases = gitAliases // {
-      ccc = "claude --dangerously-skip-permissions";
-    };
+    shellAliases = gitAliases;
   };
 
   programs.zoxide = {
@@ -130,9 +128,6 @@ in {
       lg = "lazygit";
       l = "ls -la";
       ll = "ls -l";
-      k = "kubectl";
-      kns = "kubectl config set-context --current --namespace";
-      ccc = "claude --dangerously-skip-permissions";
     };
 
     shellAbbrs = {

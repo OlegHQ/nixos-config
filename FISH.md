@@ -26,8 +26,6 @@ Ultra-fast, async prompt with Catppuccin Latte theme and power features.
 | `gp` | `git push` |
 | `gs` | `git status` |
 | `gt` | `git tag` |
-| `k` | `kubectl` |
-| `kns` | `kubectl config set-context --current --namespace` |
 | `lg` | `lazygit` |
 | `l` | `ls -la` |
 | `ll` | `ls -l` |

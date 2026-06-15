@@ -9,6 +9,7 @@ let
   lib = pkgs.lib;
   homeDir = "/home/${userName}";
   loginShell = "${homeDir}/.nix-profile/bin/fish";
+  dockerGid = "131";
 
   imageNameEnv = builtins.getEnv "CONTAINER_IMAGE_NAME";
   imageTagEnv = builtins.getEnv "CONTAINER_IMAGE_TAG";
@@ -25,6 +26,7 @@ let
       cacert
       coreutils
       curl
+      docker
       findutils
       fish
       git
@@ -36,6 +38,7 @@ let
       less
       nix
       openssh
+      tailscale
       xz
       zstd
     ];
@@ -94,6 +97,7 @@ let
 
       mkdir -p \
         ./etc/machine \
+        ./etc/docker \
         ./etc/nix \
         ./etc/ssl/certs \
         ./home/${userName} \
@@ -104,8 +108,13 @@ let
         ./nix/var/nix/profiles/per-user/${userName} \
         ./root \
         ./run \
+        ./run/tailscale \
         ./tmp \
         ./usr/local/bin \
+        ./var/lib/docker \
+        ./var/lib/tailscale \
+        ./var/run/docker \
+        ./var/run/tailscale \
         ./var/tmp
 
       chmod 1777 ./tmp ./var/tmp
@@ -113,6 +122,7 @@ let
       cat > ./etc/group <<'EOF'
 root:x:0:
 ${userName}:x:${gid}:
+docker:x:${dockerGid}:${userName}
 nobody:x:65534:
 EOF
 
@@ -147,11 +157,40 @@ EOF
       ln -sf ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ./etc/ssl/certs/ca-certificates.crt
 
       cat > ./etc/inittab <<'EOF'
-::sysinit:/bin/mkdir -p /run /tmp /var/tmp /nix/var/nix/daemon-socket
+::sysinit:/bin/mkdir -p /run /run/tailscale /tmp /var/lib/docker /var/lib/tailscale /var/run/docker /var/run/tailscale /var/tmp /nix/var/nix/daemon-socket
 ::sysinit:/bin/chmod 1777 /tmp /var/tmp
 ::respawn:/nix/var/nix/profiles/default/bin/nix-daemon --daemon
+::respawn:/etc/machine/start-dockerd.sh
+::respawn:/etc/machine/start-tailscaled.sh
 ::respawn:/bin/sh -c 'while :; do /bin/sleep 86400; done'
 ::shutdown:/bin/true
+EOF
+
+      cat > ./etc/machine/start-dockerd.sh <<'EOF'
+#!/bin/sh
+set -eu
+
+mkdir -p /var/lib/docker /var/run/docker
+rm -f /var/run/docker.pid
+
+exec /nix/var/nix/profiles/default/bin/dockerd \
+  --host=unix:///var/run/docker.sock \
+  --group=docker \
+  --data-root=/var/lib/docker \
+  --exec-root=/var/run/docker \
+  --pidfile=/var/run/docker.pid
+EOF
+
+      cat > ./etc/machine/start-tailscaled.sh <<'EOF'
+#!/bin/sh
+set -eu
+
+mkdir -p /var/lib/tailscale /var/run/tailscale
+
+exec /nix/var/nix/profiles/default/bin/tailscaled \
+  --state=/var/lib/tailscale/tailscaled.state \
+  --socket=/var/run/tailscale/tailscaled.sock \
+  --tun=userspace-networking
 EOF
 
       cat > ./etc/machine/create-user.sh <<'EOF'
@@ -169,6 +208,21 @@ mkdir -p "$(dirname "''${home_dir}")" "''${home_dir}"
 
 if ! grep -q "^''${user_name}:" /etc/group; then
   printf '%s:x:%s:\n' "''${user_name}" "''${group_id}" >> /etc/group
+fi
+
+if grep -q '^docker:' /etc/group; then
+  awk -F: -v OFS=: -v user="''${user_name}" '
+    $1 == "docker" {
+      found = 0
+      count = split($4, members, ",")
+      for (i = 1; i <= count; i++) {
+        if (members[i] == user) found = 1
+      }
+      if (!found) $4 = ($4 == "" ? user : $4 "," user)
+    }
+    { print }
+  ' /etc/group > /etc/group.tmp
+  mv /etc/group.tmp /etc/group
 fi
 
 if grep -q "^''${user_name}:" /etc/passwd; then
@@ -202,7 +256,7 @@ EOF
         done
       done
 
-      chmod 0755 ./etc/machine/create-user.sh ./root ./home/${userName} ./run
+      chmod 0755 ./etc/machine/create-user.sh ./etc/machine/start-dockerd.sh ./etc/machine/start-tailscaled.sh ./root ./home/${userName} ./run
     '';
 
     fakeRootCommands = ''

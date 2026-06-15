@@ -278,14 +278,14 @@ ifeq ($(UNAME), Darwin)
 		if [ "$$attempt" = 5 ]; then exit 1; fi; \
 		sleep 1; \
 	done
-	container machine run -n $(CONTAINER_NAME) --user $(CONTAINER_USER) --workdir /home/$(CONTAINER_USER) -- fish -lc 'echo; printf "arch=%s user=%s home=%s\n" (uname -m) "$$USER" "$$HOME"; command -v fish; command -v nix; nix --version; command -v home-manager; command -v nvim; command -v tmux; command -v lazygit; test -d /Users/$(CONTAINER_USER) && echo users-mounted'
+	container machine run -n $(CONTAINER_NAME) --user $(CONTAINER_USER) --workdir /home/$(CONTAINER_USER) -- fish -lc 'echo; printf "arch=%s user=%s home=%s\n" (uname -m) "$$USER" "$$HOME"; id; groups | string match -q "*docker*"; and echo docker-group; or exit 1; command -v fish; command -v nix; nix --version; command -v home-manager; command -v nvim; command -v tmux; command -v lazygit; command -v docker; for attempt in 1 2 3 4 5; docker version >/dev/null 2>&1; and break; sleep 1; end; docker version --format "docker-server={{.Server.Version}}"; command -v tailscale; tailscale version | head -1; test -d /Users/$(CONTAINER_USER) && echo users-mounted'
 else
 	@echo "Apple container CLI targets are intended for macOS hosts."
 endif
 
 container-direct-check:
 ifeq ($(UNAME), Darwin)
-	container run --rm --arch $(CONTAINER_ARCH) --uid $(CONTAINER_UID) --gid $(CONTAINER_GID) --entrypoint /bin/sh $(CONTAINER_IMAGE) -lc 'set -eu; echo "arch=$$(uname -m) user=$$(id -un) home=$$HOME"; command -v fish; command -v nix; nix --version; command -v nvim; command -v tmux; command -v lazygit'
+	container run --rm --arch $(CONTAINER_ARCH) --uid $(CONTAINER_UID) --gid $(CONTAINER_GID) --entrypoint /bin/sh $(CONTAINER_IMAGE) -lc 'set -eu; echo "arch=$$(uname -m) user=$$(id -un) home=$$HOME"; command -v fish; command -v nix; nix --version; command -v nvim; command -v tmux; command -v lazygit; command -v docker; command -v tailscale'
 else
 	@echo "Apple container CLI targets are intended for macOS hosts."
 endif

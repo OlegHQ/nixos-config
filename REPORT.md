@@ -367,9 +367,11 @@ This is the correct model. The config is not copied from macOS at runtime. It is
 The image includes `/etc/inittab`:
 
 ```text
-::sysinit:/bin/mkdir -p /run /tmp /var/tmp /nix/var/nix/daemon-socket
+::sysinit:/bin/mkdir -p /run /run/tailscale /tmp /var/lib/docker /var/lib/tailscale /var/run/docker /var/run/tailscale /var/tmp /nix/var/nix/daemon-socket
 ::sysinit:/bin/chmod 1777 /tmp /var/tmp
 ::respawn:/nix/var/nix/profiles/default/bin/nix-daemon --daemon
+::respawn:/etc/machine/start-dockerd.sh
+::respawn:/etc/machine/start-tailscaled.sh
 ::respawn:/bin/sh -c 'while :; do /bin/sleep 86400; done'
 ::shutdown:/bin/true
 ```
@@ -402,6 +404,99 @@ trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8
 ```
 
 This keeps Nix usable inside the container without requiring a full NixOS setup.
+
+### Docker Runtime
+
+The container image now includes Docker in the runtime profile. This is not only the Docker client. The image also includes `dockerd` and starts it from Alpine init.
+
+The goal is that the normal `snowbear` user can run:
+
+```sh
+docker run ...
+```
+
+without `sudo`.
+
+The image does this with three pieces:
+
+- `pkgs.docker` is included in the runtime profile.
+- `/etc/group` contains a `docker` group.
+- `snowbear` is a member of the `docker` group.
+
+The Docker daemon is started by:
+
+```text
+/etc/machine/start-dockerd.sh
+```
+
+That script runs:
+
+```sh
+dockerd \
+  --host=unix:///var/run/docker.sock \
+  --group=docker \
+  --data-root=/var/lib/docker \
+  --exec-root=/var/run/docker \
+  --pidfile=/var/run/docker.pid
+```
+
+The key flag is:
+
+```text
+--group=docker
+```
+
+That makes the Docker socket group-owned by `docker`, so the `snowbear` user can talk to the daemon through group membership rather than using `sudo`.
+
+The image creates these Docker runtime directories:
+
+```text
+/var/lib/docker
+/var/run/docker
+```
+
+The normal container check now verifies:
+
+- the user has `docker` group membership,
+- `docker` exists,
+- the Docker daemon answers `docker version`.
+
+### Tailscale Runtime
+
+The container image now includes Tailscale in the runtime profile:
+
+```nix
+pkgs.tailscale
+```
+
+The image starts `tailscaled` from:
+
+```text
+/etc/machine/start-tailscaled.sh
+```
+
+The daemon runs with:
+
+```sh
+tailscaled \
+  --state=/var/lib/tailscale/tailscaled.state \
+  --socket=/var/run/tailscale/tailscaled.sock \
+  --tun=userspace-networking
+```
+
+The state directory is:
+
+```text
+/var/lib/tailscale
+```
+
+The socket is:
+
+```text
+/var/run/tailscale/tailscaled.sock
+```
+
+The `--tun=userspace-networking` mode is intentional for this container image because it avoids depending on kernel TUN device behavior in Apple's container VM. It keeps Tailscale usable in the image while keeping the setup simple.
 
 ### User and UID/GID
 

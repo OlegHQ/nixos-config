@@ -65,6 +65,7 @@ let
     set -l ctp_blue ${p.blue}
     set -l ctp_sapphire ${p.sapphire}
     set -l ctp_teal ${p.teal}
+    set -l ctp_peach ${p.peach}
     set -l ctp_mauve ${p.mauve}
     set -l ctp_red ${p.red}
     set -l ctp_overlay ${p.overlay1}
@@ -73,6 +74,12 @@ let
 
     if set -q VIRTUAL_ENV
         echo -n (set_color -b $ctp_mauve white)" "(basename $VIRTUAL_ENV)" "(set_color normal)" "
+    end
+
+    if set -q SNOWBEAR_CONTAINER
+        set -l container_label container
+        set -q SNOWBEAR_CONTAINER_LABEL; and set container_label $SNOWBEAR_CONTAINER_LABEL
+        echo -n (set_color -b $ctp_peach black)" $container_label "(set_color normal)" "
     end
 
     echo -n (set_color $ctp_overlay)(whoami)(set_color $ctp_teal)"@"(set_color $ctp_overlay)(prompt_hostname)(set_color normal)" "

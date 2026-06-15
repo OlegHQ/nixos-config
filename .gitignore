@@ -3,4 +3,9 @@ result
 iso/nixos.iso
 debug.log
 default.profraw
-
+container/*.tar
+container/*.tar.gz
+container/*.oci
+container/**/*.tar
+container/**/*.tar.gz
+container/**/*.oci

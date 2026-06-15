@@ -40,6 +40,11 @@
       flake = false;
     };
 
+    # Full Neovim config exposed as a Home Manager module.
+    nvimconf = {
+      url = "github:OlegHQ/nvim-config?ref=dev";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
@@ -59,14 +64,25 @@
           })
         # direnv's fish-based test suite gets killed in the darwin sandbox; skip it.
         (final: prev: {
-          direnv = prev.direnv.overrideAttrs (old: {
-            doCheck = false;
-            doInstallCheck = false;
-          });
+          direnv =
+            if prev.stdenv.isDarwin then
+              prev.direnv.overrideAttrs (old: {
+                doCheck = false;
+                doInstallCheck = false;
+              })
+            else
+              prev.direnv;
         })
       ];
 
-      hmExtras = { full ? false }: [];
+      hmExtras = { full ? false }: (if full then [
+        inputs.nvimconf.homeManagerModules.default
+        {
+          programs.nvimconf.enable = true;
+          programs.nvimconf.theme = "catppuccin_latte";
+          programs.nvimconf.themeMode = "light";
+        }
+      ] else []);
 
       # Single parameterized Darwin builder (was mkDarwin + mkDarwinFull)
       mkDarwin = name: { system, user, full ? false }:
@@ -98,7 +114,7 @@
         };
 
       # Single parameterized Home Manager builder (was mkHome + mkHomeFull)
-      mkHome = { system, user, full ? false }:
+      mkHome = { system, user, full ? false, extraModules ? [] }:
         let pkgs = nixpkgs.legacyPackages.${system};
         in home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
@@ -110,7 +126,25 @@
               home.homeDirectory = "/home/${user}";
             }
             (import ./home/default.nix { inherit inputs; })
-          ] ++ hmExtras { inherit full; };
+          ] ++ hmExtras { inherit full; } ++ extraModules;
+        };
+
+      mkContainerImage = { system, user }:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          uidEnv = builtins.getEnv "CONTAINER_UID";
+          gidEnv = builtins.getEnv "CONTAINER_GID";
+        in
+        import ./container {
+          inherit pkgs;
+          homeConfiguration = mkHome {
+            inherit system user;
+            full = true;
+            extraModules = [ ./container/home.nix ];
+          };
+          userName = user;
+          uid = if uidEnv == "" then "1000" else uidEnv;
+          gid = if gidEnv == "" then "1000" else gidEnv;
         };
 
     in {
@@ -144,6 +178,16 @@
           system = "aarch64-linux";
           user = defaultUser;
           full = true;
+        };
+      };
+
+      packages = {
+        aarch64-linux = {
+          containerImage = mkContainerImage {
+            system = "aarch64-linux";
+            user = defaultUser;
+          };
+          default = self.packages.aarch64-linux.containerImage;
         };
       };
     };

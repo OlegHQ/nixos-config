@@ -37,6 +37,10 @@ let
     version = "1.0.0";
     src = ./packages/kp;
     vendorHash = null;
+    preBuild = ''
+      export HOME="$TMPDIR"
+      export XDG_CACHE_HOME="$TMPDIR/.cache"
+    '';
   };
 
   keychainUnlock = pkgs.writeShellScriptBin "keychain-unlock" ''

@@ -448,6 +448,8 @@ The key flag is:
 
 That makes the Docker socket group-owned by `docker`, so the `snowbear` user can talk to the daemon through group membership rather than using `sudo`.
 
+The startup wrapper also changes the socket owner to `snowbear:docker` and keeps mode `0660`. This matters because Apple `container machine run --user snowbear` includes supplementary groups, but `--user 501:20` starts a process with only the primary group. With `snowbear` as the socket owner, both styles can run Docker without `sudo`.
+
 The image creates these Docker runtime directories:
 
 ```text
@@ -460,6 +462,7 @@ The normal container check now verifies:
 - the user has `docker` group membership,
 - `docker` exists,
 - the Docker daemon answers `docker version`.
+- a numeric `UID:GID` shell can run `docker ps`.
 
 ### Tailscale Runtime
 

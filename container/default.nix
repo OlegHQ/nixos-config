@@ -173,12 +173,27 @@ set -eu
 mkdir -p /var/lib/docker /var/run/docker
 rm -f /var/run/docker.pid
 
-exec /nix/var/nix/profiles/default/bin/dockerd \
+/nix/var/nix/profiles/default/bin/dockerd \
   --host=unix:///var/run/docker.sock \
   --group=docker \
   --data-root=/var/lib/docker \
   --exec-root=/var/run/docker \
-  --pidfile=/var/run/docker.pid
+  --pidfile=/var/run/docker.pid &
+dockerd_pid="$!"
+
+attempt=0
+while [ "$attempt" -lt 10 ]; do
+  if [ -S /var/run/docker.sock ]; then
+    chown ${userName}:docker /var/run/docker.sock
+    chmod 0660 /var/run/docker.sock
+    break
+  fi
+  attempt=$((attempt + 1))
+  sleep 1
+done
+
+trap 'kill "$dockerd_pid" 2>/dev/null || true; wait "$dockerd_pid" 2>/dev/null || true' INT TERM
+wait "$dockerd_pid"
 EOF
 
       cat > ./etc/machine/start-tailscaled.sh <<'EOF'

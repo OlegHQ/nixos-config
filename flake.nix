@@ -1,22 +1,20 @@
 {
-  description = "NixOS/Darwin configuration with Home Manager";
+  description = "Nix, nix-darwin, Home Manager, and Apple container configuration";
 
   inputs = {
-    # Core
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    # System managers
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Shell plugins
+    darwin = {
+      url = "github:LnL7/nix-darwin/nix-darwin-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     fish-fzf = {
       url = "github:jethrokuan/fzf/24f4739fc1dffafcc0da3ccfbbd14d9c7d31827a";
       flake = false;
@@ -30,7 +28,6 @@
       flake = false;
     };
 
-    # Tmux plugins
     tmux-pain-control = {
       url = "github:tmux-plugins/tmux-pain-control/2db63de3b08fc64831d833240749133cecb67d92";
       flake = false;
@@ -40,113 +37,17 @@
       flake = false;
     };
 
-    # Full Neovim config exposed as a Home Manager module.
     nvimconf = {
       url = "github:OlegHQ/nvim-config?ref=dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs:
+  outputs = { self, ... }@inputs:
     let
-      # Default user — override via _module.args if needed
-      defaultUser = "snowbear";
-
-      # Bleeding-edge packages from unstable
-      overlays = [
-        (final: prev:
-          let unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
-          in {
-            vimPlugins = unstable.vimPlugins;
-            bun = unstable.bun;
-            d2 = unstable.d2;
-            helm-ls = unstable.helm-ls;
-          })
-        # direnv's fish-based test suite gets killed in the darwin sandbox; skip it.
-        (final: prev: {
-          direnv =
-            if prev.stdenv.isDarwin then
-              prev.direnv.overrideAttrs (old: {
-                doCheck = false;
-                doInstallCheck = false;
-              })
-            else
-              prev.direnv;
-        })
-      ];
-
-      hmExtras = { full ? false }: (if full then [
-        inputs.nvimconf.homeManagerModules.default
-        {
-          programs.nvimconf.enable = true;
-          programs.nvimconf.theme = "catppuccin_latte";
-          programs.nvimconf.themeMode = "light";
-        }
-      ] else []);
-
-      # Single parameterized Darwin builder (was mkDarwin + mkDarwinFull)
-      mkDarwin = name: { system, user, full ? false }:
-        darwin.lib.darwinSystem {
-          inherit system inputs;
-          modules = [
-            { nixpkgs.overlays = overlays; }
-            ./darwin/system.nix
-            ./darwin/account.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${user} = {
-                imports = [
-                  (import ./home/default.nix { inherit inputs; })
-                ] ++ hmExtras { inherit full; };
-              };
-            }
-            {
-              config._module.args = {
-                currentSystemName = name;
-                currentSystem = system;
-                userName = user;
-                userHomeDarwin = "/Users/${user}";
-              };
-            }
-          ];
-        };
-
-      # Single parameterized Home Manager builder (was mkHome + mkHomeFull)
-      mkHome = { system, user, full ? false, extraModules ? [] }:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            { _module.args.pkgsPath = pkgs.path; }
-            {
-              nixpkgs.overlays = overlays;
-              home.username = user;
-              home.homeDirectory = "/home/${user}";
-            }
-            (import ./home/default.nix { inherit inputs; })
-          ] ++ hmExtras { inherit full; } ++ extraModules;
-        };
-
-      mkContainerImage = { system, user }:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          uidEnv = builtins.getEnv "CONTAINER_UID";
-          gidEnv = builtins.getEnv "CONTAINER_GID";
-        in
-        import ./container {
-          inherit pkgs;
-          homeConfiguration = mkHome {
-            inherit system user;
-            full = true;
-            extraModules = [ ./container/home.nix ];
-          };
-          userName = user;
-          uid = if uidEnv == "" then "1000" else uidEnv;
-          gid = if gidEnv == "" then "1000" else gidEnv;
-        };
-
+      overlays = import ./nix/overlays.nix { inherit inputs; };
+      builders = import ./nix/builders.nix { inherit self inputs overlays; };
+      inherit (builders) defaultUser mkContainerImage mkDarwin mkHome;
     in {
       darwinConfigurations = {
         mac = mkDarwin "mac" {
@@ -181,14 +82,18 @@
         };
       };
 
-      packages = {
-        aarch64-linux = {
-          containerImage = mkContainerImage {
-            system = "aarch64-linux";
-            user = defaultUser;
-          };
-          default = self.packages.aarch64-linux.containerImage;
+      packages.aarch64-linux = {
+        homeManager = inputs.home-manager.packages.aarch64-linux.home-manager;
+        containerImage = mkContainerImage {
+          system = "aarch64-linux";
+          user = defaultUser;
         };
+        default = self.packages.aarch64-linux.containerImage;
+      };
+
+      apps.aarch64-linux.homeManager = {
+        type = "app";
+        program = "${self.packages.aarch64-linux.homeManager}/bin/home-manager";
       };
     };
 }

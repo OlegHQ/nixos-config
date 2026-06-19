@@ -1,117 +1,57 @@
-# 🚀 Elite NixOS Configuration
+# snowbear Nix Config
 
-Welcome to my battle-tested NixOS configuration - a meticulously crafted system that bridges the gap between power and elegance. This isn't just another dotfiles repo; it's a complete ecosystem designed for developers who demand excellence.
+Personal Nix configuration for macOS, Linux Home Manager, and persistent Apple `container` machines.
 
-## ⚡ Features
-
-- **🍎 macOS Integration**: Seamless nix-darwin setup with native macOS feel
-- **🐧 Linux Support**: Full Home Manager configuration for x86_64 and aarch64
-- **🔧 Development Ready**: Pre-configured with modern tools and language servers
-- **🎨 Beautiful UI**: Catppuccin theme across all applications
-- **⚙️ Reproducible**: Flake-based configuration ensures consistency across machines
-- **🚀 Performance Optimized**: Carefully selected packages from stable and unstable channels
-
-## 🛠 Tech Stack
-
-### Core Tools
-
-- **Editor**: Helix (primary) + Neovim (fallback) with LSP support
-- **Shell**: Fish with intelligent completions and plugins
-- **Terminal**: Ghostty with optimized settings
-- **Multiplexer**: tmux with pain-control and catppuccin theme
-- **Version Control**: Git with sensible aliases and configuration
-
-### Development Environment
-
-- **Languages**: TypeScript, Python, Go
-- **Monitoring**: htop, lazygit, ripgrep, fd, fzf
-
-## 🚀 Quick Start
-
-### macOS Setup
-
-1. **Install Nix** using the Determinate Systems installer:
-
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-   ```
-
-2. **Clone and Deploy**:
-
-   ```bash
-   git clone <your-repo-url> ~/.config/nixos
-   cd ~/.config/nixos
-   make switch
-   ```
-
-3. **Profit** 🎉
-
-### Linux Setup
-
-For Linux systems, use Home Manager directly:
+## Main Commands
 
 ```bash
-# For x86_64 systems
-nix run nixpkgs#home-manager -- switch --flake .#snowbear-x86_64
-
-# For ARM64 systems
-nix run nixpkgs#home-manager -- switch --flake .#snowbear-aarch64
-```
-
-## 🔧 Configuration Structure
-
-```
-├── flake.nix              # Main flake configuration
-├── darwin/                # macOS-specific settings
-│   ├── system.nix         # System-level configuration
-│   └── account.nix        # User account setup
-├── home/                  # Home Manager configuration
-│   ├── default.nix        # Main home configuration
-│   ├── editor.nix         # Neovim configuration
-│   └── configs/           # Application configs
-└── Makefile              # Build automation
-```
-
-## 🎯 Philosophy
-
-This configuration follows several key principles:
-
-1. **Minimalism**: Only include what you actually use
-2. **Performance**: Prefer fast, native tools over bloated alternatives
-3. **Consistency**: Unified theme and keybindings across all applications
-4. **Reliability**: Stable base with carefully selected unstable packages
-5. **Productivity**: Optimized for rapid development workflows
-
-## 🔍 Advanced Usage
-
-### Custom Builds
-
-```bash
-# Test configuration without switching
+make switch
+make full
 make test
-
-# Build specific configuration
-NIXNAME=mac make switch
+make build
+make check
 ```
 
-### Development Workflow
+On macOS these target nix-darwin. On Linux they target Home Manager.
 
-The configuration includes direnv integration for per-project environments:
+## Apple Container Workflow
+
+The container workflow is persistent by default:
 
 ```bash
-# In any project directory
-echo "use flake" > .envrc
-direnv allow
+make container-bootstrap
+make container-shell
+make container-hm-full
+make container-check
 ```
 
-## 🤝 Contributing
+`container-bootstrap` builds and loads the base image, then creates the machine only if it does not already exist. It does not delete `/home/snowbear`, `apk` installs, Docker state, or other machine-local state.
 
-Found a bug or have an improvement? Feel free to open an issue or submit a PR. This configuration is constantly evolving based on real-world usage.
+`container-hm-full` and `container-hm-switch` first repair the in-machine Nix cache config if needed, then build this flake's Home Manager activation package inside the existing machine. User config updates can apply without resetting the image layer.
 
-## ⚠️ Disclaimer
+Use explicit reset only when the base image plumbing changed:
 
-This is a personal configuration optimized for my workflow. While you're welcome to use it as inspiration, I recommend understanding each component before blindly copying. Your mileage may vary.
+```bash
+make container-reset
+```
 
-## 📜 License
+Use separate machines by overriding `CONTAINER_NAME`:
 
-MIT License - Use at your own risk and have fun! 🎉
+```bash
+make container-bootstrap CONTAINER_NAME=snowbear-personal
+make container-bootstrap CONTAINER_NAME=snowbear-work
+```
+
+## Layout
+
+```text
+flake.nix          public flake outputs
+nix/               overlays and output builders
+darwin/            nix-darwin host modules
+home/              Home Manager modules and app config
+container/         Alpine-based Apple container image builder
+mk/container.mk    Apple container machine targets
+.agents/skills/    repo-local agent skills
+```
+
+See `AGENTS.md` and `.agents/skills/nix-apple-container` before changing container or Nix workflow code.

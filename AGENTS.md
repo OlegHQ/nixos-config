@@ -1,84 +1,125 @@
 # AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for agents working in this repository.
+
+## Use The Local Skill
+
+Use the repo-local skill at `.agents/skills/nix-apple-container` for Nix, Home Manager, nix-darwin, Apple `container`, Alpine `apk`, Docker-in-container, Tailscale, and persistent container-machine work.
+
+Read the skill before changing container or Nix workflow code. Its references capture the non-obvious Apple `container` behavior this repo depends on.
 
 ## Commands
 
-### Primary Development Commands
-- `make switch` - Apply configuration changes (main command for deployment)
-- `make test` - Test configuration without applying changes
-- `make build` - Build configuration without switching
-- `make check` - Validate flake configuration
-- `make clean` - Clean build artifacts
+Host configuration:
 
-### Platform-Specific Behavior
-Commands automatically detect the platform:
-- **macOS (Darwin)**: Uses nix-darwin with `darwin-rebuild`
-- **Linux**: Uses Home Manager with architecture detection (`x86_64` or `aarch64`)
+- `make switch` - Apply the normal host config.
+- `make full` - Apply the full host config.
+- `make test` - Dry-run the host config.
+- `make build` - Build the host config.
+- `make check` - Run `nix flake check --impure`.
+- `make prune` - Remove old Nix generations and run store GC.
 
-### Configuration Variables
-- `NIXNAME` - Set Darwin configuration name (default: `mac`)
-- `NIXPKGS_ALLOW_UNFREE=1` - Required for unfree packages (automatically set)
+Apple container machines on macOS:
 
-### Manual Platform Commands
+- `make container-image` - Build and load `local/snowbear-dev:latest`.
+- `make container-bootstrap` - Build image and create `snowbear-dev` only if missing.
+- `make container-up` - Alias for non-destructive bootstrap.
+- `make container-reset` - Destructively recreate the machine from the image.
+- `make container-shell` - Open fish in `/home/snowbear`.
+- `make container-host-shell` - Open fish in mounted `/Users/snowbear`.
+- `make container-root-shell` - Open root shell for `apk` and system work.
+- `make container-nix-cache` - Normalize in-machine Nix cache config and restart if changed.
+- `make container-hm-switch` - Switch non-full Home Manager inside the existing machine.
+- `make container-hm-full` - Switch full Home Manager inside the existing machine.
+- `make container-gc` - Expire Home Manager generations and run root Nix GC inside the machine.
+- `make container-check` - Smoke-test the persistent machine.
+- `make container-direct-check` - Smoke-test the loaded image without a machine.
+
+Use separate persistent machines by overriding `CONTAINER_NAME`:
+
 ```bash
-# macOS
-nix build ".#darwinConfigurations.mac.system" --impure
-./result/sw/bin/darwin-rebuild switch --flake ".#mac" --impure
-
-# Linux x86_64
-nix run nixpkgs#home-manager -- switch --flake ".#snowbear-x86_64" --impure
-
-# Linux aarch64  
-nix run nixpkgs#home-manager -- switch --flake ".#snowbear-aarch64" --impure
+make container-bootstrap CONTAINER_NAME=snowbear-personal
+make container-bootstrap CONTAINER_NAME=snowbear-work
+make container-shell CONTAINER_NAME=snowbear-work
 ```
 
 ## Architecture
 
-### Multi-Platform Configuration System
-This is a sophisticated Nix flake configuration supporting both macOS (via nix-darwin) and Linux (via Home Manager) with a unified codebase.
+This is a flake-based macOS/Linux user configuration with an Apple `container` machine image.
 
-### Key Components
-- **flake.nix**: Main configuration entry point with multi-platform outputs
-- **darwin/**: macOS-specific system configuration using nix-darwin
-- **home/**: Cross-platform Home Manager configuration
-- **Makefile**: Unified build system with platform detection
+- `flake.nix` wires public outputs.
+- `nix/overlays.nix` defines package overlays.
+- `nix/builders.nix` defines nix-darwin, Home Manager, and container-image builders.
+- `darwin/` contains nix-darwin host config.
+- `home/` contains cross-platform Home Manager modules.
+- `container/` builds the Alpine-based Apple container image with Nix, Home Manager, Docker, and Tailscale.
+- `mk/container.mk` contains Apple container lifecycle targets.
 
-### Configuration Structure
+Public outputs to preserve:
+
+- `darwinConfigurations.mac`
+- `darwinConfigurations.mac-full`
+- `homeConfigurations.snowbear-x86_64`
+- `homeConfigurations.snowbear-aarch64`
+- `homeConfigurations.snowbear-full-x86_64`
+- `homeConfigurations.snowbear-full-aarch64`
+- `packages.aarch64-linux.containerImage`
+- `packages.aarch64-linux.homeManager`
+
+## Persistent Container Model
+
+The normal container workflow is persistent:
+
+1. Build/load the base image with `make container-image`.
+2. Create the machine once with `make container-create` or `make container-bootstrap`.
+3. Apply user config changes with `make container-hm-full`.
+4. Use `apk` inside the machine for mutable Alpine packages.
+5. Use `make container-reset` only when replacing base image boot/runtime plumbing.
+
+Existing machines do not receive rebuilt image layers. Rebuilding the image only affects newly created or reset machines.
+
+Persistent machine state includes `/home/snowbear`, `apk` installs, `/var/lib/docker`, Tailscale state, and mutable rootfs edits. `container-reset` deletes that state.
+
+`make container-nix-cache` is the only target that intentionally updates Nix daemon config under `/etc/nix` in an existing machine. It keeps old persistent machines from source-building when the daemon lacks the current cache settings.
+
+`make container-hm-switch` and `make container-hm-full` depend on `container-nix-cache`, then build this flake's `homeConfigurations.*.activationPackage` inside the existing machine and run its activation script. That updates user packages/config from the current lockfile without depending on the baked `/usr/local/bin/home-manager` launcher.
+
+## Package Management
+
+- macOS system layer: nix-darwin.
+- Linux user layer: Home Manager.
+- Container base/user layer: Home Manager inside a long-lived Alpine machine.
+- Mutable Alpine packages: `apk`, usually from `make container-root-shell`.
+
+The repo currently tracks nixpkgs, Home Manager, and nix-darwin `26.05`.
+
+## Editing Rules
+
+- Preserve uncommitted user changes.
+- Keep feature outputs stable unless the user explicitly asks to remove them.
+- Prefer Home Manager modules for user tools and dotfiles.
+- Put Apple container operational behavior in `mk/container.mk` or `container/`.
+- Do not make `container-up` destructive.
+- Use `container-reset` for destructive rebuilds.
+
+## Validation
+
+Run the narrowest useful checks first:
+
+```bash
+git diff --check
+nix flake check --impure
+make test
+make build
 ```
-├── flake.nix              # Multi-platform flake with overlays
-├── darwin/
-│   ├── system.nix         # macOS system settings
-│   └── account.nix        # User account configuration
-├── home/
-│   ├── default.nix        # Main Home Manager config
-│   ├── editor.nix         # Neovim configuration
-│   └── configs/           # Application configuration files
-└── Makefile              # Cross-platform build automation
+
+For container changes on macOS:
+
+```bash
+make container-image
+make container-direct-check
+make container-bootstrap
+make container-check
+make container-hm-full
+make container-gc
 ```
-
-### Package Management Strategy
-- **Stable Base**: Uses nixos-25.05 for core system
-- **Selective Unstable**: Specific packages from nixpkgs-unstable via overlays
-- **Pinned Plugins**: Neovim plugins pinned to specific commits for stability
-- **Platform-Specific**: Different package sets for macOS vs Linux
-
-### Key Design Patterns
-1. **Overlays**: Used extensively for bleeding-edge packages and custom Neovim setup
-2. **Platform Detection**: Automatic macOS/Linux detection with appropriate package selection
-3. **Modular Configuration**: Separate modules for different aspects (editor, shell, system)
-4. **User Parameterization**: Single `userName` variable controls user across all configurations
-
-### Development Environment Features
-- **Primary Editor**: Neovim with curated plugin setup
-- **Shell**: Fish with fzf integration
-- **Terminal**: Ghostty with optimized settings
-- **Version Control**: Git with sensible aliases and lazygit
-- **Development Tools**: Curated CLI and language tooling
-
-### Configuration Management
-- direnv integration for per-project environments
-- Catppuccin theme across all applications
-- Cross-platform clipboard aliases (pbcopy/pbpaste on Linux)
-
-This configuration prioritizes reproducibility, performance, and cross-platform consistency while maintaining a curated set of modern development tools.

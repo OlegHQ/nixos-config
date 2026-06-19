@@ -152,6 +152,7 @@ sandbox = false
 trusted-users = root ${userName}
 substituters = https://cache.nixos.org/
 trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8rGs=
+require-sigs = false
 EOF
 
       ln -sf ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ./etc/ssl/certs/ca-certificates.crt
@@ -287,7 +288,6 @@ EOF
         "LOGNAME=${userName}"
         "SHELL=${loginShell}"
         "SNOWBEAR_CONTAINER=1"
-        "SNOWBEAR_CONTAINER_LABEL=container"
         "PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/nix/var/nix/profiles/default/bin:${homeDir}/.nix-profile/bin"
         "NIX_REMOTE=daemon"
         "NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"

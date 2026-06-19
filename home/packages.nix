@@ -55,6 +55,7 @@ in {
     pkgs.htop
     pkgs.jq
     pkgs.ripgrep
+    pkgs.screenfetch
     pkgs.tree
     pkgs.watch
     pkgs.tree-sitter

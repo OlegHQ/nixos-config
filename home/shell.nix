@@ -77,12 +77,11 @@ let
     end
 
     if set -q SNOWBEAR_CONTAINER
-        set -l container_label container
-        set -q SNOWBEAR_CONTAINER_LABEL; and set container_label $SNOWBEAR_CONTAINER_LABEL
-        echo -n (set_color -b $ctp_peach black)" $container_label "(set_color normal)" "
+        echo -n (set_color $ctp_teal)(whoami)(set_color $ctp_overlay)"@"(set_color --bold $ctp_peach)(prompt_hostname)(set_color normal)" "
+    else
+        echo -n (set_color $ctp_teal)(whoami)(set_color $ctp_overlay)"@"(set_color $ctp_blue)(prompt_hostname)(set_color normal)" "
     end
 
-    echo -n (set_color $ctp_overlay)(whoami)(set_color $ctp_teal)"@"(set_color $ctp_overlay)(prompt_hostname)(set_color normal)" "
     echo -n (set_color $ctp_sapphire)(prompt_pwd --full-length-dirs 2)(set_color normal)
 
     set -l gi (_git_info)

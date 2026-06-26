@@ -27,12 +27,12 @@ Use this only when base image plumbing changed or a clean machine is desired.
 
 ## Personal And Work Machines
 
-Use `CONTAINER_NAME` to create independent machines from the same base image:
+Use `NAME` to create independent machines from the same base image:
 
 ```bash
-make container-bootstrap CONTAINER_NAME=snowbear-personal
-make container-bootstrap CONTAINER_NAME=snowbear-work
-make container-shell CONTAINER_NAME=snowbear-work
+make container-bootstrap NAME=personal
+make container-bootstrap NAME=work
+make container-shell NAME=work
 ```
 
 Avoid adding duplicate Makefile targets for each machine unless behavior differs.

@@ -7,7 +7,8 @@
 CONTAINER_USER ?= $(shell id -un)
 CONTAINER_UID ?= $(shell id -u)
 CONTAINER_GID ?= $(shell id -g)
-CONTAINER_NAME ?= snowbear-dev
+NAME ?= dev
+CONTAINER_NAME ?= $(NAME)
 CONTAINER_IMAGE ?= local/snowbear-dev:latest
 CONTAINER_HOME_MOUNT ?= rw
 CONTAINER_HOST_HOME ?= /Users/$(CONTAINER_USER)
@@ -18,13 +19,13 @@ CONTAINER_BUILDER_IMAGE ?= nixos/nix:2.24.10
 CONTAINER_IMAGE_WORDS := $(subst :, ,$(CONTAINER_IMAGE))
 CONTAINER_IMAGE_NAME ?= $(word 1,$(CONTAINER_IMAGE_WORDS))
 CONTAINER_IMAGE_TAG ?= $(or $(word 2,$(CONTAINER_IMAGE_WORDS)),latest)
-CONTAINER_IMAGE_ARCHIVE ?= container/$(CONTAINER_NAME).oci.tar
+CONTAINER_IMAGE_ARCHIVE ?= container/snowbear-dev.oci.tar
 CONTAINER_BUILD_CPUS ?= 4
 CONTAINER_BUILD_MEMORY ?= 8G
 CONTAINER_BUILD_MAX_JOBS ?= 2
 CONTAINER_BUILD_CORES ?= 0
 CONTAINER_NIX_SUBSTITUTERS ?= https://cache.nixos.org/
-CONTAINER_NIX_TRUSTED_PUBLIC_KEYS ?= cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8rGs=
+CONTAINER_NIX_TRUSTED_PUBLIC_KEYS ?= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 CONTAINER_NIX_REQUIRE_SIGS ?= false
 CONTAINER_HM_PROFILE ?= $(CONTAINER_USER)-aarch64
 CONTAINER_HM_FULL_PROFILE ?= $(CONTAINER_USER)-full-aarch64
@@ -32,7 +33,7 @@ CONTAINER_HM_EXPIRE ?= -7 days
 CONTAINER_SCRIPT_DIR ?= $(CONTAINER_REPO)/container/scripts
 
 .PHONY: container-image container-create container-machine container-bootstrap container-up
-.PHONY: container-reset container-machine-reset container-wait container-nix-cache
+.PHONY: container-reset container-rebuild container-machine-reset container-wait container-nix-cache
 .PHONY: container-shell container-host-shell container-root-shell
 .PHONY: container-hm-switch container-hm-full container-gc
 .PHONY: container-check container-direct-check
@@ -95,6 +96,8 @@ ifeq ($(UNAME), Darwin)
 else
 	@echo "Apple container targets are intended for macOS hosts."
 endif
+
+container-rebuild: container-reset
 
 container-machine-reset: container-reset
 
@@ -218,7 +221,7 @@ endif
 
 container-direct-check:
 ifeq ($(UNAME), Darwin)
-	container run --rm --arch $(CONTAINER_ARCH) --uid $(CONTAINER_UID) --gid $(CONTAINER_GID) --entrypoint /bin/sh $(CONTAINER_IMAGE) -lc 'set -eu; echo "arch=$$(uname -m) user=$$(id -un) home=$$HOME"; command -v fish; command -v nix; nix --version; command -v home-manager; home-manager --version; command -v nvim; command -v tmux; command -v lazygit; command -v docker; command -v screenfetch; command -v tailscale'
+	container run --rm --arch $(CONTAINER_ARCH) --uid $(CONTAINER_UID) --gid $(CONTAINER_GID) --entrypoint /bin/sh $(CONTAINER_IMAGE) -lc 'set -eu; echo "arch=$$(uname -m) user=$$(id -un) home=$$HOME"; command -v fish; command -v nix; nix --version; command -v home-manager; home-manager --version; command -v nvim; command -v tmux; command -v lazygit; command -v docker; command -v screenfetch; command -v sudo; sudo -n true; sudo -n env | grep -q "^LOCALE_ARCHIVE_"; command -v ssh; command -v sshd; command -v mosh; command -v mosh-server; command -v tailscale'
 else
 	@echo "Apple container targets are intended for macOS hosts."
 endif

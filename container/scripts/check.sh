@@ -16,6 +16,13 @@ command -v tmux
 command -v lazygit
 command -v docker
 command -v screenfetch
+command -v sudo
+command -v ssh
+command -v sshd
+command -v mosh
+command -v mosh-server
+sudo -n true
+echo sudo-user
 
 for attempt in 1 2 3 4 5; do
   if docker version >/dev/null 2>&1; then

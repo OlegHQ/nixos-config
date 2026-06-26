@@ -122,6 +122,7 @@ in {
     interactiveShellInit = lib.strings.concatStrings
       (lib.strings.intersperse "\n" ([
         "set -gx PATH /nix/var/nix/profiles/default/bin $HOME/.nix-profile/bin $PATH"
+        "test -d /etc/machine; and set -gx SNOWBEAR_CONTAINER 1"
         (builtins.readFile ./configs/config.fish)
         fishTheme
         "set -g SHELL ${pkgs.fish}/bin/fish"

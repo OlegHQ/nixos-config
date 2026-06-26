@@ -39,6 +39,8 @@ State lost by machine deletion:
 
 Use mounted `/Users/snowbear/...` for host-backed repo and project files. Use `/home/snowbear` for Linux VM-local state.
 
+macOS privacy controls still apply to paths reached through the home mount. Accessing protected folders such as `/Users/snowbear/Desktop`, `/Users/snowbear/Documents`, or listing `/Users/snowbear` can block guest `virtiofs` requests while macOS waits for TCC approval for `/usr/local/libexec/container/plugins/container-runtime-linux/bin/container-runtime-linux`. Grant Full Disk Access, or approve the specific Files and Folders prompt, before using those paths from the machine. Prefer mounted repo paths such as `/Users/snowbear/WORK/...` for normal development.
+
 ## User And Docker Socket Gotcha
 
 `container machine run --user snowbear` includes supplementary groups. `--user 501:20` does not. The Docker socket must be accessible by ownership as well as group:

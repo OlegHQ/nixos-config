@@ -36,8 +36,10 @@ let
       gzip
       home-manager
       less
+      mosh
       nix
       openssh
+      sudo
       tailscale
       xz
       zstd
@@ -99,6 +101,8 @@ let
         ./etc/machine \
         ./etc/docker \
         ./etc/nix \
+        ./etc/pam.d \
+        ./etc/ssh \
         ./etc/ssl/certs \
         ./home/${userName} \
         ./nix/var/nix/daemon-socket \
@@ -111,9 +115,11 @@ let
         ./run/tailscale \
         ./tmp \
         ./usr/local/bin \
+        ./var/empty \
         ./var/lib/docker \
         ./var/lib/tailscale \
         ./var/run/docker \
+        ./var/run/sshd \
         ./var/run/tailscale \
         ./var/tmp
 
@@ -123,18 +129,37 @@ let
 root:x:0:
 ${userName}:x:${gid}:
 docker:x:${dockerGid}:${userName}
+sshd:x:74:
 nobody:x:65534:
 EOF
 
       cat > ./etc/passwd <<'EOF'
 root:x:0:0:root:/root:/bin/sh
 ${userName}:x:${uid}:${gid}:${userName}:${homeDir}:${loginShell}
+sshd:x:74:74:sshd:/var/empty:/sbin/nologin
 nobody:x:65534:65534:nobody:/:/sbin/nologin
 EOF
 
       cat > ./etc/shells <<'EOF'
 /bin/sh
 ${loginShell}
+EOF
+
+      mkdir -p ./etc/sudoers.d
+      cat > ./etc/sudoers <<'EOF'
+Defaults env_keep += "LOCALE_ARCHIVE LOCALE_ARCHIVE_* NIX_SSL_CERT_FILE SSL_CERT_FILE"
+root ALL=(ALL:ALL) ALL
+@includedir /etc/sudoers.d
+EOF
+      cat > ./etc/sudoers.d/${userName} <<'EOF'
+${userName} ALL=(ALL:ALL) NOPASSWD: ALL
+EOF
+      chmod 0440 ./etc/sudoers ./etc/sudoers.d/${userName}
+
+      cat > ./etc/pam.d/sudo <<'EOF'
+auth sufficient pam_permit.so
+account sufficient pam_permit.so
+session sufficient pam_permit.so
 EOF
 
       cat > ./etc/nsswitch.conf <<'EOF'
@@ -151,17 +176,18 @@ build-users-group =
 sandbox = false
 trusted-users = root ${userName}
 substituters = https://cache.nixos.org/
-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8rGs=
+trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 require-sigs = false
 EOF
 
       ln -sf ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt ./etc/ssl/certs/ca-certificates.crt
 
       cat > ./etc/inittab <<'EOF'
-::sysinit:/bin/mkdir -p /run /run/tailscale /tmp /var/lib/docker /var/lib/tailscale /var/run/docker /var/run/tailscale /var/tmp /nix/var/nix/daemon-socket
+::sysinit:/bin/mkdir -p /run /run/tailscale /tmp /var/lib/docker /var/lib/tailscale /var/run/docker /var/run/sshd /var/run/tailscale /var/tmp /nix/var/nix/daemon-socket
 ::sysinit:/bin/chmod 1777 /tmp /var/tmp
 ::respawn:/nix/var/nix/profiles/default/bin/nix-daemon --daemon
 ::respawn:/etc/machine/start-dockerd.sh
+::respawn:/etc/machine/start-sshd.sh
 ::respawn:/etc/machine/start-tailscaled.sh
 ::respawn:/bin/sh -c 'while :; do /bin/sleep 86400; done'
 ::shutdown:/bin/true
@@ -172,7 +198,7 @@ EOF
 set -eu
 
 mkdir -p /var/lib/docker /var/run/docker
-rm -f /var/run/docker.pid
+rm -f /var/run/docker.pid /var/run/docker.sock
 
 /nix/var/nix/profiles/default/bin/dockerd \
   --host=unix:///var/run/docker.sock \
@@ -207,6 +233,93 @@ exec /nix/var/nix/profiles/default/bin/tailscaled \
   --state=/var/lib/tailscale/tailscaled.state \
   --socket=/var/run/tailscale/tailscaled.sock \
   --tun=userspace-networking
+EOF
+
+      cat > ./etc/ssh/sshd_config <<'EOF'
+Port 22
+HostKey /etc/ssh/ssh_host_ed25519_key
+HostKey /etc/ssh/ssh_host_rsa_key
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
+UsePAM no
+UseDNS no
+AllowUsers ${userName}
+PidFile /run/sshd.pid
+SetEnv PATH=/usr/local/bin:/nix/var/nix/profiles/default/bin:/bin:/usr/bin
+Subsystem sftp ${pkgs.openssh}/libexec/sftp-server
+EOF
+
+      cat > ./etc/machine/start-sshd.sh <<'EOF'
+#!/bin/sh
+set -eu
+
+user_name="${userName}"
+user_id="${uid}"
+group_id="${gid}"
+home_dir="${homeDir}"
+host_home="/Users/${userName}"
+host_key_dir="''${host_home}/.local/state/apple-container/ssh/$(hostname)"
+
+mkdir -p /etc/ssh /run /var/run/sshd "''${home_dir}/.ssh"
+chown "''${user_id}:''${group_id}" "''${home_dir}/.ssh"
+chmod 0700 "''${home_dir}/.ssh"
+
+authorized_keys_tmp="''${home_dir}/.ssh/authorized_keys.tmp"
+rm -f "''${authorized_keys_tmp}"
+
+if [ -s "''${host_home}/.ssh/authorized_keys" ]; then
+  cat "''${host_home}/.ssh/authorized_keys" >> "''${authorized_keys_tmp}"
+fi
+
+for public_key in "''${host_home}"/.ssh/id_*.pub; do
+  if [ -s "''${public_key}" ]; then
+    cat "''${public_key}" >> "''${authorized_keys_tmp}"
+  fi
+done
+
+if [ -s "''${authorized_keys_tmp}" ]; then
+  awk '!seen[$0]++' "''${authorized_keys_tmp}" > "''${home_dir}/.ssh/authorized_keys"
+  rm -f "''${authorized_keys_tmp}"
+  chown "''${user_id}:''${group_id}" "''${home_dir}/.ssh/authorized_keys"
+  chmod 0600 "''${home_dir}/.ssh/authorized_keys"
+else
+  rm -f "''${authorized_keys_tmp}"
+fi
+
+if [ -d "''${host_home}" ]; then
+  mkdir -p "''${host_key_dir}"
+  chmod 0700 "''${host_key_dir}"
+fi
+
+for key_type in ed25519 rsa; do
+  key_path="/etc/ssh/ssh_host_''${key_type}_key"
+  persisted_key_path="''${host_key_dir}/ssh_host_''${key_type}_key"
+
+  if [ -s "''${persisted_key_path}" ]; then
+    cp "''${persisted_key_path}" "''${key_path}"
+    cp "''${persisted_key_path}.pub" "''${key_path}.pub"
+  elif [ "''${key_type}" = ed25519 ]; then
+    /nix/var/nix/profiles/default/bin/ssh-keygen -t ed25519 -N "" -f "''${key_path}" >/dev/null
+  else
+    /nix/var/nix/profiles/default/bin/ssh-keygen -t rsa -b 3072 -N "" -f "''${key_path}" >/dev/null
+  fi
+
+  if [ -d "''${host_key_dir}" ] && [ ! -s "''${persisted_key_path}" ]; then
+    cp "''${key_path}" "''${persisted_key_path}"
+    cp "''${key_path}.pub" "''${persisted_key_path}.pub"
+    chmod 0600 "''${persisted_key_path}"
+    chmod 0644 "''${persisted_key_path}.pub"
+  fi
+
+  chown root:root "''${key_path}" "''${key_path}.pub"
+  chmod 0600 "''${key_path}"
+  chmod 0644 "''${key_path}.pub"
+done
+
+exec /nix/var/nix/profiles/default/bin/sshd -D -e -f /etc/ssh/sshd_config
 EOF
 
       cat > ./etc/machine/create-user.sh <<'EOF'
@@ -260,7 +373,11 @@ EOF
       done
 
       ln -s ${runtimeProfile} ./nix/var/nix/profiles/default/profile
-      ln -s ${runtimeProfile}/bin ./nix/var/nix/profiles/default/bin
+      mkdir -p ./nix/var/nix/profiles/default/bin
+      for source in ${runtimeProfile}/bin/*; do
+        name="$(basename "$source")"
+        ln -s "$source" "./nix/var/nix/profiles/default/bin/$name"
+      done
       ln -s ${runtimeProfile} ./nix/var/nix/profiles/per-user/root/profile
       ln -s ${homePath} ./nix/var/nix/profiles/per-user/${userName}/profile
       ln -s /nix/var/nix/profiles/per-user/${userName}/profile ./home/${userName}/.nix-profile
@@ -272,10 +389,18 @@ EOF
         done
       done
 
-      chmod 0755 ./etc/machine/create-user.sh ./etc/machine/start-dockerd.sh ./etc/machine/start-tailscaled.sh ./root ./home/${userName} ./run
+      rm -f ./usr/local/bin/sudo
+      cp ${pkgs.sudo}/bin/sudo ./usr/local/bin/sudo
+      chmod 0755 ./usr/local/bin/sudo
+      rm -f ./nix/var/nix/profiles/default/bin/sudo
+      ln -s /usr/local/bin/sudo ./nix/var/nix/profiles/default/bin/sudo
+
+      chmod 0755 ./etc/machine/create-user.sh ./etc/machine/start-dockerd.sh ./etc/machine/start-sshd.sh ./etc/machine/start-tailscaled.sh ./root ./home/${userName} ./run
     '';
 
     fakeRootCommands = ''
+      chown root:root ./usr/local/bin/sudo
+      chmod 4755 ./usr/local/bin/sudo
       chown -hR ${uid}:${gid} ./home/${userName} ./nix/var/nix/profiles/per-user/${userName} ./nix/var/nix/gcroots/per-user/${userName}
     '';
 

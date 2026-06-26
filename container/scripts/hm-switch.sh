@@ -5,7 +5,7 @@ profile="${1:?usage: hm-switch.sh <home-profile>}"
 repo="${CONTAINER_REPO:-$(pwd)}"
 out_link="${CONTAINER_HM_OUT_LINK:-$HOME/.cache/snowbear-home-manager/result}"
 substituters="${CONTAINER_NIX_SUBSTITUTERS:-https://cache.nixos.org/}"
-trusted_public_keys="${CONTAINER_NIX_TRUSTED_PUBLIC_KEYS:-cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8rGs=}"
+trusted_public_keys="${CONTAINER_NIX_TRUSTED_PUBLIC_KEYS:-cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=}"
 
 cd "$repo"
 mkdir -p "$(dirname "$out_link")"

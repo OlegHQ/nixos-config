@@ -5,7 +5,7 @@ conf=/etc/nix/nix.conf
 tmp="$(mktemp)"
 user_name="${CONTAINER_USER:-snowbear}"
 substituters="${CONTAINER_NIX_SUBSTITUTERS:-https://cache.nixos.org/}"
-trusted_public_keys="${CONTAINER_NIX_TRUSTED_PUBLIC_KEYS:-cache.nixos.org-1:6NCHdD59X431o0gWkM8wLaM/CDG7M0mVjZ5VkgS8rGs=}"
+trusted_public_keys="${CONTAINER_NIX_TRUSTED_PUBLIC_KEYS:-cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=}"
 require_sigs="${CONTAINER_NIX_REQUIRE_SIGS:-false}"
 
 mkdir -p /etc/nix

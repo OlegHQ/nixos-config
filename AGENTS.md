@@ -22,9 +22,10 @@ Host configuration:
 Apple container machines on macOS:
 
 - `make container-image` - Build and load `local/snowbear-dev:latest`.
-- `make container-bootstrap` - Build image and create `snowbear-dev` only if missing.
+- `make container-bootstrap` - Build image and create `dev` only if missing.
 - `make container-up` - Alias for non-destructive bootstrap.
 - `make container-reset` - Destructively recreate the machine from the image.
+- `make container-rebuild` - Alias for destructive rebuild; override `NAME` for machine name.
 - `make container-shell` - Open fish in `/home/snowbear`.
 - `make container-host-shell` - Open fish in mounted `/Users/snowbear`.
 - `make container-root-shell` - Open root shell for `apk` and system work.
@@ -35,12 +36,12 @@ Apple container machines on macOS:
 - `make container-check` - Smoke-test the persistent machine.
 - `make container-direct-check` - Smoke-test the loaded image without a machine.
 
-Use separate persistent machines by overriding `CONTAINER_NAME`:
+Use separate persistent machines by overriding `NAME`:
 
 ```bash
-make container-bootstrap CONTAINER_NAME=snowbear-personal
-make container-bootstrap CONTAINER_NAME=snowbear-work
-make container-shell CONTAINER_NAME=snowbear-work
+make container-bootstrap NAME=personal
+make container-bootstrap NAME=work
+make container-shell NAME=work
 ```
 
 ## Architecture
@@ -79,6 +80,8 @@ The normal container workflow is persistent:
 Existing machines do not receive rebuilt image layers. Rebuilding the image only affects newly created or reset machines.
 
 Persistent machine state includes `/home/snowbear`, `apk` installs, `/var/lib/docker`, Tailscale state, and mutable rootfs edits. `container-reset` deletes that state.
+
+The `/Users/snowbear` home mount is still governed by macOS TCC. Guest access to protected folders such as `Desktop` and `Documents`, or a top-level `ls /Users/snowbear`, can hang `virtiofs` until `/usr/local/libexec/container/plugins/container-runtime-linux/bin/container-runtime-linux` is granted Full Disk Access or the specific Files and Folders prompt is approved. Prefer mounted repo paths under `/Users/snowbear/WORK/...` for development.
 
 `make container-nix-cache` is the only target that intentionally updates Nix daemon config under `/etc/nix` in an existing machine. It keeps old persistent machines from source-building when the daemon lacks the current cache settings.
 

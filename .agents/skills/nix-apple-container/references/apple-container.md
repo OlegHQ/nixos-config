@@ -25,7 +25,7 @@ State kept until machine deletion:
 
 - `/home/snowbear`
 - `/var/lib/docker`
-- `apk` installs
+- `apt` installs and systemd unit state
 - Tailscale state
 - mutable root filesystem edits
 

@@ -1,6 +1,6 @@
 ---
 name: nix-apple-container
-description: Maintain this repo's Nix, Home Manager, nix-darwin, and Apple container machine workflow. Use when changing container image code, Makefile container targets, persistent Apple container machines, Alpine apk usage, Docker/Tailscale/Nix daemon behavior inside the container, or docs for this repo's containerized Linux dev environment.
+description: Maintain this repo's Nix, Home Manager, nix-darwin, and Apple container machine workflow. Use when changing container image code, Makefile container targets, persistent Apple container machines, Ubuntu/systemd or apt usage, Docker/Tailscale/Nix daemon behavior inside the container, or docs for this repo's containerized Linux dev environment.
 ---
 
 # Nix Apple Container
@@ -35,7 +35,7 @@ Use this skill when working on the Apple `container` Linux machine support in th
   for switches.
 - Do not put macOS-only paths into generated Linux home files unless they are under the mounted `/Users` home.
 - Prefer Home Manager for user tools and dotfiles.
-- Use `apk` only for mutable Alpine packages inside a long-lived machine.
+- Use `apt` and `systemctl` for mutable Ubuntu packages and services inside a long-lived machine.
 - Keep Docker socket access working for both `--user snowbear` and `--user 501:20`.
 - Keep `SNOWBEAR_CONTAINER=1`; do not reintroduce a fixed prompt label.
 

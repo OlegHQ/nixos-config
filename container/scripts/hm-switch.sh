@@ -11,8 +11,12 @@ cd "$repo"
 mkdir -p "$(dirname "$out_link")"
 export NIXPKGS_ALLOW_UNFREE="${NIXPKGS_ALLOW_UNFREE:-1}"
 
-if command -v git >/dev/null 2>&1; then
-  git config --global --add safe.directory "$repo" 2>/dev/null || true
+if git_bin="$(command -v git 2>/dev/null)"; then
+  "$git_bin" config --global --add safe.directory "$repo" 2>/dev/null || true
+  if command -v sudo >/dev/null 2>&1; then
+    sudo -n HOME=/root "$git_bin" config --global --add safe.directory "$repo" 2>/dev/null || true
+    sudo -n "$git_bin" config --system --add safe.directory "$repo" 2>/dev/null || true
+  fi
 fi
 
 nix_args=""
@@ -23,6 +27,16 @@ if [ -n "$trusted_public_keys" ]; then
   nix_args="$nix_args --option trusted-public-keys ${trusted_public_keys}"
 fi
 nix_args="$nix_args --option require-sigs ${CONTAINER_NIX_REQUIRE_SIGS:-false}"
+
+attempt=0
+while ! nix store info --store daemon >/dev/null 2>&1; do
+  attempt=$((attempt + 1))
+  if [ "$attempt" -ge 30 ]; then
+    nix store info --store daemon
+    exit 1
+  fi
+  sleep 1
+done
 
 # Build the flake's activation package directly so the switch follows the
 # repo lockfile even if the machine was created from an older image.

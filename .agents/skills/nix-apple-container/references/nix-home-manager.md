@@ -4,7 +4,7 @@
 
 The Apple container image has three practical layers:
 
-1. Alpine base and init files from the OCI image.
+1. Ubuntu base and systemd boot files from the OCI image.
 2. Runtime Nix profile for `nix`, `home-manager`, Docker, Tailscale, fish, and core tools.
 3. User Home Manager profile and generated dotfiles for `snowbear`.
 
@@ -37,21 +37,21 @@ Use Home Manager for:
 
 Use image rebuild and explicit reset for:
 
-- `/etc/inittab`
+- `/sbin/init` and systemd unit defaults
 - Nix daemon startup
 - Docker daemon startup
 - Tailscale daemon startup
 - `/etc/passwd` and `/etc/group`
 - base image environment and entrypoint
 
-Use `apk` inside a long-lived machine for mutable Alpine packages that are not worth modeling in Nix.
+Use `apt` and `systemctl` inside a long-lived machine for mutable Ubuntu packages and services that are not worth modeling in Nix.
 
 ## Garbage Collection
 
 After repeated in-machine Home Manager switches:
 
 ```bash
-nix profile wipe-history --profile "$HOME/.local/state/nix/profiles/home-manager" --older-than "-7 days"
+nix profile wipe-history --profile "$HOME/.local/state/nix/profiles/home-manager" --older-than "7d"
 nix-collect-garbage -d
 ```
 

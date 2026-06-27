@@ -25,7 +25,7 @@ make container-hm-full
 make container-check
 ```
 
-`container-bootstrap` builds and loads the base image, then creates the machine only if it does not already exist. It does not delete `/home/snowbear`, `apk` installs, Docker state, or other machine-local state.
+`container-bootstrap` builds and loads the base image, then creates the `main` machine only if it does not already exist. It does not delete `/home/snowbear`, `apt` installs, systemd unit state, Docker state, or other machine-local state.
 
 `container-hm-full` and `container-hm-switch` first repair the in-machine Nix cache config if needed, then build this flake's Home Manager activation package inside the existing machine. User config updates can apply without resetting the image layer.
 
@@ -51,7 +51,7 @@ flake.nix          public flake outputs
 nix/               overlays and output builders
 darwin/            nix-darwin host modules
 home/              Home Manager modules and app config
-container/         Alpine-based Apple container image builder
+container/         Ubuntu/systemd Apple container image builder
 mk/container.mk    Apple container machine targets
 .agents/skills/    repo-local agent skills
 ```

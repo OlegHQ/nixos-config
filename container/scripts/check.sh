@@ -17,12 +17,19 @@ command -v lazygit
 command -v docker
 command -v screenfetch
 command -v sudo
+command -v systemctl
 command -v ssh
 command -v sshd
 command -v mosh
 command -v mosh-server
 sudo -n true
 echo sudo-user
+
+sudo -n systemctl is-active --quiet nix-daemon.service
+sudo -n systemctl is-active --quiet docker.service
+sudo -n systemctl is-active --quiet sshd.service
+sudo -n systemctl is-active --quiet tailscaled.service
+echo systemd-services
 
 for attempt in 1 2 3 4 5; do
   if docker version >/dev/null 2>&1; then

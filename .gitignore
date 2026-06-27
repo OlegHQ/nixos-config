@@ -1,4 +1,5 @@
 .DS_Store
+.envrc
 result
 iso/nixos.iso
 debug.log
@@ -9,3 +10,4 @@ container/*.oci
 container/**/*.tar
 container/**/*.tar.gz
 container/**/*.oci
+multipass/.generated/

@@ -1,4 +1,4 @@
-# Nix, nix-darwin, Home Manager, and Apple container helpers.
+# Nix, nix-darwin, Home Manager, and Multipass VM helpers.
 
 NIXNAME ?= mac
 UNAME := $(shell uname)
@@ -96,20 +96,23 @@ help:
 	@echo "  NIX_FALLBACK=1         Build from source if substitutes fail"
 	@echo "  NIX_EXTRA_FLAGS=...    Pass extra flags to nix commands"
 	@echo
-	@echo "Apple container targets:"
-	@echo "  container-image        Build and load base OCI image"
-	@echo "  container-bootstrap    Build image and create main if missing"
-	@echo "  container-up           Alias for non-destructive bootstrap"
-	@echo "  container-reset        Destructively recreate machine from image"
-	@echo "  container-rebuild      Destructive rebuild; set NAME=name for custom machine"
-	@echo "  container-shell        Open fish in /home/$(CONTAINER_USER)"
-	@echo "  container-host-shell   Open fish in mounted host home"
-	@echo "  container-root-shell   Open root shell for apt/systemd work"
-	@echo "  container-nix-cache    Repair Nix cache config inside machine"
-	@echo "  container-hm-switch    Switch non-full Home Manager in existing machine"
-	@echo "  container-hm-full      Switch full Home Manager in existing machine"
-	@echo "  container-gc           Prune Nix store/generations inside machine"
-	@echo "  container-check        Smoke-test persistent machine"
-	@echo "  container-direct-check Smoke-test image without a machine"
+	@echo "Multipass VM targets:"
+	@echo "  multipass-bootstrap    Create $(NAME) if missing, provision it, and load Home Manager on first boot"
+	@echo "  multipass-up           Alias for non-destructive bootstrap"
+	@echo "  multipass-reset        Destructively recreate the VM"
+	@echo "  multipass-shell        Open fish in /home/$(MULTIPASS_USER)"
+	@echo "  multipass-host-shell   Open fish in synced repo inside the VM"
+	@echo "  multipass-root-shell   Open root shell for apt/systemd work"
+	@echo "  multipass-nix-cache    Repair Nix cache config inside the VM"
+	@echo "  multipass-hm-switch    Switch non-full Home Manager in existing VM"
+	@echo "  multipass-hm-full      Switch full Home Manager in existing VM"
+	@echo "  multipass-gc           Prune Nix store/generations inside VM"
+	@echo "  multipass-check        Smoke-test persistent VM"
+	@echo "  multipass-tailscale-up Authenticate or update Tailscale in the VM"
+	@echo "  multipass-disk-grow    Increase VM disk to MULTIPASS_DISK"
+	@echo "  NAME=work              Use a separate persistent VM"
+	@echo "  MULTIPASS_BRIDGE=en1   Override bridged network"
+	@echo "  MULTIPASS_MOUNT_HOME=1 Opt into mounting $(MULTIPASS_HOST_HOME)"
+	@echo "  MULTIPASS_BOOTSTRAP_HM=always  Re-run HM during bootstrap"
 
-include mk/container.mk
+include mk/multipass.mk

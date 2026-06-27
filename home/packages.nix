@@ -58,6 +58,7 @@ in {
     pkgs.himalaya
     keychainUnlock
   ]) ++ (lib.optionals isLinux [
+    pkgs.home-manager
     pkgs.util-linux
     pkgs.bzip2
     pkgs.gmp

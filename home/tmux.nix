@@ -76,7 +76,7 @@ let
 in {
   programs.tmux = {
     enable = true;
-    terminal = "xterm-256color";
+    terminal = "tmux-256color";
     shortcut = "a";
     secureSocket = false;
     disableConfirmationPrompt = true;
@@ -84,8 +84,10 @@ in {
     escapeTime = 0;
 
     extraConfig = ''
-      set -ga terminal-overrides ",xterm-256color:Tc"
+      set -as terminal-features ",xterm*:RGB,tmux*:RGB,screen*:RGB,foot*:RGB,alacritty*:RGB,kitty*:RGB,wezterm*:RGB,ghostty*:RGB"
+      set -ga terminal-overrides ",xterm*:Tc,tmux*:Tc,screen*:Tc,foot*:Tc,alacritty*:Tc,kitty*:Tc,wezterm*:Tc,ghostty*:Tc"
       set -ga terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[ q'
+      set-environment -g COLORTERM truecolor
       set -g allow-passthrough on
       set -s set-clipboard off
 

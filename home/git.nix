@@ -4,7 +4,7 @@
 {
   options.snowbear.git.setIdentity = lib.mkOption {
     type = lib.types.bool;
-    default = builtins.getEnv "SNOWBEAR_HOME_CONTAINER" != "1";
+    default = builtins.getEnv "SNOWBEAR_HOME_MULTIPASS" != "1";
     description = "Whether Home Manager should write Git user.name and user.email.";
   };
 

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Nix Apple Container"
-  short_description: "Maintain Nix and Apple container VMs"
-  default_prompt: "Use $nix-apple-container to update this repo's persistent Apple container Home Manager workflow."
+  display_name: "Nix Multipass"
+  short_description: "Maintain Nix and Multipass Ubuntu VMs"
+  default_prompt: "Use $nix-multipass to update this repo's persistent Multipass Home Manager workflow."

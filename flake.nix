@@ -1,5 +1,5 @@
 {
-  description = "Nix, nix-darwin, Home Manager, and Apple container configuration";
+  description = "Nix, nix-darwin, Home Manager, and Multipass VM configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
@@ -47,7 +47,7 @@
     let
       overlays = import ./nix/overlays.nix { inherit inputs; };
       builders = import ./nix/builders.nix { inherit self inputs overlays; };
-      inherit (builders) defaultUser mkContainerImage mkDarwin mkHome;
+      inherit (builders) defaultUser mkDarwin mkHome;
     in {
       darwinConfigurations = {
         mac = mkDarwin "mac" {
@@ -84,11 +84,7 @@
 
       packages.aarch64-linux = {
         homeManager = inputs.home-manager.packages.aarch64-linux.home-manager;
-        containerImage = mkContainerImage {
-          system = "aarch64-linux";
-          user = defaultUser;
-        };
-        default = self.packages.aarch64-linux.containerImage;
+        default = self.packages.aarch64-linux.homeManager;
       };
 
       apps.aarch64-linux.homeManager = {

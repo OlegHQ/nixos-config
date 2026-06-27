@@ -63,23 +63,6 @@ let
       ] ++ hmExtras { inherit full; } ++ extraModules;
     };
 
-  mkContainerImage = { system, user }:
-    let
-      pkgs = pkgsFor system;
-      uidEnv = builtins.getEnv "CONTAINER_UID";
-      gidEnv = builtins.getEnv "CONTAINER_GID";
-    in
-    import ../container {
-      inherit pkgs;
-      homeConfiguration = mkHome {
-        inherit system user;
-        full = true;
-        extraModules = [ ../container/home.nix ];
-      };
-      userName = user;
-      uid = if uidEnv == "" then "1000" else uidEnv;
-      gid = if gidEnv == "" then "1000" else gidEnv;
-    };
 in {
-  inherit defaultUser mkContainerImage mkDarwin mkHome;
+  inherit defaultUser mkDarwin mkHome;
 }

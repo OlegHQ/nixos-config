@@ -2,6 +2,10 @@
 { inputs, ... }:
 { config, lib, pkgs, ... }:
 
+let
+  isMultipassHome = builtins.getEnv "SNOWBEAR_HOME_MULTIPASS" == "1";
+in
+
 {
   imports = [
     (import ./shell.nix { inherit inputs; })
@@ -22,11 +26,15 @@
     LANG = "en_US.UTF-8";
     LC_CTYPE = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
+    COLORTERM = "truecolor";
+    TERMINFO_DIRS = "${pkgs.ncurses}/share/terminfo:/usr/share/terminfo:/etc/terminfo:/lib/terminfo";
     EDITOR = "nvim";
     PAGER = "less -FirSwX";
     DOTNET_CLI_TELEMETRY_OPTOUT = "1";
     DOTNET_NOLOGO = "1";
     GOBIN = "$HOME/.local/bin";
+  } // lib.optionalAttrs isMultipassHome {
+    SNOWBEAR_MULTIPASS = "1";
   };
 
   home.file.".inputrc".source = ./configs/inputrc;

@@ -76,7 +76,7 @@ let
         echo -n (set_color -b $ctp_mauve white)" "(basename $VIRTUAL_ENV)" "(set_color normal)" "
     end
 
-    if set -q SNOWBEAR_CONTAINER
+    if set -q SNOWBEAR_MULTIPASS
         echo -n (set_color $ctp_teal)(whoami)(set_color $ctp_overlay)"@"(set_color --bold $ctp_peach)(prompt_hostname)(set_color normal)" "
     else
         echo -n (set_color $ctp_teal)(whoami)(set_color $ctp_overlay)"@"(set_color $ctp_blue)(prompt_hostname)(set_color normal)" "
@@ -122,7 +122,7 @@ in {
     interactiveShellInit = lib.strings.concatStrings
       (lib.strings.intersperse "\n" ([
         "set -gx PATH /nix/var/nix/profiles/default/bin $HOME/.nix-profile/bin $PATH"
-        "test -d /etc/machine; and set -gx SNOWBEAR_CONTAINER 1"
+        "test -f /etc/snowbear-multipass; and set -gx SNOWBEAR_MULTIPASS 1"
         (builtins.readFile ./configs/config.fish)
         fishTheme
         "set -g SHELL ${pkgs.fish}/bin/fish"

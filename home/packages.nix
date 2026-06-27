@@ -11,27 +11,6 @@ let
     cat "$1" | col -bx | bat --language man --style plain
   '');
 
-  dumptty = pkgs.writeShellScriptBin "dumptty" ''
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    TMPFILE="/tmp/terminal_dump_$TIMESTAMP.txt"
-
-    if [ -n "$TMUX" ]; then
-        echo "Dumping tmux pane history to $TMPFILE"
-        tmux capture-pane -pS - > "$TMPFILE"
-    else
-        echo "dumptty only works inside tmux!"
-        echo "Regular terminals don't expose their scrollback buffer to programs."
-        echo ""
-        echo "Suggestions:"
-        echo "  - Use tmux for terminal session management"
-        echo "  - Or manually copy/paste the content you need"
-        exit 1
-    fi
-
-    echo "Saved terminal dump to: $TMPFILE"
-    nvim '+normal G' "$TMPFILE"
-  '';
-
   kp = pkgs.buildGoModule {
     pname = "kp";
     version = "1.0.0";
@@ -62,15 +41,6 @@ in {
     pkgs.lazygit
     pkgs.zoxide
     pkgs.gh
-    pkgs.glab
-    pkgs.bun
-    pkgs.mongosh
-
-    pkgs.go
-    pkgs.air
-    pkgs.templ
-
-    pkgs.uv
 
     pkgs.fswatch
 
@@ -78,16 +48,16 @@ in {
 
     pkgs.glow
 
-    pkgs.python3
+    pkgs.bun
+    pkgs.uv
     pkgs.nodejs_24
-
-    dumptty
+    pkgs.python3
+    pkgs.rustup
     kp
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
     keychainUnlock
   ]) ++ (lib.optionals isLinux [
-    pkgs.rustup
     pkgs.util-linux
     pkgs.bzip2
     pkgs.gmp

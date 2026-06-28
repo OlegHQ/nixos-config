@@ -34,7 +34,7 @@ let
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.${user}.imports = [
-            (import ../home/default.nix { inherit inputs; })
+            (import ../home/default.nix { inherit inputs full; })
           ] ++ hmExtras { inherit full; };
         }
         {
@@ -59,7 +59,7 @@ let
           home.username = user;
           home.homeDirectory = "/home/${user}";
         }
-        (import ../home/default.nix { inherit inputs; })
+        (import ../home/default.nix { inherit inputs full; })
       ] ++ hmExtras { inherit full; } ++ extraModules;
     };
 

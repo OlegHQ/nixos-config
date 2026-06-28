@@ -1,7 +1,8 @@
 # Neovim and Helix editor configuration
+{ full ? false }:
 { config, lib, pkgs, ... }:
 
-{
+if full then {
   programs.neovim = {
     enable = true;
     withPython3 = true;
@@ -31,4 +32,6 @@
     ];
   };
 
+} else {
+  home.packages = [ pkgs.neovim ];
 }

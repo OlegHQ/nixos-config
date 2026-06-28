@@ -5,6 +5,7 @@ UNAME := $(shell uname)
 ARCH := $(shell arch)
 NIX_FALLBACK ?= 0
 NIX_EXTRA_FLAGS ?=
+PRUNE ?= 0
 NIX_FALLBACK_FLAGS := $(if $(filter 1 true yes,$(NIX_FALLBACK)),--fallback,)
 NIX_COMMON_FLAGS := $(NIX_FALLBACK_FLAGS) $(NIX_EXTRA_FLAGS)
 IS_ROOT := $(shell [ "$$(id -u)" -eq 0 ] && echo 1 || echo 0)
@@ -18,6 +19,14 @@ define ensure-not-root
 	fi
 endef
 
+define maybe-prune
+	@if [ "$(PRUNE)" = 1 ] || [ "$(PRUNE)" = true ] || [ "$(PRUNE)" = yes ]; then \
+		$(MAKE) prune; \
+	else \
+		echo "Skipping prune; run 'make prune' or pass PRUNE=1 to prune old generations and garbage."; \
+	fi
+endef
+
 all: switch
 
 switch:
@@ -26,11 +35,11 @@ ifeq ($(UNAME), Darwin)
 	@echo "Switching Darwin configuration $(NIXNAME)..."
 	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.$(NIXNAME).system" --impure $(NIX_COMMON_FLAGS)
 	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#$(NIXNAME)" --impure
-	$(MAKE) prune
+	$(maybe-prune)
 else
 	@echo "Switching Home Manager configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run $(NIX_COMMON_FLAGS) nixpkgs#home-manager -- switch --flake ".#$(USER)-$(ARCH)" --impure
-	$(MAKE) prune
+	$(maybe-prune)
 endif
 
 full:
@@ -39,11 +48,11 @@ ifeq ($(UNAME), Darwin)
 	@echo "Switching Darwin full configuration $(NIXNAME)-full..."
 	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.$(NIXNAME)-full.system" --impure $(NIX_COMMON_FLAGS)
 	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#$(NIXNAME)-full" --impure
-	$(MAKE) prune
+	$(maybe-prune)
 else
 	@echo "Switching Home Manager full configuration..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run $(NIX_COMMON_FLAGS) nixpkgs#home-manager -- switch --flake ".#$(USER)-full-$(ARCH)" --impure
-	$(MAKE) prune
+	$(maybe-prune)
 endif
 
 test:
@@ -93,6 +102,7 @@ help:
 	@echo "  check                  Validate flake"
 	@echo "  clean                  Remove local result symlink"
 	@echo "  prune                  Remove old Nix generations and garbage"
+	@echo "  PRUNE=1                Also prune after switch/full"
 	@echo "  NIX_FALLBACK=1         Build from source if substitutes fail"
 	@echo "  NIX_EXTRA_FLAGS=...    Pass extra flags to nix commands"
 	@echo

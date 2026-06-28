@@ -23,6 +23,11 @@ let
     gt = "git tag";
   };
 
+  editorAliases = {
+    vi = "nvim";
+    vim = "nvim";
+  };
+
   fishTheme = ''
     # Fish theme (generated from ${theme.themeFamily}/${theme.themeMode})
     set -g fish_color_normal ${p.text}
@@ -103,7 +108,7 @@ in {
     enable = true;
     shellOptions = [ ];
     historyControl = [ "ignoredups" "ignorespace" ];
-    shellAliases = gitAliases;
+    shellAliases = gitAliases // editorAliases;
   };
 
   programs.zoxide = {
@@ -131,7 +136,7 @@ in {
         "fish_add_path $HOME/.dotnet/tools"
       ]));
 
-    shellAliases = gitAliases // {
+    shellAliases = gitAliases // editorAliases // {
       lg = "lazygit";
       l = "ls -la";
       ll = "ls -l";

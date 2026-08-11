@@ -53,6 +53,10 @@ in {
     pkgs.nodejs_24
     pkgs.python3
     pkgs.rustup
+
+    pkgs.pyright
+    pkgs.typescript-language-server
+
     kp
   ] ++ (lib.optionals isDarwin [
     pkgs.himalaya
@@ -69,3 +73,4 @@ in {
 
   home.sessionVariables.MANPAGER = "${manpager}/bin/manpager";
 }
+

@@ -12,8 +12,7 @@ Read the skill before changing Multipass or Nix workflow code. Its references ca
 
 Host configuration:
 
-- `make switch` - Apply the normal host config.
-- `make full` - Apply the full host config.
+- `make switch` - Apply the host config (`WITH_NVIM=1` enables the managed Neovim config).
 - `make test` - Dry-run the host config.
 - `make build` - Build the host config.
 - `make check` - Run `nix flake check --impure`.
@@ -21,15 +20,14 @@ Host configuration:
 
 Multipass VMs on macOS:
 
-- `make multipass-bootstrap` - Create `main` only if missing, set it as the Multipass primary, provision it, sync the repo, and run full Home Manager on first creation.
+- `make multipass-bootstrap` - Create `main` only if missing, set it as the Multipass primary, provision it, sync the repo, and run Home Manager on first creation.
 - `make multipass-up` - Alias for non-destructive bootstrap.
 - `make multipass-reset` - Destructively recreate the VM.
 - `make multipass-shell` - Open fish in `/home/snowbear`.
 - `make multipass-host-shell` - Open fish in the synced repo inside the VM.
 - `make multipass-root-shell` - Open root shell for `apt`, `systemctl`, and system work.
 - `make multipass-nix-cache` - Normalize in-VM Nix cache config and restart `nix-daemon` if changed.
-- `make multipass-hm-switch` - Switch non-full Home Manager inside the existing VM.
-- `make multipass-hm-full` - Switch full Home Manager inside the existing VM.
+- `make multipass-hm-switch` - Switch Home Manager inside the existing VM.
 - `make multipass-gc` - Expire Home Manager generations and run root Nix GC inside the VM.
 - `make multipass-check` - Smoke-test the persistent VM.
 - `make multipass-tailscale-up` - Authenticate or update Tailscale in the VM.
@@ -60,11 +58,8 @@ This is a flake-based macOS/Linux user configuration with a persistent Multipass
 Public outputs to preserve:
 
 - `darwinConfigurations.mac`
-- `darwinConfigurations.mac-full`
 - `homeConfigurations.snowbear-x86_64`
 - `homeConfigurations.snowbear-aarch64`
-- `homeConfigurations.snowbear-full-x86_64`
-- `homeConfigurations.snowbear-full-aarch64`
 - `packages.aarch64-linux.homeManager`
 
 ## Persistent Multipass Model
@@ -73,11 +68,11 @@ The normal VM workflow is persistent:
 
 1. Create the VM once with `make multipass-bootstrap`.
 2. Keep `/home/snowbear`, `/home/snowbear/src/nixos-config`, `/var/lib/docker`, `/var/lib/tailscale`, apt installs, systemd unit state, and mutable rootfs edits inside the VM.
-3. Apply user config changes with `make multipass-hm-full`.
+3. Apply user config changes with `make multipass-hm-switch`.
 4. Use `apt` or `systemctl` inside the VM for mutable Ubuntu packages and services.
 5. Use `make multipass-reset` only when a clean VM is desired.
 
-Multipass launches Ubuntu directly; there is no custom OCI image layer to rebuild. Existing VMs do not receive provisioning changes until `make multipass-provision`, `make multipass-hm-full`, or a reset applies them.
+Multipass launches Ubuntu directly; there is no custom OCI image layer to rebuild. Existing VMs do not receive provisioning changes until `make multipass-provision`, `make multipass-hm-switch`, or a reset applies them.
 
 Plain `multipass shell` and `multipass shell main` enter through Multipass' default `ubuntu` account, then delegate interactive shells into the `snowbear` Home Manager account in `/home/snowbear`. Keep this handoff working so the raw Multipass CLI feels like the managed VM.
 
@@ -93,7 +88,7 @@ If `MULTIPASS_MOUNT_HOME=1` is enabled, the `/Users/snowbear` mount is still gov
 
 `make multipass-nix-cache` is the explicit target that updates Nix daemon config under `/etc/nix` in an existing VM.
 
-`make multipass-hm-switch` and `make multipass-hm-full` depend on `multipass-nix-cache`, then build this flake's `homeConfigurations.*.activationPackage` inside the existing VM and run its activation script. That updates user packages/config from the current lockfile.
+`make multipass-hm-switch` depends on `multipass-nix-cache`, then builds this flake's `homeConfigurations.*.activationPackage` inside the existing VM and runs its activation script. That updates user packages/config from the current lockfile.
 
 ## Package Management
 
@@ -129,6 +124,6 @@ For Multipass changes on macOS:
 ```bash
 make multipass-bootstrap
 make multipass-check
-make multipass-hm-full
+make multipass-hm-switch
 make multipass-gc
 ```

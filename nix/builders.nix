@@ -12,8 +12,10 @@ let
       inherit overlays system;
     };
 
-  hmExtras = { full ? false }:
-    if full then [
+  withNvimConfig = builtins.getEnv "WITH_NVIM" == "1";
+
+  nvimConfigModules =
+    if withNvimConfig then [
       inputs.nvimconf.homeManagerModules.default
       {
         programs.nvimconf.enable = true;
@@ -22,7 +24,7 @@ let
       }
     ] else [];
 
-  mkDarwin = name: { system, user, full ? false }:
+  mkDarwin = name: { system, user }:
     inputs.darwin.lib.darwinSystem {
       inherit inputs system;
       modules = [
@@ -34,8 +36,8 @@ let
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.${user}.imports = [
-            (import ../home/default.nix { inherit inputs full; })
-          ] ++ hmExtras { inherit full; };
+            (import ../home/default.nix { inherit inputs; })
+          ] ++ nvimConfigModules;
         }
         {
           config._module.args = {
@@ -48,7 +50,7 @@ let
       ];
     };
 
-  mkHome = { system, user, full ? false, extraModules ? [] }:
+  mkHome = { system, user, extraModules ? [] }:
     let pkgs = pkgsFor system;
     in
     inputs.home-manager.lib.homeManagerConfiguration {
@@ -59,8 +61,8 @@ let
           home.username = user;
           home.homeDirectory = "/home/${user}";
         }
-        (import ../home/default.nix { inherit inputs full; })
-      ] ++ hmExtras { inherit full; } ++ extraModules;
+        (import ../home/default.nix { inherit inputs; })
+      ] ++ nvimConfigModules ++ extraModules;
     };
 
 in {

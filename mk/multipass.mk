@@ -23,7 +23,6 @@ MULTIPASS_REPO ?= $(CURDIR)
 MULTIPASS_VM_REPO ?= /home/$(MULTIPASS_USER)/src/nixos-config
 MULTIPASS_VM_SCRIPT_DIR ?= $(MULTIPASS_VM_REPO)/multipass/scripts
 MULTIPASS_HM_PROFILE ?= $(MULTIPASS_USER)-aarch64
-MULTIPASS_HM_FULL_PROFILE ?= $(MULTIPASS_USER)-full-aarch64
 MULTIPASS_HM_EXPIRE ?= 7d
 MULTIPASS_SCRIPT_DIR ?= $(MULTIPASS_REPO)/multipass/scripts
 MULTIPASS_AUTHORIZED_KEYS ?= $(MULTIPASS_REPO)/multipass/.generated/authorized_keys.$(MULTIPASS_NAME)
@@ -36,13 +35,13 @@ MULTIPASS_NIX_TRUSTED_PUBLIC_KEYS ?= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURk
 MULTIPASS_NIX_REQUIRE_SIGS ?= false
 MULTIPASS_TAILSCALE_AUTH_KEY ?=
 MULTIPASS_TAILSCALE_EXTRA_ARGS ?= --accept-dns=true
-MULTIPASS_USER_ENV = PATH=/nix/var/nix/profiles/default/bin:/home/$(MULTIPASS_USER)/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/$(MULTIPASS_USER) USER=$(MULTIPASS_USER) LOGNAME=$(MULTIPASS_USER) SNOWBEAR_MULTIPASS=1
+MULTIPASS_USER_ENV = PATH=/nix/var/nix/profiles/default/bin:/home/$(MULTIPASS_USER)/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin HOME=/home/$(MULTIPASS_USER) USER=$(MULTIPASS_USER) LOGNAME=$(MULTIPASS_USER) SNOWBEAR_MULTIPASS=1 WITH_NVIM=$(WITH_NVIM)
 MULTIPASS_DEFAULT_BRIDGE = $$(route get default 2>/dev/null | awk '/interface:/ { print $$2; exit }')
 
 .PHONY: multipass-create multipass-bootstrap multipass-up multipass-reset multipass-rebuild
 .PHONY: multipass-wait multipass-mount multipass-sync-repo multipass-authorized-keys multipass-provision multipass-nix-cache
 .PHONY: multipass-shell multipass-host-shell multipass-root-shell
-.PHONY: multipass-hm-switch multipass-hm-full multipass-gc multipass-check
+.PHONY: multipass-hm-switch multipass-gc multipass-check
 .PHONY: multipass-tailscale-up multipass-disable-tailscale multipass-disk-grow
 .PHONY: multipass-info multipass-list multipass-bridge
 
@@ -118,9 +117,9 @@ ifeq ($(UNAME), Darwin)
 	$(MAKE) multipass-mount; \
 	$(MAKE) multipass-provision; \
 	if [ "$(MULTIPASS_BOOTSTRAP_HM)" = "always" ] || { [ "$(MULTIPASS_BOOTSTRAP_HM)" = "new" ] && [ "$$needs_hm" = "1" ]; }; then \
-		$(MAKE) multipass-hm-full; \
+		$(MAKE) multipass-hm-switch; \
 	else \
-		echo "Home Manager switch skipped for existing $(MULTIPASS_NAME); run make multipass-hm-full to update it."; \
+		echo "Home Manager switch skipped for existing $(MULTIPASS_NAME); run make multipass-hm-switch to update it."; \
 	fi
 else
 	@echo "Multipass VM targets are intended for macOS hosts."
@@ -307,21 +306,6 @@ else
 	@echo "Multipass VM targets are intended for macOS hosts."
 endif
 
-multipass-hm-full: multipass-nix-cache multipass-sync-repo
-ifeq ($(UNAME), Darwin)
-	multipass exec -d "$(MULTIPASS_VM_REPO)" "$(MULTIPASS_NAME)" -- sudo -H -u "$(MULTIPASS_USER)" env \
-		$(MULTIPASS_USER_ENV) \
-		NIXPKGS_ALLOW_UNFREE=1 \
-		SNOWBEAR_HOME_MULTIPASS=1 \
-		MULTIPASS_REPO="$(MULTIPASS_VM_REPO)" \
-		MULTIPASS_NIX_SUBSTITUTERS="$(MULTIPASS_NIX_SUBSTITUTERS)" \
-		MULTIPASS_NIX_TRUSTED_PUBLIC_KEYS="$(MULTIPASS_NIX_TRUSTED_PUBLIC_KEYS)" \
-		MULTIPASS_NIX_REQUIRE_SIGS="$(MULTIPASS_NIX_REQUIRE_SIGS)" \
-		/bin/sh "$(MULTIPASS_VM_SCRIPT_DIR)/hm-switch.sh" "$(MULTIPASS_HM_FULL_PROFILE)"
-else
-	@echo "Multipass VM targets are intended for macOS hosts."
-endif
-
 multipass-gc: multipass-sync-repo
 ifeq ($(UNAME), Darwin)
 	-multipass exec -d "$(MULTIPASS_VM_REPO)" "$(MULTIPASS_NAME)" -- sudo -H -u "$(MULTIPASS_USER)" env \
@@ -429,7 +413,7 @@ endif
 # Compatibility aliases. These do not call the old VM CLI.
 .PHONY: container-bootstrap container-up container-reset container-rebuild container-machine-reset
 .PHONY: container-shell container-host-shell container-root-shell container-nix-cache
-.PHONY: container-hm-switch container-hm-full container-gc container-check
+.PHONY: container-hm-switch container-gc container-check
 .PHONY: container-create container-machine container-image container-direct-check
 
 container-bootstrap: multipass-bootstrap
@@ -442,7 +426,6 @@ container-host-shell: multipass-host-shell
 container-root-shell: multipass-root-shell
 container-nix-cache: multipass-nix-cache
 container-hm-switch: multipass-hm-switch
-container-hm-full: multipass-hm-full
 container-gc: multipass-gc
 container-check: multipass-check
 container-create: multipass-create

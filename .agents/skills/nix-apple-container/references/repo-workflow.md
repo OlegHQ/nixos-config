@@ -8,11 +8,11 @@ Normal flow:
 make multipass-bootstrap
 multipass shell
 make multipass-shell
-make multipass-hm-full
+make multipass-hm-switch
 make multipass-check
 ```
 
-`multipass-bootstrap` must not delete an existing VM. It creates the VM only if missing, makes it the Multipass primary instance, provisions system packages and services, syncs the repo into `/home/snowbear/src/nixos-config`, and runs full Home Manager on first creation.
+`multipass-bootstrap` must not delete an existing VM. It creates the VM only if missing, makes it the Multipass primary instance, provisions system packages and services, syncs the repo into `/home/snowbear/src/nixos-config`, and runs Home Manager on first creation.
 
 Plain `multipass shell` and `multipass shell main` must land in the `snowbear` Home Manager account. Multipass starts the session as `ubuntu`, so provisioning installs an interactive shell handoff from `ubuntu` to `snowbear`.
 
@@ -47,11 +47,9 @@ Avoid adding duplicate Makefile targets for each VM unless behavior differs.
 Preserve these flake outputs:
 
 - `darwinConfigurations.mac`
-- `darwinConfigurations.mac-full`
 - `homeConfigurations.snowbear-aarch64`
-- `homeConfigurations.snowbear-full-aarch64`
 - `packages.aarch64-linux.homeManager`
 
 Avoid renaming user-facing targets without keeping compatibility aliases.
 
-`multipass-hm-switch` and `multipass-hm-full` should run `multipass-nix-cache`, then build `homeConfigurations.*.activationPackage` from this flake and run the activation script so persistent VMs follow the current lockfile.
+`multipass-hm-switch` should run `multipass-nix-cache`, then build `homeConfigurations.*.activationPackage` from this flake and run the activation script so persistent VMs follow the current lockfile.

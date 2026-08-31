@@ -1,13 +1,13 @@
-# Neovim and Helix editor configuration
-{ full ? false }:
-{ config, lib, pkgs, ... }:
+# Neovim editor and plugins. WITH_NVIM only controls ownership of its config.
+{ pkgs, ... }:
 
-if full then {
+{
   programs.neovim = {
     enable = true;
     withPython3 = true;
     withRuby = true;
     viAlias = true;
+    sideloadInitLua = builtins.getEnv "WITH_NVIM" != "1";
 
     plugins = with pkgs.vimPlugins; [
       fzf-lua
@@ -31,7 +31,4 @@ if full then {
       blink-cmp
     ];
   };
-
-} else {
-  home.packages = [ pkgs.neovim ];
 }

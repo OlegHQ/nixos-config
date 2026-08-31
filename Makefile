@@ -6,11 +6,13 @@ ARCH := $(shell arch)
 NIX_FALLBACK ?= 0
 NIX_EXTRA_FLAGS ?=
 PRUNE ?= 0
+WITH_NVIM ?= 0
+export WITH_NVIM
 NIX_FALLBACK_FLAGS := $(if $(filter 1 true yes,$(NIX_FALLBACK)),--fallback,)
 NIX_COMMON_FLAGS := $(NIX_FALLBACK_FLAGS) $(NIX_EXTRA_FLAGS)
 IS_ROOT := $(shell [ "$$(id -u)" -eq 0 ] && echo 1 || echo 0)
 
-.PHONY: all switch full test build check clean prune help
+.PHONY: all switch test build check clean prune help
 
 define ensure-not-root
 	@if [ "$(IS_ROOT)" = 1 ]; then \
@@ -32,26 +34,13 @@ all: switch
 switch:
 	$(ensure-not-root)
 ifeq ($(UNAME), Darwin)
-	@echo "Switching Darwin configuration $(NIXNAME)..."
+	@echo "Switching Darwin configuration $(NIXNAME) (WITH_NVIM=$(WITH_NVIM))..."
 	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.$(NIXNAME).system" --impure $(NIX_COMMON_FLAGS)
-	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#$(NIXNAME)" --impure
+	sudo NIXPKGS_ALLOW_UNFREE=1 WITH_NVIM="$(WITH_NVIM)" ./result/sw/bin/darwin-rebuild switch --flake ".#$(NIXNAME)" --impure
 	$(maybe-prune)
 else
-	@echo "Switching Home Manager configuration..."
+	@echo "Switching Home Manager configuration (WITH_NVIM=$(WITH_NVIM))..."
 	NIXPKGS_ALLOW_UNFREE=1 nix run $(NIX_COMMON_FLAGS) nixpkgs#home-manager -- switch --flake ".#$(USER)-$(ARCH)" --impure
-	$(maybe-prune)
-endif
-
-full:
-	$(ensure-not-root)
-ifeq ($(UNAME), Darwin)
-	@echo "Switching Darwin full configuration $(NIXNAME)-full..."
-	NIXPKGS_ALLOW_UNFREE=1 nix build ".#darwinConfigurations.$(NIXNAME)-full.system" --impure $(NIX_COMMON_FLAGS)
-	sudo NIXPKGS_ALLOW_UNFREE=1 ./result/sw/bin/darwin-rebuild switch --flake ".#$(NIXNAME)-full" --impure
-	$(maybe-prune)
-else
-	@echo "Switching Home Manager full configuration..."
-	NIXPKGS_ALLOW_UNFREE=1 nix run $(NIX_COMMON_FLAGS) nixpkgs#home-manager -- switch --flake ".#$(USER)-full-$(ARCH)" --impure
 	$(maybe-prune)
 endif
 
@@ -96,13 +85,13 @@ endif
 help:
 	@echo "Common targets:"
 	@echo "  switch                 Apply normal host configuration"
-	@echo "  full                   Apply full host configuration"
 	@echo "  test                   Dry-run host configuration"
 	@echo "  build                  Build host configuration"
 	@echo "  check                  Validate flake"
 	@echo "  clean                  Remove local result symlink"
 	@echo "  prune                  Remove old Nix generations and garbage"
-	@echo "  PRUNE=1                Also prune after switch/full"
+	@echo "  PRUNE=1                Also prune after switch"
+	@echo "  WITH_NVIM=1            Manage ~/.config/nvim with Home Manager (default: 0)"
 	@echo "  NIX_FALLBACK=1         Build from source if substitutes fail"
 	@echo "  NIX_EXTRA_FLAGS=...    Pass extra flags to nix commands"
 	@echo
@@ -114,8 +103,7 @@ help:
 	@echo "  multipass-host-shell   Open fish in synced repo inside the VM"
 	@echo "  multipass-root-shell   Open root shell for apt/systemd work"
 	@echo "  multipass-nix-cache    Repair Nix cache config inside the VM"
-	@echo "  multipass-hm-switch    Switch non-full Home Manager in existing VM"
-	@echo "  multipass-hm-full      Switch full Home Manager in existing VM"
+	@echo "  multipass-hm-switch    Switch Home Manager in existing VM"
 	@echo "  multipass-gc           Prune Nix store/generations inside VM"
 	@echo "  multipass-check        Smoke-test persistent VM"
 	@echo "  multipass-tailscale-up Authenticate or update Tailscale in the VM"

@@ -15,7 +15,7 @@ The repo's `multipass-nix-cache` target is a narrow exception: it repairs `/etc/
 In persistent VMs, build the flake's Home Manager activation package and run its activation script:
 
 ```bash
-nix build ".#homeConfigurations.snowbear-full-aarch64.activationPackage" --impure --out-link "$HOME/.cache/snowbear-home-manager/result"
+nix build ".#homeConfigurations.snowbear-aarch64.activationPackage" --impure --out-link "$HOME/.cache/snowbear-home-manager/result"
 "$HOME/.cache/snowbear-home-manager/result/activate"
 ```
 

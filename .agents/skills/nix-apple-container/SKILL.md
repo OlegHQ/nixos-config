@@ -56,6 +56,6 @@ make multipass-check
 For Home Manager changes inside an existing VM:
 
 ```bash
-make multipass-hm-full
+make multipass-hm-switch
 make multipass-gc
 ```

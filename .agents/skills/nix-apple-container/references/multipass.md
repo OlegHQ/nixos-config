@@ -21,7 +21,7 @@ Use official docs as the source for behavior that may change:
 
 ## VMs Are Persistent
 
-`multipass launch` creates a persistent VM. After creation, it has mutable state. Provisioning script changes do not apply until `make multipass-provision`, `make multipass-hm-full`, or a reset runs.
+`multipass launch` creates a persistent VM. After creation, it has mutable state. Provisioning script changes do not apply until `make multipass-provision`, `make multipass-hm-switch`, or a reset runs.
 
 State kept until VM deletion:
 

@@ -1,5 +1,5 @@
 # Home Manager entry point — imports only, minimal inline config
-{ inputs, full ? false, ... }:
+{ inputs, ... }:
 { config, lib, pkgs, ... }:
 
 let
@@ -10,7 +10,7 @@ in
   imports = [
     (import ./shell.nix { inherit inputs; })
     (import ./tmux.nix { inherit inputs; })
-    (import ./editor.nix { inherit full; })
+    ./editor.nix
     ./git.nix
     ./terminal.nix
     ./packages.nix

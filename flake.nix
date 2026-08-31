@@ -54,11 +54,6 @@
           system = "aarch64-darwin";
           user = defaultUser;
         };
-        mac-full = mkDarwin "mac-full" {
-          system = "aarch64-darwin";
-          user = defaultUser;
-          full = true;
-        };
       };
 
       homeConfigurations = {
@@ -69,16 +64,6 @@
         "${defaultUser}-aarch64" = mkHome {
           system = "aarch64-linux";
           user = defaultUser;
-        };
-        "${defaultUser}-full-x86_64" = mkHome {
-          system = "x86_64-linux";
-          user = defaultUser;
-          full = true;
-        };
-        "${defaultUser}-full-aarch64" = mkHome {
-          system = "aarch64-linux";
-          user = defaultUser;
-          full = true;
         };
       };
 

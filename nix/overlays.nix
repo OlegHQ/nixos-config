@@ -9,6 +9,7 @@
       bun = unstable.bun;
       d2 = unstable.d2;
       helm-ls = unstable.helm-ls;
+      uv = unstable.uv;
     })
 
   (final: prev: {

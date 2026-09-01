@@ -54,6 +54,11 @@ in {
     pkgs.python3
     pkgs.rustup
 
+    pkgs.go
+    pkgs.gopls
+    pkgs.air
+    pkgs.gotestsum
+
     pkgs.pyright
     pkgs.typescript-language-server
 
